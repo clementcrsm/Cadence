@@ -118,6 +118,13 @@ html[data-theme="dark"] .seg button[aria-pressed="true"]{ background:var(--surfa
 .gate-legend{ display:flex; flex-wrap:wrap; gap:14px; margin-top:14px; font-size:13px; color:var(--muted); }
 .gate-legend span{ display:inline-flex; align-items:center; gap:7px; }
 .gate-form{ display:grid; place-items:center; padding:calc(40px + var(--safe-t)) 24px calc(40px + var(--safe-b)); }
+.gate-form{ position:relative; }
+.gate-version{ position:absolute; left:24px; right:24px; bottom:calc(16px + var(--safe-b)); margin:0; text-align:center; font-size:12.5px; color:var(--faint); }
+.changelog{ display:grid; gap:14px; }
+.cl-row{ display:grid; grid-template-columns:118px 1fr; gap:12px; align-items:baseline; padding-bottom:12px; border-bottom:1px solid var(--line-soft); }
+.cl-row:last-child{ border-bottom:0; }
+.cl-row b{ font-size:15px; display:flex; gap:6px; align-items:center; flex-wrap:wrap; } .cl-row p{ margin:0; color:var(--muted); font-size:14px; }
+@media (max-width:700px){ .gate-form{ padding-bottom:calc(64px + var(--safe-b)); } .cl-row{ grid-template-columns:1fr; gap:4px; } }
 .gate-card{ width:min(400px, 100%); display:grid; gap:16px; }
 .gate-card h2{ font-size:28px; letter-spacing:-.02em; margin:0; line-height:1.1; }
 .gate-card .sub{ color:var(--muted); margin:-6px 0 4px; }
@@ -615,7 +622,7 @@ const CONFIG = {
   SUPABASE_URL: 'https://bbafwfvfarwofifnmdmq.supabase.co',
   SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiYWZ3ZnZmYXJ3b2ZpZm5tZG1xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMzQzNzEsImV4cCI6MjEwNTkxMDM3MX0.33OjtEAEjUp8v5M-5qtcaoOYT3Vov6dCk96PYujbfW0'
 };
-const VERSION = '2.0.1';
+const VERSION = '2.0.2';
 const LS = { cfg:'cadence_cfg', local:'cadence_local', prefs:'cadence_prefs' };
 
 /* ---------- Utilitaires ---------- */
@@ -1064,7 +1071,7 @@ function renderSetup(error){
     <button class="btn primary" type="submit">Connecter</button>
     <button class="btn ghost" type="button" data-action="demo">Essayer sans compte (mode démo)</button>
     <p class="note">Le mode démo garde tout dans ce navigateur, sans compte ni partage. Idéal pour tester avant la mise en ligne.</p>
-  </form></div></div>`;
+  </form>${versionFoot()}</div></div>`;
   $('#setup-form').addEventListener('submit', e => {
     e.preventDefault(); const f = new FormData(e.target);
     localStorage.setItem(LS.cfg, JSON.stringify({ mode:'remote', url:f.get('url').trim().replace(/\/$/, ''), key:f.get('key').trim() }));
@@ -1090,7 +1097,7 @@ function renderAuth(mode = 'login', msg = ''){
       ${mode === 'login' ? `<a href="#" class="link" data-auth="signup">Créer un compte</a><a href="#" class="link" data-auth="reset">Mot de passe oublié</a>` : ''}
       ${mode === 'signup' || mode === 'reset' ? `<a href="#" class="link" data-auth="login">J’ai déjà un compte</a>` : ''}
     </div>
-  </form></div></div>`;
+  </form>${versionFoot()}</div></div>`;
   $$('[data-auth]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); renderAuth(a.dataset.auth); }));
   const form = $('#auth-form'), out = $('#auth-msg'), btn = form.querySelector('[type=submit]');
   form.querySelector('[data-eye]')?.addEventListener('click', e => {
@@ -1116,6 +1123,22 @@ function renderAuth(mode = 'login', msg = ''){
     } catch (err) { out.textContent = errMsg(err); }
     finally { btn.disabled = false; }
   });
+}
+
+/* ---------- Versions ---------- */
+const CHANGELOG = [
+  ['2.0.2', 'Numéro de version et historique des versions en bas de l’écran de connexion.'],
+  ['2.0.1', 'Écran « nouveau mot de passe » après une réinitialisation, message clair quand un lien email a expiré.'],
+  ['2.0.0', 'Validation en plusieurs étapes et verrouillage, discussion et historique, lien de validation sans compte, aperçus par plateforme, grille Instagram, médiathèque.'],
+  ['1.0.3', 'Bouton pour afficher le mot de passe, corrections automatiques désactivées sur les champs de connexion.'],
+  ['1.0.2', 'Changement d’email et de mot de passe dans les réglages.'],
+  ['1.0.1', 'Connexion à la base en ligne, correction de l’affichage de la ponctuation.'],
+  ['1.0.0', 'Première version : vues année, mois, semaine, liste et tableau, glisser-déposer, fiche contenu, campagnes, boîte à idées, espaces d’équipe, calque alternance, version mobile.']
+];
+const versionFoot = () => `<p class="gate-version">Cadence version ${VERSION}. <a href="#" class="link" data-action="changelog">Historique des versions</a></p>`;
+function openChangelog(){
+  openModal({ title:'Historique des versions', body:`<div class="changelog">${CHANGELOG.map(([v, t], i) => `<div class="cl-row"><b>${v}${i === 0 ? ' <span class="pill">Actuelle</span>' : ''}</b><p>${esc(t)}</p></div>`).join('')}</div>`,
+    footer:`<span class="spacer"></span><button class="btn primary" data-action="close-modal">Fermer</button>` });
 }
 
 /* ============================================================
@@ -1643,7 +1666,7 @@ function openSettings(){
       <p class="meta-line" style="margin:0">Un lien de confirmation est envoyé : le changement ne prend effet qu’après validation.</p>
       <div class="grid2" style="margin-top:6px"><input class="input" type="password" id="acc-pw" placeholder="Nouveau mot de passe" autocomplete="new-password" minlength="8" aria-label="Nouveau mot de passe"><input class="input" type="password" id="acc-pw2" placeholder="Confirmer" autocomplete="new-password" aria-label="Confirmer le mot de passe"></div>
       <button class="btn" id="acc-pw-save" style="justify-self:start">Changer le mot de passe</button></div>` : ''}
-    <p class="meta-line">Cadence v${VERSION}. ${S.be.kind === 'local' ? 'Mode démo : les données restent dans ce navigateur.' : 'Connecté en tant que ' + esc(S.user.email || '') + '.'} Raccourcis : N nouveau contenu, T aujourd’hui, flèches pour naviguer, 1 à 5 pour changer de vue.</p>`,
+    <p class="meta-line">Cadence version ${VERSION} (<a href="#" class="link" data-action="changelog">historique</a>). ${S.be.kind === 'local' ? 'Mode démo : les données restent dans ce navigateur.' : 'Connecté en tant que ' + esc(S.user.email || '') + '.'} Raccourcis : N nouveau contenu, T aujourd’hui, flèches pour naviguer, 1 à 7 pour changer de vue.</p>`,
   footer:`<button class="btn ghost danger" id="me-out">${I('logout')}${S.be.kind === 'local' ? 'Quitter le mode démo' : 'Se déconnecter'}</button><span class="spacer"></span><button class="btn primary" data-action="close-modal">Terminé</button>`,
   onMount(m){
     $$('[data-pref]', m).forEach(b => b.addEventListener('click', () => { setPref(b.dataset.pref, b.dataset.v); $$(`[data-pref="${b.dataset.pref}"]`, m).forEach(x => x.setAttribute('aria-pressed', x === b)); renderAll(); }));
@@ -1762,6 +1785,7 @@ document.addEventListener('click', async e => {
   switch (a) {
     case 'demo': localStorage.setItem(LS.cfg, JSON.stringify({ mode:'local' })); location.reload(); break;
     case 'close-modal': closeModal(); break;
+    case 'changelog': openChangelog(); break;
     case 'toggle-side': S.sideOpen = !S.sideOpen; syncPanels(); break;
     case 'close-panels': S.sideOpen = false; if (narrow()) S.ideasOpen = false; renderIdeas(); syncPanels(); break;
     case 'set-view': setView(d.view); break;
