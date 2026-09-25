@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark" data-density="confort">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cadence : calendrier éditorial</title>
+<meta name="description" content="Calendrier éditorial partagé pour la classe de Bachelor Communication, Marketing et Événementiel.">
+<meta name="theme-color" content="#17181B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cadence">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+/* ---------- Jetons ---------- */
+:root{
+  --font:"Schibsted Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --accent:#F5D547; --accent-ink:#17181B;
+  --r-xs:4px; --r-sm:7px; --r-md:11px; --r-lg:18px;
+  --alt-formation:#3FB6A8; --alt-entreprise:#8C95A3; --alt-ferie:#E8A33D; --alt-examen:#E0607E; --alt-vacances:#6F7F95;
+  --st-idee:#8A8F98; --st-redaction:#6FA8FF; --st-a_valider:#E8A33D; --st-programme:#A58BFF; --st-publie:#4CC38A;
+  --side-w:252px; --ideas-w:300px;
+  --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+html[data-theme="dark"]{
+  --bg:#17181B; --surface:#1F2125; --surface-2:#26282D; --surface-3:#30333A;
+  --line:#34373E; --line-soft:#2A2D33; --text:#ECEDEF; --muted:#A0A5AD; --faint:#6E737B;
+  --shadow:0 18px 40px rgba(0,0,0,.5); --accent-text:var(--accent); --tint:.16;
+  color-scheme:dark;
+}
+html[data-theme="light"]{
+  --bg:#ECEEF1; --surface:#FFFFFF; --surface-2:#F4F5F7; --surface-3:#E6E8EC;
+  --line:#D6D9DF; --line-soft:#E4E6EA; --text:#16171A; --muted:#585D66; --faint:#8A8F97;
+  --shadow:0 18px 40px rgba(22,26,34,.16); --accent-text:color-mix(in srgb, var(--accent) 42%, #000); --tint:.13;
+  color-scheme:light;
+}
+html[data-density="compact"]{ --cell-min:92px; --chip-h:20px; --gap:6px; }
+html[data-density="confort"]{ --cell-min:124px; --chip-h:24px; --gap:10px; }
+
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ height:100%; margin:0; }
+body{
+  font-family:var(--font); font-size:15px; line-height:1.45; color:var(--text); background:var(--bg);
+  -webkit-font-smoothing:antialiased; font-variant-numeric:tabular-nums;
+  overscroll-behavior:none;
+}
+button,input,select,textarea{ font:inherit; color:inherit; }
+button{ cursor:pointer; background:none; border:0; padding:0; }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:var(--r-xs); }
+svg.i{ width:18px; height:18px; flex:none; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.muted{ color:var(--muted); } .faint{ color:var(--faint); }
+[hidden]{ display:none !important; }
+
+/* ---------- Contrôles ---------- */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px; height:38px; padding:0 14px;
+  border-radius:var(--r-sm); border:1px solid var(--line); background:var(--surface-2); color:var(--text);
+  font-weight:550; white-space:nowrap; transition:background .15s, border-color .15s;
+}
+.btn:hover{ background:var(--surface-3); }
+.btn.primary{ background:var(--accent); color:var(--accent-ink); border-color:transparent; }
+.btn.primary:hover{ filter:brightness(1.06); }
+.btn.ghost{ background:transparent; border-color:transparent; }
+.btn.ghost:hover{ background:var(--surface-2); }
+.btn.danger{ color:#F0707F; }
+.btn.sm{ height:32px; padding:0 10px; font-size:14px; }
+.btn:disabled{ opacity:.5; cursor:not-allowed; }
+.icon-btn{ width:36px; height:36px; display:inline-grid; place-items:center; border-radius:var(--r-sm); color:var(--muted); }
+.icon-btn:hover{ background:var(--surface-2); color:var(--text); }
+.icon-btn.on{ color:var(--accent-text); background:color-mix(in srgb, var(--accent) 14%, transparent); }
+
+.field{ display:grid; gap:6px; }
+.field > span{ font-size:13px; color:var(--muted); font-weight:500; }
+.input, .select, .textarea{
+  width:100%; min-height:40px; padding:9px 12px; border-radius:var(--r-sm); border:1px solid var(--line);
+  background:var(--surface-2); outline:none; transition:border-color .15s;
+}
+.textarea{ min-height:120px; resize:vertical; line-height:1.5; }
+.input:focus, .select:focus, .textarea:focus{ border-color:var(--accent); }
+.select{ appearance:none; background-image:linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position:calc(100% - 17px) 50%, calc(100% - 12px) 50%; background-size:5px 5px; background-repeat:no-repeat; padding-right:30px; }
+.row{ display:flex; gap:10px; align-items:center; }
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.check{ display:flex; gap:10px; align-items:flex-start; font-size:13.5px; color:var(--muted); }
+.check input{ margin-top:3px; accent-color:var(--accent); }
+
+.seg{ display:inline-flex; padding:3px; border-radius:var(--r-sm); background:var(--surface-2); border:1px solid var(--line-soft); gap:2px; }
+.seg button{ height:30px; padding:0 11px; border-radius:5px; color:var(--muted); font-weight:550; font-size:14px; }
+.seg button[aria-pressed="true"]{ background:var(--surface); color:var(--text); box-shadow:0 1px 0 var(--line); }
+html[data-theme="dark"] .seg button[aria-pressed="true"]{ background:var(--surface-3); }
+
+.pill{ display:inline-flex; align-items:center; gap:6px; height:24px; padding:0 9px; border-radius:99px; font-size:12.5px; font-weight:600; background:var(--surface-3); color:var(--muted); white-space:nowrap; }
+.pill .dot, .dot{ width:8px; height:8px; border-radius:50%; background:var(--c, var(--faint)); flex:none; }
+.toggle-chip{ display:inline-flex; align-items:center; gap:7px; height:30px; padding:0 11px; border-radius:99px; border:1px solid var(--line); color:var(--muted); font-size:13.5px; font-weight:550; }
+.toggle-chip[aria-pressed="true"]{ border-color:transparent; background:color-mix(in srgb, var(--c, var(--accent)) 22%, transparent); color:var(--text); }
+
+.st-idee{ --st:var(--st-idee); } .st-redaction{ --st:var(--st-redaction); } .st-a_valider{ --st:var(--st-a_valider); } .st-programme{ --st:var(--st-programme); } .st-publie{ --st:var(--st-publie); }
+.status-pill{ background:color-mix(in srgb, var(--st) 20%, transparent); color:var(--text); }
+.status-pill .dot{ background:var(--st); }
+
+/* ---------- Écrans d'accès ---------- */
+.gate{ min-height:100%; display:grid; grid-template-columns:1.1fr 1fr; }
+.gate-art{ position:relative; padding:calc(48px + var(--safe-t)) 56px 48px; display:flex; flex-direction:column; justify-content:space-between; background:var(--surface); border-right:1px solid var(--line-soft); overflow:hidden; }
+.wordmark{ font-size:clamp(64px, 9vw, 128px); line-height:.88; font-weight:850; letter-spacing:-.045em; margin:0; }
+.gate-art p{ max-width:34ch; color:var(--muted); font-size:17px; margin:18px 0 0; }
+.gate-strip{ display:grid; grid-template-columns:repeat(var(--n), 1fr); gap:3px; height:74px; align-items:end; }
+.gate-strip i{ display:block; border-radius:2px; background:var(--c); height:var(--h); transform-origin:bottom; animation:rise .9s var(--ease) both; animation-delay:calc(var(--k) * 14ms); }
+@keyframes rise{ from{ transform:scaleY(0); } to{ transform:scaleY(1); } }
+.gate-legend{ display:flex; flex-wrap:wrap; gap:14px; margin-top:14px; font-size:13px; color:var(--muted); }
+.gate-legend span{ display:inline-flex; align-items:center; gap:7px; }
+.gate-form{ display:grid; place-items:center; padding:calc(40px + var(--safe-t)) 24px calc(40px + var(--safe-b)); }
+.gate-card{ width:min(400px, 100%); display:grid; gap:16px; }
+.gate-card h2{ font-size:28px; letter-spacing:-.02em; margin:0; line-height:1.1; }
+.gate-card .sub{ color:var(--muted); margin:-6px 0 4px; }
+.gate-card .links{ display:flex; justify-content:space-between; gap:12px; font-size:14px; }
+.link{ color:var(--accent-text); font-weight:600; text-decoration:none; }
+.link:hover{ text-decoration:underline; }
+.form-error{ color:#F0707F; font-size:14px; min-height:0; }
+.form-ok{ color:var(--st-publie); font-size:14px; }
+
+/* ---------- Coquille de l'app ---------- */
+.app{ height:100%; display:grid; grid-template-columns:var(--side-w) minmax(0,1fr) auto; }
+.side{ display:flex; flex-direction:column; gap:18px; padding:calc(18px + var(--safe-t)) 14px calc(14px + var(--safe-b)); border-right:1px solid var(--line-soft); background:var(--surface); overflow-y:auto; }
+.brand{ display:flex; align-items:center; gap:10px; padding:0 6px; font-weight:800; font-size:19px; letter-spacing:-.02em; }
+.brand-mark{ width:26px; height:26px; display:grid; grid-template-columns:repeat(4,1fr); gap:2px; align-items:end; }
+.brand-mark i{ display:block; border-radius:1.5px; background:var(--c); height:var(--h); }
+.ws-switch{ display:flex; align-items:center; gap:10px; width:100%; padding:10px; border-radius:var(--r-md); border:1px solid var(--line); background:var(--surface-2); text-align:left; }
+.ws-switch:hover{ border-color:var(--faint); }
+.ws-avatar{ width:30px; height:30px; border-radius:8px; display:grid; place-items:center; font-weight:750; font-size:13px; background:var(--accent); color:var(--accent-ink); flex:none; }
+.ws-avatar.team{ background:var(--surface-3); color:var(--text); }
+.ws-meta{ min-width:0; flex:1; }
+.ws-meta b{ display:block; font-size:14.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ws-meta small{ color:var(--muted); font-size:12.5px; }
+.nav{ display:grid; gap:2px; }
+.nav button{ display:flex; align-items:center; gap:11px; height:38px; padding:0 10px; border-radius:var(--r-sm); color:var(--muted); font-weight:550; text-align:left; }
+.nav button:hover{ background:var(--surface-2); color:var(--text); }
+.nav button[aria-current="true"]{ background:var(--surface-2); color:var(--text); }
+.nav button[aria-current="true"] svg{ color:var(--accent-text); }
+.nav .count{ margin-left:auto; font-size:12.5px; color:var(--faint); }
+.side-sec{ display:grid; gap:6px; }
+.side-sec > header{ display:flex; align-items:center; justify-content:space-between; padding:0 6px 0 10px; font-size:13px; font-weight:650; color:var(--muted); }
+.camp-item{ display:flex; align-items:center; gap:10px; padding:7px 10px; border-radius:var(--r-sm); text-align:left; width:100%; }
+.camp-item:hover{ background:var(--surface-2); }
+.camp-item .bar-swatch{ width:4px; align-self:stretch; border-radius:2px; background:var(--c); flex:none; }
+.camp-item b{ display:block; font-size:14px; font-weight:600; line-height:1.25; }
+.camp-item small{ color:var(--faint); font-size:12.5px; }
+.legend{ display:grid; gap:4px; padding:0 10px; }
+.legend span{ display:flex; align-items:center; gap:9px; font-size:13.5px; color:var(--muted); }
+.legend i{ width:14px; height:10px; border-radius:2px; background:var(--c); }
+.side-empty{ padding:4px 10px; font-size:13.5px; color:var(--faint); }
+.side-foot{ margin-top:auto; }
+.me{ display:flex; align-items:center; gap:10px; width:100%; padding:8px; border-radius:var(--r-md); text-align:left; }
+.me:hover{ background:var(--surface-2); }
+.me .ava{ width:32px; height:32px; border-radius:50%; background:var(--surface-3); display:grid; place-items:center; font-weight:700; font-size:13px; }
+.me b{ display:block; font-size:14px; } .me small{ color:var(--muted); font-size:12.5px; }
+
+.main{ min-width:0; display:flex; flex-direction:column; height:100%; overflow:hidden; }
+.toolbar{ display:flex; align-items:flex-end; gap:16px; padding:calc(18px + var(--safe-t)) 24px 14px; border-bottom:1px solid var(--line-soft); }
+.period{ min-width:220px; flex:1 1 260px; }
+.period h1{ margin:0; font-size:clamp(26px, 3vw, 38px); line-height:1; letter-spacing:-.035em; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.period h1 span{ color:var(--faint); font-weight:500; }
+.rhythm{ display:grid; grid-template-columns:repeat(var(--n), 1fr); gap:2px; height:6px; margin-top:12px; max-width:420px; }
+.rhythm i{ border-radius:1px; background:var(--c, var(--line)); }
+.rhythm i.none{ background:var(--line-soft); }
+.tools{ display:flex; align-items:center; gap:8px; flex:0 1 auto; justify-content:flex-end; }
+.main{ container-type:inline-size; }
+@container (max-width:1020px){ .toolbar .seg.views{ display:none; } }
+@container (max-width:900px){ .toolbar .new-desktop .label{ display:none; } .toolbar .new-desktop{ width:38px; padding:0; } }
+.navarrows{ display:flex; align-items:center; gap:2px; }
+.menu-btn{ display:none; }
+
+.filters{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 24px; border-bottom:1px solid var(--line-soft); background:var(--surface); }
+.filters .input{ width:220px; min-height:32px; padding:5px 10px; }
+.filters .select{ width:auto; min-height:32px; padding:4px 30px 4px 10px; font-size:14px; }
+.filters .sep{ width:1px; height:22px; background:var(--line); margin:0 4px; }
+.view{ flex:1; overflow:auto; position:relative; -webkit-overflow-scrolling:touch; }
+
+/* ---------- Vue mois ---------- */
+.month{ display:flex; flex-direction:column; min-height:100%; padding:0 24px 24px; }
+.dow{ position:sticky; top:0; z-index:3; display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); background:var(--bg); border-bottom:1px solid var(--line-soft); }
+.dow span{ padding:10px 10px 8px; font-size:12.5px; font-weight:600; color:var(--faint); }
+.weeks{ flex:1; display:grid; grid-auto-rows:minmax(var(--cell-min), 1fr); }
+.week{ position:relative; display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); border-bottom:1px solid var(--line-soft); --lanes:0; }
+.cell{ position:relative; min-width:0; padding:calc(34px + var(--lanes) * 21px) 6px 8px; border-right:1px solid var(--line-soft); cursor:default; }
+.cell:first-child{ border-left:1px solid var(--line-soft); }
+.cell::before{ content:""; position:absolute; inset:0; background:var(--altc, transparent); opacity:var(--tint); pointer-events:none; }
+.cell::after{ content:""; position:absolute; left:0; right:0; top:0; height:3px; background:var(--altc, transparent); pointer-events:none; }
+.cell.out{ opacity:.45; }
+.cell.sel{ box-shadow:inset 0 0 0 1.5px var(--accent); }
+.cell-head{ position:absolute; top:6px; left:6px; right:6px; display:flex; align-items:center; gap:6px; }
+.daynum{ min-width:26px; height:26px; padding:0 6px; border-radius:7px; font-weight:650; font-size:14px; }
+.daynum:hover{ background:var(--surface-3); }
+.cell.today .daynum{ background:var(--accent); color:var(--accent-ink); }
+.alt-tag{ font-size:11.5px; font-weight:600; color:var(--altc); overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+html[data-theme="light"] .alt-tag{ color:color-mix(in srgb, var(--altc) 70%, #000); }
+.alt-formation{ --altc:var(--alt-formation); } .alt-entreprise{ --altc:var(--alt-entreprise); } .alt-ferie{ --altc:var(--alt-ferie); } .alt-examen{ --altc:var(--alt-examen); } .alt-vacances{ --altc:var(--alt-vacances); }
+.no-alt .cell::before, .no-alt .cell::after, .no-alt .alt-tag, .no-alt .yd::after, .no-alt .wcol::before{ display:none; }
+.chips{ position:relative; display:grid; grid-template-columns:minmax(0,1fr); gap:3px; }
+.chip{
+  position:relative; display:flex; align-items:center; gap:6px; width:100%; min-height:var(--chip-h); padding:2px 7px 2px 6px;
+  border-radius:5px; background:var(--surface-2); border:1px solid var(--line-soft); font-size:12.5px; font-weight:550; text-align:left;
+  user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; touch-action:manipulation;
+}
+.chip:hover{ border-color:var(--faint); }
+.chip .dot{ background:var(--ch); }
+.chip .t{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.chip .tm{ color:var(--faint); font-weight:500; }
+.chip::after{ content:""; position:absolute; right:4px; top:50%; width:6px; height:6px; margin-top:-3px; border-radius:2px; background:var(--st); opacity:.9; }
+.chip{ padding-right:16px; }
+.more{ font-size:12px; color:var(--muted); font-weight:600; text-align:left; padding:1px 4px; border-radius:4px; }
+.more:hover{ background:var(--surface-3); color:var(--text); }
+.bars{ position:absolute; left:0; right:0; top:34px; display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); grid-auto-rows:18px; row-gap:3px; pointer-events:none; z-index:2; }
+.bar{ pointer-events:auto; margin:0 3px; height:18px; padding:0 8px; border-radius:4px; background:color-mix(in srgb, var(--c) 30%, var(--surface)); color:var(--text); font-size:11.5px; font-weight:650; text-align:left; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; border-left:3px solid var(--c); }
+.bar.cont-l{ border-top-left-radius:0; border-bottom-left-radius:0; border-left-width:0; margin-left:0; }
+.bar.cont-r{ border-top-right-radius:0; border-bottom-right-radius:0; margin-right:0; }
+.bar.temps_fort{ background:repeating-linear-gradient(135deg, color-mix(in srgb, var(--c) 34%, var(--surface)) 0 6px, color-mix(in srgb, var(--c) 22%, var(--surface)) 6px 12px); }
+.agenda{ display:none; }
+
+/* ---------- Vue semaine ---------- */
+.weekview{ display:grid; grid-template-columns:repeat(7, minmax(128px, 1fr)); min-height:100%; padding:0 24px 24px; min-width:940px; }
+.wcol{ position:relative; display:flex; flex-direction:column; border-right:1px solid var(--line-soft); min-height:100%; }
+.wcol:first-child{ border-left:1px solid var(--line-soft); }
+.wcol::before{ content:""; position:absolute; inset:0; background:var(--altc, transparent); opacity:calc(var(--tint) * .6); pointer-events:none; }
+.whead{ position:sticky; top:0; z-index:2; padding:12px 10px 10px; background:var(--bg); border-bottom:1px solid var(--line-soft); border-top:3px solid var(--altc, transparent); }
+.whead .d{ display:flex; align-items:baseline; gap:8px; }
+.whead .d b{ font-size:24px; font-weight:800; letter-spacing:-.03em; }
+.wcol.today .whead .d b{ color:var(--accent-text); }
+.whead .d span{ color:var(--muted); font-size:13.5px; }
+.wbars{ display:grid; gap:3px; padding:6px 0 0; }
+.wbars .bar{ margin:0 6px; }
+.wlist{ position:relative; flex:1; display:grid; align-content:start; gap:6px; padding:8px 6px 16px; }
+.card{
+  position:relative; display:grid; gap:4px; width:100%; padding:9px 10px 10px 12px; border-radius:var(--r-sm); background:var(--surface);
+  border:1px solid var(--line-soft); text-align:left; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; touch-action:manipulation;
+}
+.card::before{ content:""; position:absolute; left:0; top:8px; bottom:8px; width:3px; border-radius:0 2px 2px 0; background:var(--ch); }
+.card:hover{ border-color:var(--faint); }
+.card .top{ display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); font-weight:550; }
+.card .top .fmt{ margin-left:auto; }
+.card .ttl{ font-weight:650; font-size:14px; line-height:1.3; overflow-wrap:anywhere; }
+.card .meta{ display:flex; flex-wrap:wrap; gap:5px; align-items:center; }
+.card .thumb{ width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:5px; background:var(--surface-3); }
+.addslot{ height:34px; border-radius:var(--r-sm); border:1px dashed var(--line); color:var(--faint); font-size:13px; font-weight:550; opacity:0; transition:opacity .15s; }
+.wcol:hover .addslot, .addslot:focus-visible{ opacity:1; }
+
+/* ---------- Vue année ---------- */
+.year{ display:grid; grid-template-columns:repeat(auto-fill, minmax(228px, 1fr)); gap:16px; padding:20px 24px 32px; }
+.ym{ display:grid; gap:10px; align-content:start; padding:16px; border-radius:var(--r-lg); background:var(--surface); border:1px solid var(--line-soft); }
+.ym.current{ border-color:color-mix(in srgb, var(--accent) 55%, var(--line)); }
+.ym-title{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; text-align:left; }
+.ym-title b{ font-size:20px; font-weight:800; letter-spacing:-.03em; }
+.ym-title span{ color:var(--faint); font-size:13px; font-weight:550; }
+.ym-title:hover b{ color:var(--accent-text); }
+.ym .rhythm{ margin:0; max-width:none; height:5px; }
+.ym-grid{ display:grid; grid-template-columns:repeat(7, 1fr); gap:2px; }
+.ym-grid .h{ font-size:11px; color:var(--faint); text-align:center; font-weight:600; padding-bottom:2px; }
+.yd{ position:relative; aspect-ratio:1; border-radius:6px; font-size:12.5px; font-weight:550; color:var(--muted); display:grid; place-items:center; }
+.yd::after{ content:""; position:absolute; inset:0; border-radius:6px; background:var(--altc, transparent); opacity:calc(var(--tint) * 1.3); pointer-events:none; }
+.yd:hover{ background:var(--surface-3); color:var(--text); }
+.yd.has{ color:var(--text); font-weight:750; }
+.yd .n{ position:absolute; bottom:3px; left:50%; transform:translateX(-50%); display:flex; gap:2px; }
+.yd .n i{ width:3px; height:3px; border-radius:50%; background:var(--accent-text); }
+.yd.today{ background:var(--accent); color:var(--accent-ink); }
+.yd.today .n i{ background:var(--accent-ink); }
+.ym-camps{ display:flex; flex-wrap:wrap; gap:5px; min-height:0; }
+.ym-camps button{ max-width:100%; }
+.ym-foot{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:2px 10px; font-size:12.5px; color:var(--faint); }
+
+/* ---------- Vue liste ---------- */
+.list{ padding:8px 24px 32px; max-width:1100px; }
+.list h3{ margin:22px 0 8px; font-size:13.5px; color:var(--muted); font-weight:650; }
+.lrow{ display:grid; grid-template-columns:92px 58px minmax(0,1fr) auto; gap:14px; align-items:center; width:100%; padding:10px 12px; border-radius:var(--r-sm); text-align:left; border-bottom:1px solid var(--line-soft); }
+.lrow:hover{ background:var(--surface); }
+.lrow .dt{ font-weight:650; font-size:14px; } .lrow .dt small{ display:block; color:var(--faint); font-weight:500; font-size:12px; }
+.lrow .tm{ color:var(--muted); font-size:13.5px; }
+.lrow .main-t{ min-width:0; display:grid; gap:3px; }
+.lrow .main-t b{ font-weight:650; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.lrow .main-t small{ color:var(--muted); display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.lrow .right{ display:flex; gap:6px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+
+/* ---------- Kanban ---------- */
+.kanban{ display:grid; grid-template-columns:repeat(5, minmax(240px, 1fr)); gap:14px; padding:18px 24px 28px; min-height:100%; align-items:start; }
+.kcol{ display:flex; flex-direction:column; gap:8px; padding:10px; border-radius:var(--r-lg); background:var(--surface-2); min-height:240px; border:1px solid transparent; }
+.kcol header{ display:flex; align-items:center; gap:8px; padding:4px 4px 6px; font-weight:700; font-size:14.5px; }
+.kcol header .dot{ background:var(--st); }
+.kcol header small{ margin-left:auto; color:var(--faint); font-weight:600; }
+.kcol .card{ background:var(--surface); }
+
+/* ---------- Boîte à idées ---------- */
+.ideas{ width:var(--ideas-w); display:flex; flex-direction:column; border-left:1px solid var(--line-soft); background:var(--surface); min-height:0; }
+.ideas[data-open="false"]{ display:none; }
+.ideas > header{ display:flex; align-items:center; gap:8px; padding:calc(20px + var(--safe-t)) 16px 10px; }
+.ideas > header h2{ margin:0; font-size:17px; font-weight:750; letter-spacing:-.01em; flex:1; }
+.ideas form{ padding:0 16px 12px; }
+.ideas-list{ flex:1; overflow-y:auto; display:grid; align-content:start; gap:8px; padding:4px 16px calc(20px + var(--safe-b)); }
+.ideas-empty{ padding:18px; border:1px dashed var(--line); border-radius:var(--r-md); color:var(--muted); font-size:14px; }
+.ideas .card{ background:var(--surface-2); }
+
+/* ---------- Glisser-déposer ---------- */
+.drag-ghost{ position:fixed; left:0; top:0; z-index:1000; pointer-events:none; opacity:.95; box-shadow:var(--shadow); transform-origin:0 0; }
+.dragging{ opacity:.35; }
+body.is-dragging{ cursor:grabbing; user-select:none; -webkit-user-select:none; }
+.drop-over{ box-shadow:inset 0 0 0 2px var(--accent) !important; }
+.kcol.drop-over, .ideas.drop-over{ border-color:var(--accent); }
+
+/* ---------- Modales, popovers, toasts ---------- */
+.scrim{ position:fixed; inset:0; background:rgba(8,9,11,.55); z-index:200; animation:fade .18s ease both; }
+.modal{
+  position:fixed; z-index:201; top:50%; left:50%; transform:translate(-50%,-50%); width:min(560px, calc(100vw - 24px)); max-height:calc(100dvh - 40px);
+  display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow);
+  animation:pop .2s var(--ease) both;
+}
+.modal.wide{ width:min(760px, calc(100vw - 24px)); }
+.modal > header{ display:flex; align-items:center; gap:10px; padding:18px 18px 12px 22px; }
+.modal > header h2{ margin:0; font-size:20px; letter-spacing:-.02em; flex:1; }
+.modal-body{ padding:6px 22px 20px; overflow-y:auto; display:grid; gap:16px; }
+.modal > footer{ display:flex; gap:8px; align-items:center; padding:14px 18px; border-top:1px solid var(--line-soft); }
+.modal > footer .spacer{ flex:1; }
+@keyframes fade{ from{ opacity:0; } }
+@keyframes pop{ from{ opacity:0; transform:translate(-50%,-48%) scale(.98); } }
+.tabs{ display:flex; gap:4px; border-bottom:1px solid var(--line-soft); margin:0 -22px; padding:0 22px; overflow-x:auto; }
+.tabs button{ height:38px; padding:0 10px; color:var(--muted); font-weight:600; border-bottom:2px solid transparent; white-space:nowrap; }
+.tabs button[aria-selected="true"]{ color:var(--text); border-bottom-color:var(--accent); }
+.popover{ position:fixed; z-index:150; min-width:230px; max-width:min(320px, calc(100vw - 16px)); padding:6px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); box-shadow:var(--shadow); animation:fade .12s ease both; }
+.popover .pitem{ display:flex; align-items:center; gap:10px; width:100%; padding:9px 10px; border-radius:var(--r-sm); text-align:left; font-weight:550; }
+.popover .pitem:hover{ background:var(--surface-2); }
+.popover .pitem[aria-checked="true"]{ color:var(--accent-text); }
+.popover .phead{ padding:8px 10px 4px; font-size:12.5px; font-weight:650; color:var(--faint); }
+.popover hr{ border:0; border-top:1px solid var(--line-soft); margin:6px 0; }
+.toasts{ position:fixed; left:50%; bottom:calc(20px + var(--safe-b)); transform:translateX(-50%); z-index:400; display:grid; gap:8px; justify-items:center; pointer-events:none; }
+.toast{ padding:10px 16px; border-radius:var(--r-md); background:var(--text); color:var(--bg); font-weight:600; font-size:14px; box-shadow:var(--shadow); animation:pop2 .2s var(--ease) both; }
+.toast.err{ background:#E0607E; color:#fff; }
+@keyframes pop2{ from{ opacity:0; transform:translateY(8px); } }
+
+/* Fiche contenu */
+.chan-pick{ display:flex; flex-wrap:wrap; gap:6px; }
+.status-pick{ display:flex; flex-wrap:wrap; gap:6px; }
+.status-pick .toggle-chip{ --c:var(--st); }
+.status-pick .toggle-chip .dot{ background:var(--st); }
+.tags{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; min-height:40px; padding:5px 8px; border-radius:var(--r-sm); border:1px solid var(--line); background:var(--surface-2); }
+.tags:focus-within{ border-color:var(--accent); }
+.tags input{ flex:1; min-width:120px; border:0; background:none; outline:none; padding:4px; }
+.tag{ display:inline-flex; align-items:center; gap:4px; height:26px; padding:0 4px 0 9px; border-radius:99px; background:var(--surface-3); font-size:13px; font-weight:600; }
+.tag button{ width:20px; height:20px; display:grid; place-items:center; border-radius:50%; color:var(--muted); }
+.tag button:hover{ background:var(--line); color:var(--text); }
+.counter{ font-size:12.5px; color:var(--faint); text-align:right; margin-top:-2px; }
+.counter.over{ color:#F0707F; font-weight:650; }
+.media-drop{ position:relative; display:grid; place-items:center; gap:6px; min-height:120px; border:1px dashed var(--line); border-radius:var(--r-md); color:var(--muted); font-size:14px; text-align:center; padding:14px; cursor:pointer; }
+.media-drop:hover{ border-color:var(--faint); }
+.media-drop img{ max-width:100%; max-height:260px; border-radius:var(--r-sm); display:block; }
+.media-drop input{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+.meta-line{ font-size:12.5px; color:var(--faint); }
+
+/* Réglages */
+.swatches{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.swatch{ width:32px; height:32px; border-radius:50%; background:var(--c); border:2px solid transparent; box-shadow:inset 0 0 0 1px rgba(0,0,0,.15); }
+.swatch[aria-pressed="true"]{ border-color:var(--text); }
+.swatch-custom{ position:relative; width:32px; height:32px; border-radius:50%; border:1px dashed var(--faint); display:grid; place-items:center; color:var(--muted); overflow:hidden; }
+.swatch-custom input{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+.editable-list{ display:grid; gap:6px; }
+.editable-list .erow{ display:flex; gap:8px; align-items:center; }
+.editable-list input[type="color"]{ width:40px; height:40px; padding:3px; border-radius:var(--r-sm); border:1px solid var(--line); background:var(--surface-2); flex:none; }
+.member{ display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line-soft); }
+.member .ava{ width:32px; height:32px; border-radius:50%; background:var(--surface-3); display:grid; place-items:center; font-weight:700; font-size:13px; flex:none; }
+.member .who{ flex:1; min-width:0; } .member .who b{ display:block; font-size:14.5px; } .member .who small{ color:var(--muted); }
+.code-box{ display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:var(--r-md); background:var(--surface-2); border:1px solid var(--line-soft); }
+.code-box b{ font-size:24px; letter-spacing:.14em; font-weight:800; flex:1; }
+.note{ padding:12px 14px; border-radius:var(--r-md); background:var(--surface-2); color:var(--muted); font-size:14px; }
+.day-list{ display:grid; gap:8px; }
+
+/* ---------- Barre d'onglets mobile ---------- */
+.tabbar{ display:none; }
+.fab{ display:none; }
+
+/* ---------- Responsive ---------- */
+@media (max-width:1180px){
+  :root{ --ideas-w:270px; }
+  .toolbar .seg.views{ display:none; }
+}
+@media (max-width:980px){
+  .app{ grid-template-columns:minmax(0,1fr); }
+  .side{ position:fixed; z-index:120; left:0; top:0; bottom:0; width:min(300px, 86vw); transform:translateX(-102%); transition:transform .25s var(--ease); box-shadow:var(--shadow); }
+  .app.side-open .side{ transform:none; }
+  .side-scrim{ position:fixed; inset:0; z-index:110; background:rgba(8,9,11,.5); }
+  .menu-btn{ display:inline-grid; }
+  .ideas{ position:fixed; z-index:120; right:0; top:0; bottom:0; width:min(340px, 90vw); box-shadow:var(--shadow); }
+  .ideas-toggle-desktop{ display:none; }
+}
+@media (max-width:700px){
+  body{ font-size:15px; }
+  .gate{ grid-template-columns:1fr; }
+  .gate-art{ padding:calc(28px + var(--safe-t)) 22px 24px; border-right:0; border-bottom:1px solid var(--line-soft); gap:22px; }
+  .wordmark{ font-size:64px; }
+  .gate-strip{ height:44px; }
+  .toolbar{ padding:calc(10px + var(--safe-t)) 14px 10px; gap:8px; align-items:center; flex-wrap:wrap; }
+  .period{ order:2; flex-basis:100%; }
+  .period h1{ font-size:28px; }
+  .rhythm{ max-width:none; margin-top:8px; }
+  .tools{ order:1; flex:1; justify-content:space-between; }
+  .tools .new-desktop, .tools .label{ display:none; }
+  .filters{ padding:10px 14px; }
+  .filters .input{ width:100%; }
+  .month{ padding:0 8px 12px; }
+  .weeks{ grid-auto-rows:minmax(58px, auto); flex:none; }
+  .cell{ padding:30px 2px 6px; }
+  .cell-head{ top:4px; left:0; right:0; justify-content:center; }
+  .alt-tag, .bars, .more{ display:none; }
+  .daynum{ font-size:13.5px; min-width:26px; height:24px; }
+  .chips{ display:flex; flex-wrap:wrap; justify-content:center; gap:3px; }
+  .chip{ width:7px; height:7px; min-height:0; padding:0; border:0; border-radius:50%; background:var(--ch); pointer-events:none; }
+  .chip .dot, .chip .t, .chip .tm, .chip::after{ display:none; }
+  .agenda{ display:grid; gap:8px; padding:16px 6px 110px; }
+  .agenda h3{ margin:0 0 4px; font-size:17px; letter-spacing:-.01em; }
+  .weekview{ min-width:0; grid-template-columns:1fr; padding:0 12px 110px; }
+  .wcol{ border:0; border-bottom:1px solid var(--line-soft); min-height:0; }
+  .wcol:first-child{ border-left:0; }
+  .whead{ position:static; border-bottom:0; }
+  .addslot{ opacity:1; }
+  .year{ grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; padding:12px 12px 110px; }
+  .ym{ padding:10px; border-radius:var(--r-md); }
+  .ym-title b{ font-size:16px; }
+  .yd{ font-size:10.5px; border-radius:4px; }
+  .ym-camps{ display:none; }
+  .list{ padding:4px 12px 110px; }
+  .lrow{ grid-template-columns:62px minmax(0,1fr); }
+  .lrow .tm{ display:none; }
+  .lrow .right{ grid-column:2; justify-content:flex-start; }
+  .kanban{ grid-template-columns:repeat(5, 82vw); overflow-x:auto; scroll-snap-type:x mandatory; padding:12px 12px 110px; }
+  .kcol{ scroll-snap-align:start; }
+  .modal{ top:auto; bottom:0; left:0; right:0; transform:none; width:100%; max-height:calc(100dvh - var(--safe-t) - 10px); border-radius:var(--r-lg) var(--r-lg) 0 0; padding-bottom:var(--safe-b); animation:sheet .24s var(--ease) both; }
+  @keyframes sheet{ from{ transform:translateY(40px); opacity:0; } }
+  .grid2{ grid-template-columns:1fr; }
+  .modal > footer{ flex-wrap:wrap; }
+  .modal > footer .spacer{ flex-basis:100%; height:0; }
+  .modal > footer .btn.primary{ flex:1; }
+  .toolbar .seg:not(.views){ display:none; }
+  .tabbar{
+    display:grid; grid-template-columns:repeat(5,1fr); position:fixed; z-index:90; left:0; right:0; bottom:0;
+    padding:6px 6px calc(6px + var(--safe-b)); background:color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-top:1px solid var(--line-soft);
+  }
+  .tabbar button{ display:grid; justify-items:center; gap:3px; padding:6px 0; color:var(--faint); font-size:11px; font-weight:600; }
+  .tabbar button[aria-current="true"]{ color:var(--text); }
+  .tabbar button[aria-current="true"] svg{ color:var(--accent-text); }
+  .fab{ display:grid; place-items:center; position:fixed; z-index:95; right:16px; bottom:calc(76px + var(--safe-b)); width:54px; height:54px; border-radius:18px; background:var(--accent); color:var(--accent-ink); box-shadow:var(--shadow); }
+  .fab svg{ width:24px; height:24px; stroke-width:2.2; }
+  .toasts{ bottom:calc(140px + var(--safe-b)); }
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ animation-duration:.01ms !important; animation-delay:0ms !important; transition-duration:.01ms !important; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="modal-root"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script>
+'use strict';
+/* ============================================================
+   Cadence v1 : calendrier éditorial multi-comptes
+   Renseigne ces deux valeurs avant de mettre en ligne :
+   Supabase > Project Settings > API
+   ============================================================ */
+const CONFIG = {
+  SUPABASE_URL: '',
+  SUPABASE_ANON_KEY: ''
+};
+const VERSION = '1.0.0';
+const LS = { cfg:'cadence_cfg', local:'cadence_local', prefs:'cadence_prefs' };
+
+/* ---------- Utilitaires ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() :
+  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); }));
+const pad = n => String(n).padStart(2, '0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parseISO = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (d, n) => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() + n); return x; };
+const addMonths = (d, n) => new Date(d.getFullYear(), d.getMonth() + n, 1);
+const startOfWeek = d => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
+const todayISO = () => iso(new Date());
+const MONTHS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const DOW = ['lun.','mar.','mer.','jeu.','ven.','sam.','dim.'];
+const DOW1 = ['L','M','M','J','V','S','D'];
+const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+const fmtDay = s => cap(parseISO(s).toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long' }));
+const fmtShort = s => parseISO(s).toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+const fmtTime = t => t ? t.slice(0, 5).replace(':', 'h') : '';
+const initials = s => (s || '?').trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+const clone = o => JSON.parse(JSON.stringify(o));
+const inRange = (d, a, b) => d >= a && d <= b;
+
+const I = (name) => {
+  const p = {
+    calendar:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+    year:'<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
+    week:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M9.2 5v15M14.8 5v15"/>',
+    list:'<path d="M9 6.5h11M9 12h11M9 17.5h11M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01"/>',
+    kanban:'<rect x="3.5" y="4" width="5" height="16" rx="1.5"/><rect x="10.5" y="4" width="5" height="11" rx="1.5"/><rect x="17.5" y="4" width="3" height="7" rx="1.2"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    left:'<path d="M14.5 6l-6 6 6 6"/>', right:'<path d="M9.5 6l6 6-6 6"/>',
+    down:'<path d="M6 9.5l6 6 6-6"/>',
+    x:'<path d="M6 6l12 12M18 6L6 18"/>',
+    search:'<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/>',
+    filter:'<path d="M4 6h16M7 12h10M10 18h4"/>',
+    idea:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2h5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3z"/>',
+    settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+    users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.4 3.4-5.5 6.5-5.5s5.7 2.1 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.9.7 3.1 2.5 3.5 5.2"/>',
+    flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+    layers:'<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>',
+    menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+    trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+    copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
+    image:'<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="M20.5 16l-5-5-8.5 8.5"/>',
+    link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+    logout:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 16l-4-4 4-4M6 12h10"/>',
+    check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    bookmark:'<path d="M6 4h12v17l-6-4-6 4z"/>',
+    enter:'<path d="M9 10l-4 4 4 4"/><path d="M5 14h11a4 4 0 0 0 4-4V5"/>',
+    today:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.6"/>'
+  }[name] || '';
+  return `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`;
+};
+
+/* ---------- Référentiels ---------- */
+const STATUSES = [
+  { id:'idee', name:'Idée' }, { id:'redaction', name:'Rédaction' }, { id:'a_valider', name:'À valider' },
+  { id:'programme', name:'Programmé' }, { id:'publie', name:'Publié' }
+];
+const statusName = id => (STATUSES.find(s => s.id === id) || STATUSES[0]).name;
+const ALT_TYPES = [
+  { id:'formation', name:'Formation' }, { id:'entreprise', name:'Entreprise' }, { id:'ferie', name:'Férié' },
+  { id:'examen', name:'Examen' }, { id:'vacances', name:'Vacances' }
+];
+const altName = id => (ALT_TYPES.find(a => a.id === id) || {}).name || '';
+const DEFAULT_WS_SETTINGS = {
+  channels:[
+    { id:'instagram', name:'Instagram', color:'#E4407B' },
+    { id:'linkedin', name:'LinkedIn', color:'#3D8BD9' },
+    { id:'tiktok', name:'TikTok', color:'#2EC4C0' },
+    { id:'facebook', name:'Facebook', color:'#5B74E0' },
+    { id:'youtube', name:'YouTube', color:'#E5484D' },
+    { id:'newsletter', name:'Newsletter', color:'#C9A227' },
+    { id:'site', name:'Site / blog', color:'#8E93A3' }
+  ],
+  formats:['Post','Carrousel','Reel','Story','Vidéo','Article','Newsletter','Événement'],
+  labels:[]
+};
+const CHAR_LIMITS = { instagram:2200, linkedin:3000, tiktok:4000, x:280, twitter:280, threads:500, youtube:5000, facebook:63206 };
+const ACCENTS = ['#F5D547','#7FD1C7','#9DB4FF','#F29BB0','#F4A259','#C3E88D'];
+const CAMP_COLORS = ['#F5D547','#7FD1C7','#9DB4FF','#F29BB0','#F4A259','#C3E88D','#B89CFF','#8E93A3'];
+
+/* Calendrier d'alternance préchargé (lecture du planning officiel de la classe).
+   E = entreprise, F = formation, X = férié, S = examen, . = rien (week-end, fermeture) */
+const PRESET_ALT = {
+  name:'Bachelor Communication, Marketing et Évènementiel 2026-2027, UFA Sainte-Anne La Salle Verdun',
+  months:{
+    '2026-09':'EEFF..EEEEE..FFFFF..FFFFF..EEE',
+    '2026-10':'EE..FFFFF..FFFFF..EEEEE..EEEEE.',
+    '2026-11':'XEEEEE..EEXEE..FFFFF..FFFFF..E',
+    '2026-12':'EEEE..EEEEE..EEEEE..EEEEX..EEEE',
+    '2027-01':'X..FFFFF..FFFFF..EEEEE..EEEEE..',
+    '2027-02':'FFFFF..EEEEE..FFFFF..EEEEE..',
+    '2027-03':'EEEEE..FFFFF..EEEEE..EEEEE..XFF',
+    '2027-04':'FF..FFFFF..EEEEE..EEEEE..EEEEE',
+    '2027-05':'X.FFFXEX.EEEEE..XFFFF..EEEEE...',
+    '2027-06':'.SSSSS'
+  }
+};
+const ALT_CODE = { E:'entreprise', F:'formation', X:'ferie', S:'examen' };
+function presetRows(ws){
+  const rows = [];
+  for (const [ym, str] of Object.entries(PRESET_ALT.months)) {
+    [...str].forEach((ch, i) => { if (ALT_CODE[ch]) rows.push({ workspace_id:ws, day:`${ym}-${pad(i + 1)}`, type:ALT_CODE[ch] }); });
+  }
+  return rows;
+}
+
+/* Réduit une image avant envoi : économise le stockage gratuit et accélère l'affichage */
+function compressImage(file, max = 1600, q = .82){
+  return new Promise((resolve, reject) => {
+    const img = new Image(); const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      c.toBlob(b => b ? resolve(b) : reject(new Error('Image illisible')), 'image/jpeg', q);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Ce fichier n’est pas une image lisible.')); };
+    img.src = url;
+  });
+}
+const blobToDataURL = b => new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(b); });
+
+/* ============================================================
+   Couche de données : Supabase
+   ============================================================ */
+const Remote = {
+  kind:'remote', sb:null, user:null, urlCache:new Map(),
+  async init(url, key){
+    if (!window.supabase) throw new Error('La bibliothèque Supabase n’a pas pu se charger. Vérifie ta connexion.');
+    this.sb = window.supabase.createClient(url, key, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true } });
+    const { data } = await this.sb.auth.getSession(); this.user = data.session?.user || null;
+  },
+  onAuth(cb){ this.sb.auth.onAuthStateChange((ev, session) => { this.user = session?.user || null; cb(ev, this.user); }); },
+  ok({ data, error }){ if (error) throw error; return data; },
+  async signUp(email, password, name){
+    return this.ok(await this.sb.auth.signUp({ email, password, options:{ data:{ display_name:name }, emailRedirectTo:location.origin + location.pathname } }));
+  },
+  async signIn(email, password){ const d = this.ok(await this.sb.auth.signInWithPassword({ email, password })); this.user = d.user; return d; },
+  async resetPassword(email){ this.ok(await this.sb.auth.resetPasswordForEmail(email, { redirectTo:location.origin + location.pathname })); },
+  async updatePassword(pw){ this.ok(await this.sb.auth.updateUser({ password:pw })); },
+  async signOut(){ await this.sb.auth.signOut(); this.user = null; },
+  async getProfile(){ return this.ok(await this.sb.from('profiles').select('*').eq('id', this.user.id).maybeSingle()) || { id:this.user.id, display_name:'', settings:{} }; },
+  async updateProfile(patch){ return this.ok(await this.sb.from('profiles').update(patch).eq('id', this.user.id).select().single()); },
+  async listWorkspaces(){
+    const rows = this.ok(await this.sb.from('workspace_members').select('role, workspaces(*)').eq('user_id', this.user.id));
+    return rows.filter(r => r.workspaces).map(r => ({ ...r.workspaces, role:r.role }));
+  },
+  async createWorkspace(name){ return this.ok(await this.sb.rpc('create_workspace', { p_name:name })); },
+  async joinWorkspace(code){ return this.ok(await this.sb.rpc('join_workspace', { p_code:code })); },
+  async updateWorkspace(id, patch){ return this.ok(await this.sb.from('workspaces').update(patch).eq('id', id).select().single()); },
+  async deleteWorkspace(id){ this.ok(await this.sb.from('workspaces').delete().eq('id', id)); },
+  async leaveWorkspace(id){ this.ok(await this.sb.from('workspace_members').delete().eq('workspace_id', id).eq('user_id', this.user.id)); },
+  async listMembers(ws){
+    const m = this.ok(await this.sb.from('workspace_members').select('user_id, role, joined_at').eq('workspace_id', ws));
+    const p = m.length ? this.ok(await this.sb.from('profiles').select('id, display_name').in('id', m.map(x => x.user_id))) : [];
+    return m.map(x => ({ ...x, display_name:(p.find(y => y.id === x.user_id) || {}).display_name || 'Membre' }));
+  },
+  async setRole(ws, user, role){ this.ok(await this.sb.from('workspace_members').update({ role }).eq('workspace_id', ws).eq('user_id', user)); },
+  async removeMember(ws, user){ this.ok(await this.sb.from('workspace_members').delete().eq('workspace_id', ws).eq('user_id', user)); },
+  async loadWorkspace(ws){
+    const [p, c, d, v] = await Promise.all([
+      this.sb.from('posts').select('*').eq('workspace_id', ws),
+      this.sb.from('campaigns').select('*').eq('workspace_id', ws),
+      this.sb.from('day_marks').select('day, type').eq('workspace_id', ws),
+      this.sb.from('saved_views').select('*').eq('workspace_id', ws).eq('user_id', this.user.id)
+    ]);
+    return { posts:this.ok(p), campaigns:this.ok(c), marks:this.ok(d), views:this.ok(v) };
+  },
+  async insert(table, row){ return this.ok(await this.sb.from(table).insert(row).select().single()); },
+  async update(table, id, patch){ return this.ok(await this.sb.from(table).update(patch).eq('id', id).select().single()); },
+  async remove(table, id){ this.ok(await this.sb.from(table).delete().eq('id', id)); },
+  async setDayMark(ws, day, type){
+    if (!type) this.ok(await this.sb.from('day_marks').delete().eq('workspace_id', ws).eq('day', day));
+    else this.ok(await this.sb.from('day_marks').upsert({ workspace_id:ws, day, type }, { onConflict:'workspace_id,day' }));
+  },
+  async bulkDayMarks(ws, rows){ this.ok(await this.sb.from('day_marks').upsert(rows, { onConflict:'workspace_id,day' })); },
+  async clearDayMarks(ws){ this.ok(await this.sb.from('day_marks').delete().eq('workspace_id', ws)); },
+  async uploadMedia(ws, blob){
+    const path = `${ws}/${uid()}.jpg`;
+    this.ok(await this.sb.storage.from('media').upload(path, blob, { contentType:'image/jpeg', upsert:false }));
+    return path;
+  },
+  async mediaUrl(path){
+    const hit = this.urlCache.get(path); if (hit && hit.exp > Date.now()) return hit.url;
+    const d = this.ok(await this.sb.storage.from('media').createSignedUrl(path, 3600));
+    this.urlCache.set(path, { url:d.signedUrl, exp:Date.now() + 3300e3 }); return d.signedUrl;
+  },
+  async removeMedia(path){ try { await this.sb.storage.from('media').remove([path]); } catch (e) {} },
+  subscribe(ws, cb){
+    const ch = this.sb.channel('ws-' + ws);
+    ['posts','campaigns','day_marks'].forEach(t => ch.on('postgres_changes', { event:'*', schema:'public', table:t, filter:`workspace_id=eq.${ws}` }, () => cb(t)));
+    ch.subscribe(); return () => this.sb.removeChannel(ch);
+  }
+};
+
+/* ============================================================
+   Couche de données : mode démo (stockage local du navigateur)
+   ============================================================ */
+const Local = {
+  kind:'local', db:null, user:{ id:'local-user', email:'demo@cadence.local' },
+  load(){
+    try { this.db = JSON.parse(localStorage.getItem(LS.local)); } catch (e) { this.db = null; }
+    if (!this.db) {
+      const ws = uid();
+      this.db = {
+        profiles:[{ id:this.user.id, display_name:'Démo', settings:{} }],
+        workspaces:[{ id:ws, name:'Mon calendrier', kind:'personal', owner_id:this.user.id, invite_code:'DEMO01', settings:clone(DEFAULT_WS_SETTINGS), created_at:new Date().toISOString() }],
+        workspace_members:[{ workspace_id:ws, user_id:this.user.id, role:'owner' }],
+        posts:[], campaigns:[], day_marks:[], saved_views:[], media:{}
+      };
+      this.save();
+    }
+  },
+  save(){
+    try { localStorage.setItem(LS.local, JSON.stringify(this.db)); }
+    catch (e) { toast('Stockage local plein : supprime des visuels ou passe en mode connecté.', 'err'); }
+  },
+  async init(){ this.load(); },
+  onAuth(){},
+  async signOut(){ localStorage.removeItem(LS.cfg); location.reload(); },
+  async getProfile(){ return this.db.profiles[0]; },
+  async updateProfile(patch){ Object.assign(this.db.profiles[0], patch); this.save(); return this.db.profiles[0]; },
+  async listWorkspaces(){ return this.db.workspaces.map(w => ({ ...w, role:(this.db.workspace_members.find(m => m.workspace_id === w.id) || {}).role || 'owner' })); },
+  async createWorkspace(name){
+    const w = { id:uid(), name, kind:'team', owner_id:this.user.id, invite_code:Math.random().toString(36).slice(2, 8).toUpperCase(), settings:clone(DEFAULT_WS_SETTINGS), created_at:new Date().toISOString() };
+    this.db.workspaces.push(w); this.db.workspace_members.push({ workspace_id:w.id, user_id:this.user.id, role:'owner' }); this.save(); return w;
+  },
+  async joinWorkspace(){ throw new Error('En mode démo, les espaces partagés ne fonctionnent que sur cet appareil. Connecte Supabase pour inviter ta classe.'); },
+  async updateWorkspace(id, patch){ const w = this.db.workspaces.find(x => x.id === id); Object.assign(w, patch); this.save(); return w; },
+  async deleteWorkspace(id){
+    const d = this.db;
+    d.workspaces = d.workspaces.filter(x => x.id !== id); d.workspace_members = d.workspace_members.filter(x => x.workspace_id !== id);
+    ['posts','campaigns','day_marks','saved_views'].forEach(t => d[t] = d[t].filter(x => x.workspace_id !== id)); this.save();
+  },
+  async leaveWorkspace(id){ return this.deleteWorkspace(id); },
+  async listMembers(ws){ return [{ user_id:this.user.id, role:'owner', display_name:this.db.profiles[0].display_name }]; },
+  async setRole(){}, async removeMember(){},
+  async loadWorkspace(ws){
+    const f = t => clone(this.db[t].filter(x => x.workspace_id === ws));
+    return { posts:f('posts'), campaigns:f('campaigns'), marks:f('day_marks'), views:f('saved_views') };
+  },
+  async insert(table, row){
+    const r = { id:uid(), created_at:new Date().toISOString(), updated_at:new Date().toISOString(), created_by:this.user.id, ...row };
+    if (table === 'saved_views') r.user_id = this.user.id;
+    this.db[table].push(r); this.save(); return clone(r);
+  },
+  async update(table, id, patch){ const r = this.db[table].find(x => x.id === id); Object.assign(r, patch, { updated_at:new Date().toISOString() }); this.save(); return clone(r); },
+  async remove(table, id){ this.db[table] = this.db[table].filter(x => x.id !== id); this.save(); },
+  async setDayMark(ws, day, type){
+    this.db.day_marks = this.db.day_marks.filter(x => !(x.workspace_id === ws && x.day === day));
+    if (type) this.db.day_marks.push({ workspace_id:ws, day, type }); this.save();
+  },
+  async bulkDayMarks(ws, rows){
+    const days = new Set(rows.map(r => r.day));
+    this.db.day_marks = this.db.day_marks.filter(x => !(x.workspace_id === ws && days.has(x.day))).concat(rows); this.save();
+  },
+  async clearDayMarks(ws){ this.db.day_marks = this.db.day_marks.filter(x => x.workspace_id !== ws); this.save(); },
+  async uploadMedia(ws, blob){ const path = `${ws}/${uid()}.jpg`; this.db.media[path] = await blobToDataURL(await compressImage(blob, 900, .72)); this.save(); return path; },
+  async mediaUrl(path){ return this.db.media[path] || ''; },
+  async removeMedia(path){ delete this.db.media[path]; this.save(); },
+  subscribe(){ return () => {}; }
+};
+</script>
+<script>
+/* ============================================================
+   État
+   ============================================================ */
+const DEFAULT_PREFS = { theme:'dark', accent:'#F5D547', density:'confort', showAlt:true, lastWs:null, view:'month', yearMode:'school', ideasOpen:true };
+const VIEWS = [
+  { id:'year', name:'Année', icon:'year', key:'1' }, { id:'month', name:'Mois', icon:'calendar', key:'2' },
+  { id:'week', name:'Semaine', icon:'week', key:'3' }, { id:'list', name:'Liste', icon:'list', key:'4' },
+  { id:'kanban', name:'Tableau', icon:'kanban', key:'5' }
+];
+const emptyFilters = () => ({ q:'', channels:[], statuses:[], labels:[], campaign:'' });
+const S = {
+  be:null, user:null, profile:null, prefs:{ ...DEFAULT_PREFS }, entered:false,
+  workspaces:[], ws:null, role:'viewer',
+  posts:[], campaigns:[], marks:new Map(), views:[], activeView:'',
+  view:'month', cursor:new Date(), sel:todayISO(), filters:emptyFilters(), filtersOpen:false,
+  ideasOpen:true, sideOpen:false, unsub:null
+};
+const canEdit = () => S.role === 'owner' || S.role === 'editor';
+const isOwner = () => S.role === 'owner';
+const mobile = () => window.matchMedia('(max-width:700px)').matches;
+const narrow = () => window.matchMedia('(max-width:980px)').matches;
+
+/* ---------- Préférences ---------- */
+function loadLocalPrefs(){ try { return { ...DEFAULT_PREFS, ...JSON.parse(localStorage.getItem(LS.prefs) || '{}') }; } catch (e) { return { ...DEFAULT_PREFS }; } }
+function inkFor(hex){
+  let h = (hex || '#000').replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  const n = parseInt(h, 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 > .55 ? '#17181B' : '#FFFFFF';
+}
+function applyPrefs(){
+  const p = S.prefs, root = document.documentElement;
+  const theme = p.theme === 'auto' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : p.theme;
+  root.dataset.theme = theme; root.dataset.density = p.density;
+  root.style.setProperty('--accent', p.accent); root.style.setProperty('--accent-ink', inkFor(p.accent));
+  const meta = $('meta[name="theme-color"]'); if (meta) meta.content = theme === 'light' ? '#ECEEF1' : '#17181B';
+}
+const pushPrefs = debounce(async () => { try { if (S.be && S.user) S.profile = await S.be.updateProfile({ settings:S.prefs }); } catch (e) {} }, 900);
+function setPref(k, v){ S.prefs[k] = v; localStorage.setItem(LS.prefs, JSON.stringify(S.prefs)); applyPrefs(); pushPrefs(); }
+matchMedia('(prefers-color-scheme: light)').addEventListener?.('change', () => S.prefs.theme === 'auto' && applyPrefs());
+
+/* ---------- Retours ---------- */
+function toast(msg, kind){
+  const box = $('#toasts'); if (!box) return;
+  const t = document.createElement('div'); t.className = 'toast' + (kind === 'err' ? ' err' : ''); t.textContent = msg;
+  box.appendChild(t); setTimeout(() => t.remove(), kind === 'err' ? 4600 : 2400);
+}
+function errMsg(e){
+  const m = (e && (e.message || e.error_description)) || String(e);
+  const map = [
+    [/Invalid login credentials/i, 'Email ou mot de passe incorrect.'],
+    [/already registered|already been registered/i, 'Un compte existe déjà avec cet email. Connecte-toi.'],
+    [/Email not confirmed/i, 'Confirme d’abord ton email grâce au lien reçu par mail.'],
+    [/Password should be at least/i, 'Le mot de passe doit contenir au moins 8 caractères.'],
+    [/rate limit/i, 'Trop de tentatives. Patiente une minute puis réessaie.'],
+    [/code_invalide/i, 'Ce code ne correspond à aucun espace. Vérifie-le auprès de la personne qui l’a partagé.'],
+    [/Failed to fetch|NetworkError|Load failed/i, 'Connexion impossible. Vérifie ton réseau puis réessaie.'],
+    [/row-level security|permission denied/i, 'Action refusée : ton rôle dans cet espace ne le permet pas.'],
+    [/relation .* does not exist|Could not find the table/i, 'La base n’est pas initialisée. Exécute schema.sql dans Supabase.']
+  ];
+  for (const [re, fr] of map) if (re.test(m)) return fr;
+  return m;
+}
+
+/* ============================================================
+   Écrans d'accès
+   ============================================================ */
+const presetMap = new Map(presetRows('x').map(r => [r.day, r.type]));
+function gateArt(){
+  const H = { formation:'100%', examen:'82%', entreprise:'54%', ferie:'30%' };
+  const bars = []; let d = new Date(2026, 7, 31);
+  while (d < new Date(2027, 5, 7)) {
+    const cnt = {}; for (let i = 0; i < 7; i++) { const t = presetMap.get(iso(addDays(d, i))); if (t) cnt[t] = (cnt[t] || 0) + 1; }
+    const top = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0];
+    bars.push(top ? top[0] : null); d = addDays(d, 7);
+  }
+  return `<div class="gate-art">
+    <div><h1 class="wordmark">Cadence</h1><p>Le calendrier éditorial de la classe. Chacun planifie ses contenus sur l’année, au rythme de l’alternance.</p></div>
+    <div><div class="gate-strip" style="--n:${bars.length}" aria-hidden="true">${bars.map((t, k) =>
+      `<i style="--k:${k};--c:${t ? 'var(--alt-' + t + ')' : 'var(--line)'};--h:${t ? H[t] : '12%'}"></i>`).join('')}</div>
+      <div class="gate-legend"><span><i class="dot" style="--c:var(--alt-formation)"></i>Formation</span><span><i class="dot" style="--c:var(--alt-entreprise)"></i>Entreprise</span><span><i class="dot" style="--c:var(--alt-examen)"></i>Examens</span><span class="faint">Septembre 2026 à juin 2027</span></div></div>
+  </div>`;
+}
+function renderSetup(error){
+  $('#root').innerHTML = `<div class="gate">${gateArt()}<div class="gate-form"><form class="gate-card" id="setup-form">
+    <h2>Connecter la base de données</h2>
+    <p class="sub">Colle l’URL et la clé publique (anon) de ton projet Supabase. Tu les trouves dans Project Settings, rubrique API.</p>
+    <label class="field"><span>URL du projet</span><input class="input" name="url" placeholder="https://xxxx.supabase.co" required inputmode="url" autocomplete="off"></label>
+    <label class="field"><span>Clé publique (anon)</span><input class="input" name="key" placeholder="eyJhbGciOi..." required autocomplete="off"></label>
+    <div class="form-error">${esc(error || '')}</div>
+    <button class="btn primary" type="submit">Connecter</button>
+    <button class="btn ghost" type="button" data-action="demo">Essayer sans compte (mode démo)</button>
+    <p class="note">Le mode démo garde tout dans ce navigateur, sans compte ni partage. Idéal pour tester avant la mise en ligne.</p>
+  </form></div></div>`;
+  $('#setup-form').addEventListener('submit', e => {
+    e.preventDefault(); const f = new FormData(e.target);
+    localStorage.setItem(LS.cfg, JSON.stringify({ mode:'remote', url:f.get('url').trim().replace(/\/$/, ''), key:f.get('key').trim() }));
+    location.reload();
+  });
+}
+function renderAuth(mode = 'login', msg = ''){
+  const T = {
+    login:{ h:'Connexion', sub:'Retrouve ton calendrier et les espaces de ta classe.', cta:'Se connecter' },
+    signup:{ h:'Créer un compte', sub:'Trente secondes, et ton calendrier personnel est prêt.', cta:'Créer mon compte' },
+    reset:{ h:'Mot de passe oublié', sub:'Indique ton email : tu recevras un lien pour en choisir un nouveau.', cta:'Envoyer le lien' },
+    newpass:{ h:'Nouveau mot de passe', sub:'Choisis un mot de passe d’au moins 8 caractères.', cta:'Enregistrer' }
+  }[mode];
+  $('#root').innerHTML = `<div class="gate">${gateArt()}<div class="gate-form"><form class="gate-card" id="auth-form" novalidate>
+    <h2>${T.h}</h2><p class="sub">${T.sub}</p>
+    ${mode === 'signup' ? `<label class="field"><span>Prénom et nom</span><input class="input" name="name" autocomplete="name" required></label>` : ''}
+    ${mode !== 'newpass' ? `<label class="field"><span>Email</span><input class="input" type="email" name="email" autocomplete="email" required></label>` : ''}
+    ${mode !== 'reset' ? `<label class="field"><span>Mot de passe</span><input class="input" type="password" name="password" minlength="8" autocomplete="${mode === 'login' ? 'current-password' : 'new-password'}" required></label>` : ''}
+    ${mode === 'signup' ? `<label class="check"><input type="checkbox" name="consent" required><span>J’accepte que mon nom, mon email et mes contenus soient stockés pour faire fonctionner Cadence. Je peux demander leur suppression à tout moment à l’administrateur de l’app.</span></label>` : ''}
+    <div class="${msg && msg.ok ? 'form-ok' : 'form-error'}" id="auth-msg">${esc(msg.text || msg || '')}</div>
+    <button class="btn primary" type="submit">${T.cta}</button>
+    <div class="links">
+      ${mode === 'login' ? `<a href="#" class="link" data-auth="signup">Créer un compte</a><a href="#" class="link" data-auth="reset">Mot de passe oublié</a>` : ''}
+      ${mode === 'signup' || mode === 'reset' ? `<a href="#" class="link" data-auth="login">J’ai déjà un compte</a>` : ''}
+    </div>
+  </form></div></div>`;
+  $$('[data-auth]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); renderAuth(a.dataset.auth); }));
+  const form = $('#auth-form'), out = $('#auth-msg'), btn = form.querySelector('[type=submit]');
+  form.addEventListener('submit', async e => {
+    e.preventDefault(); const f = new FormData(form); out.className = 'form-error'; out.textContent = '';
+    const email = (f.get('email') || '').trim(), pw = f.get('password') || '', name = (f.get('name') || '').trim();
+    if (mode !== 'newpass' && !/^\S+@\S+\.\S+$/.test(email)) return out.textContent = 'Saisis un email valide.';
+    if ((mode === 'login' || mode === 'signup' || mode === 'newpass') && pw.length < 8) return out.textContent = 'Le mot de passe doit contenir au moins 8 caractères.';
+    if (mode === 'signup' && !name) return out.textContent = 'Indique ton prénom et ton nom.';
+    if (mode === 'signup' && !f.get('consent')) return out.textContent = 'Coche la case de consentement pour créer ton compte.';
+    btn.disabled = true;
+    try {
+      if (mode === 'login') { await S.be.signIn(email, pw); S.user = S.be.user; await enterApp(); }
+      else if (mode === 'signup') {
+        const d = await S.be.signUp(email, pw, name);
+        if (d.session) { S.user = d.user; await enterApp(); }
+        else renderAuth('login', { ok:true, text:'Compte créé. Ouvre le lien reçu par email pour l’activer, puis connecte-toi.' });
+      } else if (mode === 'reset') { await S.be.resetPassword(email); out.className = 'form-ok'; out.textContent = 'Lien envoyé. Vérifie ta boîte mail (et les indésirables).'; }
+      else if (mode === 'newpass') { await S.be.updatePassword(pw); history.replaceState(null, '', location.pathname); S.user = S.be.user; await enterApp(); }
+    } catch (err) { out.textContent = errMsg(err); }
+    finally { btn.disabled = false; }
+  });
+}
+
+/* ============================================================
+   Démarrage
+   ============================================================ */
+async function boot(){
+  S.prefs = loadLocalPrefs(); applyPrefs();
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+  let cfg = null;
+  if (CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY) cfg = { mode:'remote', url:CONFIG.SUPABASE_URL, key:CONFIG.SUPABASE_ANON_KEY };
+  else { try { cfg = JSON.parse(localStorage.getItem(LS.cfg) || 'null'); } catch (e) {} }
+  if (!cfg) return renderSetup();
+  try {
+    if (cfg.mode === 'local') { S.be = Local; await Local.init(); S.user = Local.user; return enterApp(); }
+    S.be = Remote; await Remote.init(cfg.url, cfg.key);
+    Remote.onAuth((ev, user) => {
+      if (ev === 'PASSWORD_RECOVERY') { S.entered = false; return renderAuth('newpass'); }
+      if (ev === 'SIGNED_OUT') { S.user = null; S.entered = false; stopSub(); renderAuth('login'); }
+      if (ev === 'SIGNED_IN' && user && !S.entered && !location.hash.includes('type=recovery')) { S.user = user; enterApp(); }
+    });
+    if (location.hash.includes('type=recovery')) return renderAuth('newpass');
+    if (Remote.user) { S.user = Remote.user; await enterApp(); } else renderAuth('login');
+  } catch (e) {
+    if (CONFIG.SUPABASE_URL) $('#root').innerHTML = `<div class="gate">${gateArt()}<div class="gate-form"><div class="gate-card"><h2>Connexion impossible</h2><p class="sub">${esc(errMsg(e))}</p><button class="btn primary" onclick="location.reload()">Réessayer</button></div></div></div>`;
+    else renderSetup(errMsg(e));
+  }
+}
+async function enterApp(){
+  if (S.entered) return; S.entered = true;
+  $('#root').innerHTML = `<div class="gate"><div class="gate-form" style="grid-column:1/-1"><p class="muted">Chargement de ton calendrier…</p></div></div>`;
+  try {
+    S.profile = await S.be.getProfile();
+    S.prefs = { ...DEFAULT_PREFS, ...loadLocalPrefs(), ...(S.profile.settings || {}) };
+    localStorage.setItem(LS.prefs, JSON.stringify(S.prefs)); applyPrefs();
+    S.view = S.prefs.view || 'month';
+    S.ideasOpen = narrow() ? false : S.prefs.ideasOpen !== false;
+    await loadWorkspaces(S.prefs.lastWs);
+    renderShell();
+  } catch (e) {
+    S.entered = false;
+    $('#root').innerHTML = `<div class="gate"><div class="gate-form" style="grid-column:1/-1"><div class="gate-card"><h2>Impossible d’ouvrir ton calendrier</h2><p class="sub">${esc(errMsg(e))}</p><button class="btn primary" onclick="location.reload()">Réessayer</button><button class="btn ghost" id="bail">Se déconnecter</button></div></div></div>`;
+    $('#bail').onclick = () => S.be.signOut().then(() => location.reload());
+  }
+}
+async function loadWorkspaces(prefer){
+  S.workspaces = (await S.be.listWorkspaces()).sort((a, b) => (a.kind === 'personal' ? -1 : b.kind === 'personal' ? 1 : a.name.localeCompare(b.name, 'fr')));
+  if (!S.workspaces.length) throw new Error('Aucun espace trouvé pour ce compte. Vérifie que schema.sql a bien été exécuté (déclencheur de création de compte).');
+  const w = S.workspaces.find(x => x.id === prefer) || S.workspaces[0];
+  await openWorkspace(w.id, false);
+}
+function stopSub(){ if (S.unsub) { try { S.unsub(); } catch (e) {} S.unsub = null; } }
+async function openWorkspace(id, render = true){
+  const w = S.workspaces.find(x => x.id === id); if (!w) return;
+  w.settings = { ...clone(DEFAULT_WS_SETTINGS), ...(w.settings || {}) };
+  if (!Array.isArray(w.settings.channels) || !w.settings.channels.length) w.settings.channels = clone(DEFAULT_WS_SETTINGS.channels);
+  S.ws = w; S.role = w.role;
+  const d = await S.be.loadWorkspace(id);
+  S.posts = d.posts; S.campaigns = d.campaigns; S.marks = new Map(d.marks.map(m => [m.day, m.type])); S.views = d.views;
+  S.filters = emptyFilters(); S.activeView = '';
+  stopSub(); S.unsub = S.be.subscribe(id, debounce(refreshWs, 500));
+  if (S.prefs.lastWs !== id) setPref('lastWs', id);
+  if (render) renderAll();
+}
+async function refreshWs(){
+  if (!S.ws) return;
+  if (DnD.st) return setTimeout(refreshWs, 800);
+  try {
+    const d = await S.be.loadWorkspace(S.ws.id);
+    S.posts = d.posts; S.campaigns = d.campaigns; S.marks = new Map(d.marks.map(m => [m.day, m.type]));
+    renderAll();
+  } catch (e) {}
+}
+
+/* ============================================================
+   Données dérivées
+   ============================================================ */
+const chan = id => (S.ws.settings.channels.find(c => c.id === id)) || { id, name:id ? id : 'Sans canal', color:'#8E93A3' };
+function passes(p){
+  const f = S.filters;
+  if (f.channels.length && !f.channels.includes(p.channel)) return false;
+  if (f.statuses.length && !f.statuses.includes(p.status)) return false;
+  if (f.labels.length && !f.labels.some(l => (p.labels || []).includes(l))) return false;
+  if (f.campaign && p.campaign_id !== f.campaign) return false;
+  if (f.q) { const q = f.q.toLowerCase(); if (!`${p.title || ''} ${p.body || ''} ${p.notes || ''} ${(p.labels || []).join(' ')}`.toLowerCase().includes(q)) return false; }
+  return true;
+}
+const visible = () => S.posts.filter(passes);
+const sortPosts = (a, b) => (a.pub_date || '9').localeCompare(b.pub_date || '9') || (a.pub_time || '99').localeCompare(b.pub_time || '99') || (a.created_at || '').localeCompare(b.created_at || '');
+function byDate(){
+  const m = new Map();
+  for (const p of visible()) if (p.pub_date) { if (!m.has(p.pub_date)) m.set(p.pub_date, []); m.get(p.pub_date).push(p); }
+  for (const v of m.values()) v.sort(sortPosts);
+  return m;
+}
+const allLabels = () => [...new Set([...(S.ws.settings.labels || []), ...S.posts.flatMap(p => p.labels || [])])].sort((a, b) => a.localeCompare(b, 'fr'));
+const filterCount = () => { const f = S.filters; return f.channels.length + f.statuses.length + f.labels.length + (f.campaign ? 1 : 0) + (f.q ? 1 : 0); };
+const monthDays = (y, m) => { const n = new Date(y, m + 1, 0).getDate(); return [...Array(n)].map((_, i) => iso(new Date(y, m, i + 1))); };
+const altOn = () => S.prefs.showAlt && S.marks.size > 0;
+
+/* ============================================================
+   Coquille
+   ============================================================ */
+const brandMark = () => `<span class="brand-mark" aria-hidden="true"><i style="--c:var(--alt-formation);--h:100%"></i><i style="--c:var(--alt-entreprise);--h:55%"></i><i style="--c:var(--accent);--h:80%"></i><i style="--c:var(--alt-entreprise);--h:40%"></i></span>`;
+function renderShell(){
+  $('#root').innerHTML = `<div class="app" id="app">
+    <aside class="side" id="side" aria-label="Navigation"></aside>
+    <main class="main">
+      <header class="toolbar" id="toolbar"></header>
+      <div class="filters" id="filters" hidden></div>
+      <div class="view" id="view"></div>
+    </main>
+    <aside class="ideas" id="ideas" data-drop="ideas" aria-label="Boîte à idées"></aside>
+    <div class="side-scrim" id="scrim" data-action="close-panels" hidden></div>
+    <nav class="tabbar" id="tabbar" aria-label="Vues"></nav>
+    <button class="fab" id="fab" data-action="new-post" aria-label="Nouveau contenu">${I('plus')}</button>
+  </div>`;
+  renderAll();
+}
+function renderAll(){
+  if (!$('#app')) return;
+  renderSide(); renderToolbar(); renderFilters(); renderView(); renderIdeas(); renderTabbar(); syncPanels();
+}
+function syncPanels(){
+  const app = $('#app'); if (!app) return;
+  app.classList.toggle('side-open', S.sideOpen);
+  $('#scrim').hidden = !(narrow() && (S.sideOpen || S.ideasOpen));
+  $('#fab').hidden = !canEdit();
+}
+function renderSide(){
+  const w = S.ws, ideasN = S.posts.filter(p => !p.pub_date).length, today = todayISO();
+  const camps = [...S.campaigns].sort((a, b) => a.start_date.localeCompare(b.start_date));
+  const upcoming = camps.filter(c => c.end_date >= today).slice(0, 6);
+  const types = ALT_TYPES.filter(t => [...S.marks.values()].includes(t.id));
+  $('#side').innerHTML = `
+    <div class="brand">${brandMark()}<span>Cadence</span></div>
+    <button class="ws-switch" data-action="ws-menu" aria-haspopup="menu" aria-label="Changer d’espace">
+      <span class="ws-avatar ${w.kind === 'team' ? 'team' : ''}">${esc(initials(w.name))}</span>
+      <span class="ws-meta"><b>${esc(w.name)}</b><small>${w.kind === 'team' ? (S.role === 'viewer' ? 'Équipe, lecture seule' : 'Espace d’équipe') : 'Espace personnel'}</small></span>
+      ${I('down')}
+    </button>
+    <nav class="nav">${VIEWS.map(v => `<button data-action="set-view" data-view="${v.id}" aria-current="${S.view === v.id}">${I(v.icon)}${v.name}</button>`).join('')}
+      <button data-action="toggle-ideas" aria-current="${S.ideasOpen}">${I('idea')}Boîte à idées<span class="count">${ideasN || ''}</span></button>
+    </nav>
+    <section class="side-sec"><header><span>Campagnes et temps forts</span>${canEdit() ? `<button class="icon-btn" data-action="new-campaign" aria-label="Nouvelle campagne">${I('plus')}</button>` : ''}</header>
+      ${upcoming.length ? upcoming.map(c => `<button class="camp-item" data-action="edit-campaign" data-id="${c.id}" style="--c:${esc(c.color)}"><span class="bar-swatch"></span><span><b>${esc(c.name)}</b><small>${fmtShort(c.start_date)} au ${fmtShort(c.end_date)}</small></span></button>`).join('')
+        : `<p class="side-empty">${camps.length ? 'Aucune campagne à venir.' : 'Regroupe tes contenus par lancement, événement ou période clé.'}</p>`}
+      ${camps.length ? `<button class="btn ghost sm" data-action="campaigns" style="justify-self:start">Toutes les campagnes (${camps.length})</button>` : ''}
+    </section>
+    <section class="side-sec"><header><span>Calque alternance</span>${S.marks.size ? `<button class="icon-btn ${S.prefs.showAlt ? 'on' : ''}" data-action="toggle-alt" aria-pressed="${S.prefs.showAlt}" aria-label="Afficher le calque alternance">${I('layers')}</button>` : ''}</header>
+      ${S.marks.size ? `<div class="legend">${types.map(t => `<span><i style="--c:var(--alt-${t.id})"></i>${t.name}</span>`).join('')}</div>`
+        : canEdit() ? `<button class="btn ghost sm" data-action="ws-settings" data-tab="alternance" style="justify-self:start">Ajouter le planning d’alternance</button>` : `<p class="side-empty">Aucun planning d’alternance dans cet espace.</p>`}
+    </section>
+    <div class="side-foot"><button class="me" data-action="settings"><span class="ava">${esc(initials(S.profile.display_name))}</span><span><b>${esc(S.profile.display_name || 'Mon profil')}</b><small>${S.be.kind === 'local' ? 'Mode démo' : 'Réglages'}</small></span></button></div>`;
+}
+function periodTitle(){
+  const c = S.cursor, y = c.getFullYear(), m = c.getMonth();
+  if (S.view === 'year') {
+    if (S.prefs.yearMode === 'school') { const s = m >= 8 ? y : y - 1; return `${s}<span>-${s + 1}</span>`; }
+    return `${y}`;
+  }
+  if (S.view === 'week') {
+    const a = startOfWeek(c), b = addDays(a, 6);
+    const left = a.getMonth() === b.getMonth() ? a.getDate() : `${a.getDate()} ${MONTHS[a.getMonth()]}`;
+    return `${left} au ${b.getDate()} ${MONTHS[b.getMonth()]} <span>${b.getFullYear()}</span>`;
+  }
+  return `${cap(MONTHS[m])} <span>${y}</span>`;
+}
+function rhythmHTML(days){
+  if (!altOn()) return '';
+  return `<div class="rhythm" style="--n:${days.length}" aria-hidden="true">${days.map(d => { const t = S.marks.get(d); return t ? `<i style="--c:var(--alt-${t})"></i>` : '<i class="none"></i>'; }).join('')}</div>`;
+}
+function renderToolbar(){
+  const c = S.cursor;
+  const days = S.view === 'week' ? [...Array(7)].map((_, i) => iso(addDays(startOfWeek(c), i))) : S.view === 'year' ? [] : monthDays(c.getFullYear(), c.getMonth());
+  const fc = filterCount();
+  $('#toolbar').innerHTML = `
+    <button class="icon-btn menu-btn" data-action="toggle-side" aria-label="Ouvrir le menu">${I('menu')}</button>
+    <div class="period"><h1>${periodTitle()}</h1>${rhythmHTML(days)}</div>
+    <div class="tools">
+      <div class="navarrows">
+        <button class="icon-btn" data-action="prev" aria-label="Période précédente">${I('left')}</button>
+        <button class="btn ghost sm" data-action="today">Aujourd’hui</button>
+        <button class="icon-btn" data-action="next" aria-label="Période suivante">${I('right')}</button>
+      </div>
+      ${S.view === 'year' ? `<div class="seg" role="group" aria-label="Type d’année"><button data-action="year-mode" data-mode="school" aria-pressed="${S.prefs.yearMode === 'school'}">Scolaire</button><button data-action="year-mode" data-mode="civil" aria-pressed="${S.prefs.yearMode === 'civil'}">Civile</button></div>` : ''}
+      <div class="seg views" role="group" aria-label="Vue">${VIEWS.map(v => `<button data-action="set-view" data-view="${v.id}" aria-pressed="${S.view === v.id}" title="${v.name} (${v.key})">${v.name}</button>`).join('')}</div>
+      <button class="icon-btn ${fc || S.filtersOpen ? 'on' : ''}" data-action="toggle-filters" aria-pressed="${S.filtersOpen}" aria-label="Filtres${fc ? ' (' + fc + ' actifs)' : ''}">${I('filter')}</button>
+      <button class="icon-btn ${S.ideasOpen ? 'on' : ''}" data-action="toggle-ideas" aria-pressed="${S.ideasOpen}" aria-label="Boîte à idées">${I('idea')}</button>
+      ${canEdit() ? `<button class="btn primary new-desktop" data-action="new-post">${I('plus')}<span class="label">Nouveau contenu</span></button>` : ''}
+    </div>`;
+}
+function renderFilters(){
+  const el = $('#filters'); el.hidden = !S.filtersOpen; if (!S.filtersOpen) return;
+  const f = S.filters, labels = allLabels();
+  el.innerHTML = `
+    <input class="input" type="search" data-filter="q" placeholder="Rechercher un contenu" value="${esc(f.q)}" aria-label="Rechercher">
+    ${S.ws.settings.channels.map(c => `<button class="toggle-chip" style="--c:${esc(c.color)}" data-action="f-channel" data-id="${esc(c.id)}" aria-pressed="${f.channels.includes(c.id)}"><span class="dot"></span>${esc(c.name)}</button>`).join('')}
+    <span class="sep"></span>
+    ${STATUSES.map(s => `<button class="toggle-chip st-${s.id}" style="--c:var(--st)" data-action="f-status" data-id="${s.id}" aria-pressed="${f.statuses.includes(s.id)}"><span class="dot" style="background:var(--st)"></span>${s.name}</button>`).join('')}
+    <span class="sep"></span>
+    ${labels.length ? `<select class="select" data-filter="label" aria-label="Étiquette"><option value="">Toutes les étiquettes</option>${labels.map(l => `<option ${f.labels.includes(l) ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>` : ''}
+    ${S.campaigns.length ? `<select class="select" data-filter="campaign" aria-label="Campagne"><option value="">Toutes les campagnes</option>${S.campaigns.map(c => `<option value="${c.id}" ${f.campaign === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select>` : ''}
+    <select class="select" data-filter="saved" aria-label="Vues enregistrées"><option value="">Vues enregistrées</option>${S.views.map(v => `<option value="${v.id}" ${S.activeView === v.id ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}</select>
+    ${filterCount() ? `<button class="btn sm" data-action="save-view">${I('bookmark')}Enregistrer la vue</button><button class="btn ghost sm" data-action="f-reset">Effacer</button>` : ''}
+    ${S.activeView ? `<button class="btn ghost sm danger" data-action="del-view">Supprimer cette vue</button>` : ''}`;
+}
+function renderTabbar(){
+  $('#tabbar').innerHTML = VIEWS.map(v => `<button data-action="set-view" data-view="${v.id}" aria-current="${S.view === v.id}">${I(v.icon)}${v.name}</button>`).join('');
+}
+function renderView(){
+  const v = $('#view'); if (!v) return;
+  const fn = { year:viewYear, month:viewMonth, week:viewWeek, list:viewList, kanban:viewKanban }[S.view] || viewMonth;
+  v.innerHTML = fn();
+}
+
+/* ---------- Éléments réutilisables ---------- */
+function chipHTML(p){
+  const c = chan(p.channel);
+  return `<button class="chip st-${p.status}" style="--ch:${esc(c.color)}" data-drag="${p.id}" data-action="open-post" data-id="${p.id}" title="${esc((p.title || 'Sans titre') + ', ' + c.name + ', ' + statusName(p.status))}"><span class="dot"></span><span class="t">${p.pub_time ? `<span class="tm">${fmtTime(p.pub_time)}</span> ` : ''}${esc(p.title || 'Sans titre')}</span></button>`;
+}
+function cardHTML(p, o = {}){
+  const c = chan(p.channel), camp = S.campaigns.find(x => x.id === p.campaign_id);
+  return `<button class="card st-${p.status}" style="--ch:${esc(c.color)}" data-drag="${p.id}" data-action="open-post" data-id="${p.id}">
+    <span class="top"><span class="dot" style="--c:${esc(c.color)}"></span>${esc(c.name)}${o.showDate ? `<span class="faint">${p.pub_date ? fmtShort(p.pub_date) : 'Sans date'}</span>` : ''}${p.pub_time ? `<span>${fmtTime(p.pub_time)}</span>` : ''}<span class="fmt">${esc(p.format || '')}</span></span>
+    <span class="ttl">${esc(p.title || 'Sans titre')}</span>
+    <span class="meta"><span class="pill status-pill"><span class="dot"></span>${statusName(p.status)}</span>${camp ? `<span class="pill"><span class="dot" style="--c:${esc(camp.color)}"></span>${esc(camp.name)}</span>` : ''}${(p.labels || []).slice(0, 3).map(l => `<span class="pill">${esc(l)}</span>`).join('')}</span>
+  </button>`;
+}
+function weekBars(days){
+  const a = days[0], b = days[6];
+  const cs = S.campaigns.filter(c => c.start_date <= b && c.end_date >= a && (!S.filters.campaign || S.filters.campaign === c.id))
+    .sort((x, y) => x.start_date.localeCompare(y.start_date) || y.end_date.localeCompare(x.end_date));
+  const ends = []; let html = '';
+  for (const c of cs) {
+    const s = c.start_date >= a ? days.indexOf(c.start_date) : 0, e = c.end_date <= b ? days.indexOf(c.end_date) : 6;
+    let lane = ends.findIndex(x => x < s); if (lane < 0) { lane = ends.length; ends.push(e); } else ends[lane] = e;
+    if (lane > 2) continue;
+    html += `<button class="bar ${c.kind} ${c.start_date < a ? 'cont-l' : ''} ${c.end_date > b ? 'cont-r' : ''}" style="grid-column:${s + 1}/${e + 2};grid-row:${lane + 1};--c:${esc(c.color)}" data-action="edit-campaign" data-id="${c.id}" title="${esc(c.name)}">${esc(c.name)}</button>`;
+  }
+  return { bars:html, lanes:Math.min(ends.length, 3) };
+}
+function agendaHTML(d){
+  const ps = (byDate().get(d) || []), alt = S.marks.get(d);
+  return `<div class="row" style="justify-content:space-between;align-items:center"><h3>${fmtDay(d)}</h3>${alt && S.prefs.showAlt ? `<span class="pill alt-${alt}"><span class="dot" style="--c:var(--altc)"></span>${altName(alt)}</span>` : ''}</div>
+    ${ps.length ? ps.map(p => cardHTML(p)).join('') : `<p class="muted" style="margin:0">Rien de prévu ce jour.</p>`}
+    <div class="row">${canEdit() ? `<button class="btn sm primary" data-action="new-post" data-date="${d}">${I('plus')}Ajouter un contenu</button><button class="btn sm" data-action="day-menu" data-date="${d}">Type de journée</button>` : ''}</div>`;
+}
+
+/* ---------- Vue mois ---------- */
+function viewMonth(){
+  const y = S.cursor.getFullYear(), m = S.cursor.getMonth();
+  const start = startOfWeek(new Date(y, m, 1)), end = addDays(startOfWeek(new Date(y, m + 1, 0)), 6);
+  const map = byDate(), today = todayISO(), max = S.prefs.density === 'compact' ? 3 : 4;
+  let html = `<div class="month ${altOn() ? '' : 'no-alt'}"><div class="dow">${DOW.map(d => `<span>${d}</span>`).join('')}</div><div class="weeks">`;
+  for (let w = start; w <= end; w = addDays(w, 7)) {
+    const days = [...Array(7)].map((_, i) => iso(addDays(w, i)));
+    const { bars, lanes } = weekBars(days);
+    html += `<div class="week" style="--lanes:${lanes}">`;
+    for (const d of days) {
+      const dt = parseISO(d), alt = S.marks.get(d), ps = map.get(d) || [];
+      html += `<div class="cell ${alt ? 'alt-' + alt : ''} ${dt.getMonth() !== m ? 'out' : ''} ${d === today ? 'today' : ''} ${d === S.sel ? 'sel' : ''}" data-drop="date" data-date="${d}" data-action="select-day">
+        <div class="cell-head"><button class="daynum" data-action="day-menu" data-date="${d}" aria-label="Options du ${fmtDay(d)}">${dt.getDate()}</button>${alt ? `<span class="alt-tag">${altName(alt)}</span>` : ''}</div>
+        <div class="chips">${ps.slice(0, max).map(chipHTML).join('')}${ps.length > max ? `<button class="more" data-action="day-list" data-date="${d}">+${ps.length - max} autres</button>` : ''}</div>
+      </div>`;
+    }
+    html += `<div class="bars">${bars}</div></div>`;
+  }
+  const sel = S.sel && parseISO(S.sel).getMonth() === m && parseISO(S.sel).getFullYear() === y ? S.sel : iso(new Date(y, m, 1));
+  html += `</div><div class="agenda">${agendaHTML(sel)}</div></div>`;
+  return html;
+}
+/* ---------- Vue semaine ---------- */
+function viewWeek(){
+  const start = startOfWeek(S.cursor), map = byDate(), today = todayISO();
+  return `<div class="weekview ${altOn() ? '' : 'no-alt'}">${[...Array(7)].map((_, i) => {
+    const d = iso(addDays(start, i)), dt = parseISO(d), alt = S.marks.get(d), ps = map.get(d) || [];
+    const camps = S.campaigns.filter(c => inRange(d, c.start_date, c.end_date) && (!S.filters.campaign || S.filters.campaign === c.id));
+    return `<section class="wcol ${alt ? 'alt-' + alt : ''} ${d === today ? 'today' : ''}" data-drop="date" data-date="${d}">
+      <header class="whead"><div class="d"><b>${dt.getDate()}</b><span>${cap(dt.toLocaleDateString('fr-FR', { weekday:'long' }))}</span></div>${alt ? `<span class="alt-tag">${altName(alt)}</span>` : '<span class="alt-tag">&nbsp;</span>'}</header>
+      ${camps.length ? `<div class="wbars">${camps.map(c => `<button class="bar ${c.kind} ${c.start_date < d ? 'cont-l' : ''} ${c.end_date > d ? 'cont-r' : ''}" style="--c:${esc(c.color)}" data-action="edit-campaign" data-id="${c.id}">${esc(c.name)}</button>`).join('')}</div>` : ''}
+      <div class="wlist">${ps.map(p => cardHTML(p)).join('')}${canEdit() ? `<button class="addslot" data-action="new-post" data-date="${d}">Ajouter</button>` : ''}</div>
+    </section>`;
+  }).join('')}</div>`;
+}
+/* ---------- Vue année ---------- */
+function yearStart(){
+  const c = S.cursor;
+  return S.prefs.yearMode === 'school' ? new Date(c.getMonth() >= 8 ? c.getFullYear() : c.getFullYear() - 1, 8, 1) : new Date(c.getFullYear(), 0, 1);
+}
+function viewYear(){
+  const base = yearStart(), map = byDate(), today = todayISO(), now = new Date();
+  let html = `<div class="year ${altOn() ? '' : 'no-alt'}">`;
+  for (let i = 0; i < 12; i++) {
+    const md = addMonths(base, i), y = md.getFullYear(), m = md.getMonth(), days = monthDays(y, m);
+    const off = (md.getDay() + 6) % 7, a = days[0], b = days[days.length - 1];
+    const total = days.reduce((n, d) => n + (map.get(d) || []).length, 0);
+    const form = days.filter(d => S.marks.get(d) === 'formation').length;
+    const camps = S.campaigns.filter(c => c.start_date <= b && c.end_date >= a);
+    html += `<section class="ym ${y === now.getFullYear() && m === now.getMonth() ? 'current' : ''}">
+      <button class="ym-title" data-action="goto-month" data-y="${y}" data-m="${m}"><b>${cap(MONTHS[m])}</b><span>${y}</span></button>
+      ${rhythmHTML(days)}
+      <div class="ym-grid">${DOW1.map(d => `<span class="h">${d}</span>`).join('')}${'<span></span>'.repeat(off)}${days.map(d => {
+        const n = (map.get(d) || []).length, alt = S.marks.get(d);
+        return `<button class="yd ${alt ? 'alt-' + alt : ''} ${n ? 'has' : ''} ${d === today ? 'today' : ''}" data-action="goto-day" data-date="${d}" aria-label="${fmtDay(d)}, ${n} contenu${n > 1 ? 's' : ''}"><span>${parseISO(d).getDate()}</span>${n ? `<span class="n">${'<i></i>'.repeat(Math.min(n, 3))}</span>` : ''}</button>`;
+      }).join('')}</div>
+      ${camps.length ? `<div class="ym-camps">${camps.map(c => `<button class="pill" data-action="edit-campaign" data-id="${c.id}"><span class="dot" style="--c:${esc(c.color)}"></span>${esc(c.name)}</button>`).join('')}</div>` : ''}
+      <div class="ym-foot"><span>${total ? total + ' contenu' + (total > 1 ? 's' : '') : 'Aucun contenu'}</span>${form && altOn() ? `<span>${form} j de formation</span>` : ''}</div>
+    </section>`;
+  }
+  return html + '</div>';
+}
+/* ---------- Vue liste ---------- */
+function viewList(){
+  const y = S.cursor.getFullYear(), m = S.cursor.getMonth(), days = monthDays(y, m);
+  const ps = visible().filter(p => p.pub_date && p.pub_date >= days[0] && p.pub_date <= days[days.length - 1]).sort(sortPosts);
+  const ideasN = visible().filter(p => !p.pub_date).length;
+  if (!ps.length) return `<div class="list"><div class="ideas-empty" style="margin-top:24px">Aucun contenu planifié en ${MONTHS[m]} ${y}${filterCount() ? ' avec ces filtres' : ''}.
+    ${canEdit() ? `<div style="margin-top:12px"><button class="btn primary sm" data-action="new-post">${I('plus')}Nouveau contenu</button></div>` : ''}</div></div>`;
+  return `<div class="list">${ps.map(p => {
+    const c = chan(p.channel), camp = S.campaigns.find(x => x.id === p.campaign_id), dt = parseISO(p.pub_date);
+    return `<button class="lrow st-${p.status}" data-action="open-post" data-id="${p.id}">
+      <span class="dt">${dt.toLocaleDateString('fr-FR', { day:'numeric', month:'short' })}<small>${cap(dt.toLocaleDateString('fr-FR', { weekday:'long' }))}</small></span>
+      <span class="tm">${fmtTime(p.pub_time)}</span>
+      <span class="main-t"><b>${esc(p.title || 'Sans titre')}</b><small><span class="dot" style="--c:${esc(c.color)}"></span>${esc(c.name)}${p.format ? ', ' + esc(p.format) : ''}</small></span>
+      <span class="right"><span class="pill status-pill"><span class="dot"></span>${statusName(p.status)}</span>${camp ? `<span class="pill"><span class="dot" style="--c:${esc(camp.color)}"></span>${esc(camp.name)}</span>` : ''}${(p.labels || []).slice(0, 2).map(l => `<span class="pill">${esc(l)}</span>`).join('')}</span>
+    </button>`; }).join('')}
+    ${ideasN ? `<p class="muted" style="margin-top:18px">${ideasN} idée${ideasN > 1 ? 's' : ''} sans date. <a href="#" class="link" data-action="toggle-ideas">Ouvrir la boîte à idées</a></p>` : ''}</div>`;
+}
+/* ---------- Vue tableau (kanban) ---------- */
+function viewKanban(){
+  const y = S.cursor.getFullYear(), m = S.cursor.getMonth(), days = monthDays(y, m);
+  const ps = visible().filter(p => !p.pub_date || (p.pub_date >= days[0] && p.pub_date <= days[days.length - 1])).sort(sortPosts);
+  return `<div class="kanban">${STATUSES.map(s => {
+    const col = ps.filter(p => p.status === s.id);
+    return `<section class="kcol st-${s.id}" data-drop="status" data-status="${s.id}" aria-label="${s.name}"><header><span class="dot"></span>${s.name}<small>${col.length}</small></header>
+      ${col.map(p => cardHTML(p, { showDate:true })).join('')}</section>`;
+  }).join('')}</div>`;
+}
+/* ---------- Boîte à idées ---------- */
+function renderIdeas(){
+  const el = $('#ideas'); el.dataset.open = S.ideasOpen;
+  const ideas = visible().filter(p => !p.pub_date).sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+  el.innerHTML = `<header><h2>Boîte à idées</h2><span class="faint">${ideas.length}</span><button class="icon-btn" data-action="toggle-ideas" aria-label="Fermer la boîte à idées">${I('x')}</button></header>
+    ${canEdit() ? `<form id="quick-idea" class="row"><input class="input" name="t" placeholder="Noter une idée" autocomplete="off" aria-label="Nouvelle idée" maxlength="160"><button class="btn sm" type="submit">Ajouter</button></form>` : ''}
+    <div class="ideas-list">${ideas.length ? ideas.map(p => cardHTML(p)).join('') : `<div class="ideas-empty">Note ici les idées sans date. Glisse-les ensuite sur un jour du calendrier pour les planifier${narrow() ? ', ou ouvre-les pour leur donner une date' : ''}.</div>`}</div>`;
+  const f = $('#quick-idea');
+  if (f) f.addEventListener('submit', async e => {
+    e.preventDefault(); const t = f.t.value.trim(); if (!t) return;
+    f.t.value = '';
+    try { const r = await S.be.insert('posts', { workspace_id:S.ws.id, title:t, status:'idee', pub_date:null, labels:[], channel:null, format:null }); S.posts.push(r); renderIdeas(); renderSide(); $('#quick-idea')?.t.focus(); }
+    catch (err) { toast(errMsg(err), 'err'); }
+  });
+}
+
+/* ============================================================
+   Modales et popovers
+   ============================================================ */
+function openModal({ title, body, footer = '', wide = false, onMount }){
+  closePopover();
+  const root = $('#modal-root');
+  root.innerHTML = `<div class="scrim" data-action="close-modal"></div><div class="modal ${wide ? 'wide' : ''}" role="dialog" aria-modal="true" aria-label="${esc(title)}">
+    <header><h2>${esc(title)}</h2><button class="icon-btn" data-action="close-modal" aria-label="Fermer">${I('x')}</button></header>
+    <div class="modal-body">${body}</div>${footer ? `<footer>${footer}</footer>` : ''}</div>`;
+  S.lastFocus = document.activeElement;
+  const m = $('.modal', root); onMount && onMount(m);
+  const first = m.querySelector('input:not([type=hidden]):not([disabled]), textarea, select, button.primary'); if (first && !mobile()) first.focus();
+  return m;
+}
+function closeModal(){ $('#modal-root').innerHTML = ''; S.lastFocus?.focus?.(); }
+function openPopover(anchor, html, onMount){
+  closePopover();
+  const p = document.createElement('div'); p.className = 'popover'; p.setAttribute('role', 'menu'); p.innerHTML = html; document.body.appendChild(p);
+  const r = anchor.getBoundingClientRect(), pw = p.offsetWidth, ph = p.offsetHeight;
+  let left = Math.min(Math.max(8, r.left), innerWidth - pw - 8), top = r.bottom + 6;
+  if (top + ph > innerHeight - 8) top = Math.max(8, r.top - ph - 6);
+  p.style.left = left + 'px'; p.style.top = top + 'px'; S.popAnchor = anchor;
+  onMount && onMount(p);
+}
+function closePopover(){ $('.popover')?.remove(); S.popAnchor = null; }
+
+/* ---------- Fiche contenu ---------- */
+function openPost(id, preset = {}){
+  const existing = id ? S.posts.find(x => x.id === id) : null;
+  if (id && !existing) return;
+  const chs = S.ws.settings.channels, fmts = S.ws.settings.formats || [];
+  const p = existing || { title:'', body:'', channel:chs[0]?.id || null, format:fmts[0] || null, status:preset.date ? 'redaction' : 'idee', pub_date:preset.date || null, pub_time:null, labels:[], campaign_id:S.filters.campaign || null, media_path:null, link:'', notes:'' };
+  const ro = !canEdit(), dis = ro ? 'disabled' : '';
+  const st = { labels:[...(p.labels || [])], status:p.status, channel:p.channel, blob:null, dropMedia:false };
+  const body = `<form id="post-form" class="modal-body" style="padding:0;gap:16px" autocomplete="off">
+    <label class="field"><span>Titre</span><input class="input" name="title" value="${esc(p.title)}" placeholder="Ex. Coulisses du shooting de lancement" ${dis} maxlength="200"></label>
+    <div class="field"><span>Statut</span><div class="status-pick" role="radiogroup" aria-label="Statut">${STATUSES.map(s => `<button type="button" class="toggle-chip st-${s.id}" data-st="${s.id}" role="radio" aria-pressed="${st.status === s.id}" aria-checked="${st.status === s.id}" ${dis}><span class="dot"></span>${s.name}</button>`).join('')}</div></div>
+    <div class="field"><span>Canal</span><div class="chan-pick" role="radiogroup" aria-label="Canal">${chs.map(c => `<button type="button" class="toggle-chip" style="--c:${esc(c.color)}" data-ch="${esc(c.id)}" role="radio" aria-pressed="${st.channel === c.id}" aria-checked="${st.channel === c.id}" ${dis}><span class="dot"></span>${esc(c.name)}</button>`).join('')}</div></div>
+    <div class="grid2">
+      <label class="field"><span>Format</span><select class="select" name="format" ${dis}><option value="">Aucun</option>${fmts.map(f => `<option ${p.format === f ? 'selected' : ''}>${esc(f)}</option>`).join('')}${p.format && !fmts.includes(p.format) ? `<option selected>${esc(p.format)}</option>` : ''}</select></label>
+      <label class="field"><span>Campagne</span><select class="select" name="campaign_id" ${dis}><option value="">Aucune</option>${S.campaigns.map(c => `<option value="${c.id}" ${p.campaign_id === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></label>
+    </div>
+    <div class="grid2">
+      <label class="field"><span>Date de publication</span><input class="input" type="date" name="pub_date" value="${p.pub_date || ''}" ${dis}></label>
+      <label class="field"><span>Heure</span><input class="input" type="time" name="pub_time" value="${p.pub_time ? p.pub_time.slice(0, 5) : ''}" ${dis}></label>
+    </div>
+    <p class="meta-line" style="margin:-8px 0 0">Sans date, le contenu reste dans la boîte à idées.</p>
+    <div class="field"><span>Étiquettes</span><div class="tags" id="tags"></div><datalist id="label-list">${allLabels().map(l => `<option value="${esc(l)}">`).join('')}</datalist></div>
+    <label class="field"><span>Texte de la publication</span><textarea class="textarea" name="body" placeholder="Légende, accroche, hashtags…" ${dis}>${esc(p.body || '')}</textarea></label>
+    <div class="counter" id="counter"></div>
+    <div class="field"><span>Visuel</span><label class="media-drop" id="media-drop">${ro ? '' : '<input type="file" accept="image/*" name="media" aria-label="Choisir un visuel">'}<span id="media-inner">${I('image')}<span>${ro ? 'Aucun visuel' : 'Ajouter une image (JPG, PNG, HEIC converti)'}</span></span></label>
+      ${ro ? '' : `<button type="button" class="btn ghost sm" id="media-remove" hidden style="justify-self:start">${I('trash')}Retirer le visuel</button>`}</div>
+    <label class="field"><span>Lien</span><input class="input" type="url" name="link" value="${esc(p.link || '')}" placeholder="https://" ${dis} inputmode="url"></label>
+    <label class="field"><span>Notes internes</span><textarea class="textarea" name="notes" style="min-height:80px" placeholder="Brief, idées de visuels, contraintes…" ${dis}>${esc(p.notes || '')}</textarea></label>
+    ${existing ? `<p class="meta-line">Créé le ${new Date(p.created_at).toLocaleDateString('fr-FR')}${p.updated_at ? ', modifié le ' + new Date(p.updated_at).toLocaleDateString('fr-FR') : ''}</p>` : ''}
+  </form>`;
+  const footer = ro ? `<span class="spacer"></span><button class="btn" data-action="close-modal">Fermer</button>`
+    : `${existing ? `<button class="btn ghost danger sm" id="post-del">${I('trash')}Supprimer</button><button class="btn ghost sm" id="post-dup">${I('copy')}Dupliquer</button>` : ''}<span class="spacer"></span><button class="btn" data-action="close-modal">Annuler</button><button class="btn primary" id="post-save">${existing ? 'Enregistrer' : 'Créer le contenu'}</button>`;
+  openModal({ title:existing ? (ro ? 'Contenu' : 'Modifier le contenu') : 'Nouveau contenu', wide:true, body, footer, onMount(m){
+    const form = $('#post-form', m);
+    const drawTags = () => {
+      $('#tags', m).innerHTML = st.labels.map((l, i) => `<span class="tag">${esc(l)}${ro ? '' : `<button type="button" data-rm="${i}" aria-label="Retirer ${esc(l)}">${I('x')}</button>`}</span>`).join('')
+        + (ro ? '' : `<input list="label-list" id="tag-in" placeholder="${st.labels.length ? '' : 'Ajouter une étiquette puis Entrée'}" aria-label="Nouvelle étiquette">`);
+      const tin = $('#tag-in', m); if (!tin) return;
+      const add = () => { const v = tin.value.trim().replace(/,$/, ''); if (v && !st.labels.includes(v)) st.labels.push(v); tin.value = ''; drawTags(); $('#tag-in', m).focus(); };
+      tin.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); add(); } else if (e.key === 'Backspace' && !tin.value && st.labels.length) { st.labels.pop(); drawTags(); $('#tag-in', m).focus(); } });
+      tin.addEventListener('change', () => { if (tin.value.trim()) add(); });
+    };
+    drawTags();
+    $('#tags', m).addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (b) { st.labels.splice(+b.dataset.rm, 1); drawTags(); } });
+    const count = () => {
+      const n = form.body.value.length, c = chan(st.channel), lim = CHAR_LIMITS[(c.id || '').toLowerCase()] || CHAR_LIMITS[(c.name || '').toLowerCase()];
+      const el = $('#counter', m); el.textContent = lim ? `${n} / ${lim} caractères pour ${c.name}` : `${n} caractères`; el.classList.toggle('over', !!lim && n > lim);
+    };
+    form.body.addEventListener('input', count); count();
+    $$('[data-st]', m).forEach(b => b.addEventListener('click', () => { st.status = b.dataset.st; $$('[data-st]', m).forEach(x => { x.setAttribute('aria-pressed', x === b); x.setAttribute('aria-checked', x === b); }); }));
+    $$('[data-ch]', m).forEach(b => b.addEventListener('click', () => { st.channel = st.channel === b.dataset.ch ? null : b.dataset.ch; $$('[data-ch]', m).forEach(x => { const on = x.dataset.ch === st.channel; x.setAttribute('aria-pressed', on); x.setAttribute('aria-checked', on); }); count(); }));
+    const inner = $('#media-inner', m), rmBtn = $('#media-remove', m);
+    const showImg = url => { inner.innerHTML = `<img src="${esc(url)}" alt="Aperçu du visuel">`; if (rmBtn) rmBtn.hidden = false; };
+    if (p.media_path) S.be.mediaUrl(p.media_path).then(u => u && !st.dropMedia && !st.blob && showImg(u)).catch(() => {});
+    const fileIn = form.querySelector('[name=media]');
+    fileIn?.addEventListener('change', async () => {
+      const f = fileIn.files[0]; if (!f) return;
+      try { st.blob = await compressImage(f); st.dropMedia = false; showImg(URL.createObjectURL(st.blob)); } catch (e) { toast(errMsg(e), 'err'); }
+    });
+    rmBtn?.addEventListener('click', () => { st.blob = null; st.dropMedia = true; if (fileIn) fileIn.value = ''; inner.innerHTML = `${I('image')}<span>Ajouter une image</span>`; rmBtn.hidden = true; });
+    const save = async () => {
+      const btn = $('#post-save', m); btn.disabled = true;
+      try {
+        const f = new FormData(form);
+        const row = {
+          title:(f.get('title') || '').trim(), body:f.get('body') || '', channel:st.channel, format:f.get('format') || null, status:st.status,
+          pub_date:f.get('pub_date') || null, pub_time:f.get('pub_time') || null, labels:st.labels, campaign_id:f.get('campaign_id') || null,
+          link:(f.get('link') || '').trim() || null, notes:f.get('notes') || null
+        };
+        if (!row.pub_date) row.pub_time = null;
+        const oldPath = existing?.media_path;
+        if (st.blob) row.media_path = await S.be.uploadMedia(S.ws.id, st.blob);
+        else if (st.dropMedia) row.media_path = null;
+        let r;
+        if (existing) { r = await S.be.update('posts', existing.id, row); Object.assign(existing, r); }
+        else { r = await S.be.insert('posts', { ...row, workspace_id:S.ws.id }); S.posts.push(r); }
+        if (oldPath && (st.blob || st.dropMedia)) S.be.removeMedia(oldPath);
+        closeModal(); renderAll(); toast(existing ? 'Contenu enregistré' : (row.pub_date ? `Contenu planifié le ${fmtShort(row.pub_date)}` : 'Idée ajoutée à la boîte à idées'));
+      } catch (e) { toast(errMsg(e), 'err'); btn.disabled = false; }
+    };
+    $('#post-save', m)?.addEventListener('click', save);
+    form.addEventListener('submit', e => { e.preventDefault(); save(); });
+    form.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); save(); } });
+    $('#post-del', m)?.addEventListener('click', async () => {
+      if (!confirm('Supprimer ce contenu ? Cette action est définitive.')) return;
+      try { await S.be.remove('posts', existing.id); if (existing.media_path) S.be.removeMedia(existing.media_path); S.posts = S.posts.filter(x => x.id !== existing.id); closeModal(); renderAll(); toast('Contenu supprimé'); }
+      catch (e) { toast(errMsg(e), 'err'); }
+    });
+    $('#post-dup', m)?.addEventListener('click', async () => {
+      try {
+        const { id:_i, created_at:_c, updated_at:_u, created_by:_b, media_path:_m, ...rest } = existing;
+        const r = await S.be.insert('posts', { ...rest, title:(existing.title || 'Sans titre') + ' (copie)', status:'redaction', media_path:null });
+        S.posts.push(r); renderAll(); toast('Contenu dupliqué'); openPost(r.id);
+      } catch (e) { toast(errMsg(e), 'err'); }
+    });
+  } });
+}
+function openDayList(d){
+  const ps = byDate().get(d) || [];
+  openModal({ title:fmtDay(d), body:`<div class="day-list">${ps.map(p => cardHTML(p)).join('') || '<p class="muted">Rien de prévu ce jour.</p>'}</div>`,
+    footer:canEdit() ? `<span class="spacer"></span><button class="btn primary" data-action="new-post" data-date="${d}">${I('plus')}Ajouter un contenu</button>` : '' });
+}
+
+/* ---------- Campagnes ---------- */
+function openCampaign(id, preset = {}){
+  const ex = id ? S.campaigns.find(c => c.id === id) : null;
+  const d0 = preset.date || todayISO();
+  const c = ex || { name:'', kind:'campagne', color:CAMP_COLORS[S.campaigns.length % CAMP_COLORS.length], start_date:d0, end_date:iso(addDays(parseISO(d0), 13)), description:'' };
+  const ro = !canEdit(), dis = ro ? 'disabled' : '';
+  const n = S.posts.filter(p => ex && p.campaign_id === ex.id).length;
+  const st = { kind:c.kind, color:c.color };
+  openModal({ title:ex ? (ro ? c.name : 'Modifier la campagne') : 'Nouvelle campagne', body:`<form id="camp-form" class="modal-body" style="padding:0">
+    <label class="field"><span>Nom</span><input class="input" name="name" value="${esc(c.name)}" placeholder="Ex. Salon de l’étudiant, Journée portes ouvertes" required ${dis} maxlength="120"></label>
+    <div class="field"><span>Type</span><div class="seg" role="radiogroup"><button type="button" data-kind="campagne" aria-pressed="${st.kind === 'campagne'}" ${dis}>Campagne</button><button type="button" data-kind="temps_fort" aria-pressed="${st.kind === 'temps_fort'}" ${dis}>Temps fort</button></div>
+      <p class="meta-line" style="margin:2px 0 0">Une campagne regroupe des contenus. Un temps fort signale une période clé (événement, marronnier, journée mondiale).</p></div>
+    <div class="field"><span>Couleur</span><div class="swatches">${CAMP_COLORS.map(col => `<button type="button" class="swatch" style="--c:${col}" data-col="${col}" aria-pressed="${st.color === col}" aria-label="Couleur ${col}" ${dis}></button>`).join('')}</div></div>
+    <div class="grid2"><label class="field"><span>Début</span><input class="input" type="date" name="start_date" value="${c.start_date}" required ${dis}></label><label class="field"><span>Fin</span><input class="input" type="date" name="end_date" value="${c.end_date}" required ${dis}></label></div>
+    <label class="field"><span>Objectif ou description</span><textarea class="textarea" name="description" style="min-height:90px" ${dis}>${esc(c.description || '')}</textarea></label>
+    ${ex ? `<p class="meta-line">${n} contenu${n > 1 ? 's' : ''} rattaché${n > 1 ? 's' : ''} à cette campagne.</p>` : ''}
+  </form>`,
+  footer:`${ex ? `<button class="btn ghost sm" id="camp-filter">${I('filter')}Voir ses contenus</button>` : ''}${ex && !ro ? `<button class="btn ghost danger sm" id="camp-del">${I('trash')}Supprimer</button>` : ''}<span class="spacer"></span><button class="btn" data-action="close-modal">${ro ? 'Fermer' : 'Annuler'}</button>${ro ? '' : `<button class="btn primary" id="camp-save">${ex ? 'Enregistrer' : 'Créer la campagne'}</button>`}`,
+  onMount(m){
+    const form = $('#camp-form', m);
+    $$('[data-kind]', m).forEach(b => b.addEventListener('click', () => { st.kind = b.dataset.kind; $$('[data-kind]', m).forEach(x => x.setAttribute('aria-pressed', x === b)); }));
+    $$('[data-col]', m).forEach(b => b.addEventListener('click', () => { st.color = b.dataset.col; $$('[data-col]', m).forEach(x => x.setAttribute('aria-pressed', x === b)); }));
+    const save = async () => {
+      const f = new FormData(form), name = (f.get('name') || '').trim(), s = f.get('start_date'), e = f.get('end_date');
+      if (!name) return toast('Donne un nom à la campagne.', 'err');
+      if (!s || !e || e < s) return toast('La date de fin doit suivre la date de début.', 'err');
+      const row = { name, kind:st.kind, color:st.color, start_date:s, end_date:e, description:f.get('description') || null };
+      try {
+        if (ex) { Object.assign(ex, await S.be.update('campaigns', ex.id, row)); }
+        else S.campaigns.push(await S.be.insert('campaigns', { ...row, workspace_id:S.ws.id }));
+        closeModal(); renderAll(); toast(ex ? 'Campagne enregistrée' : 'Campagne créée');
+      } catch (err) { toast(errMsg(err), 'err'); }
+    };
+    $('#camp-save', m)?.addEventListener('click', save);
+    form.addEventListener('submit', e => { e.preventDefault(); save(); });
+    $('#camp-del', m)?.addEventListener('click', async () => {
+      if (!confirm(`Supprimer la campagne « ${ex.name} » ? Les contenus rattachés sont conservés.`)) return;
+      try { await S.be.remove('campaigns', ex.id); S.campaigns = S.campaigns.filter(x => x.id !== ex.id); S.posts.forEach(p => { if (p.campaign_id === ex.id) p.campaign_id = null; }); if (S.filters.campaign === ex.id) S.filters.campaign = ''; closeModal(); renderAll(); toast('Campagne supprimée'); }
+      catch (err) { toast(errMsg(err), 'err'); }
+    });
+    $('#camp-filter', m)?.addEventListener('click', () => { S.filters = { ...emptyFilters(), campaign:ex.id }; S.filtersOpen = true; S.activeView = ''; S.cursor = parseISO(ex.start_date); if (S.view === 'year') S.view = 'month'; closeModal(); renderAll(); });
+  } });
+}
+function openCampaigns(){
+  const cs = [...S.campaigns].sort((a, b) => a.start_date.localeCompare(b.start_date));
+  openModal({ title:'Campagnes et temps forts', body:`<div class="day-list">${cs.map(c => {
+    const n = S.posts.filter(p => p.campaign_id === c.id).length;
+    return `<button class="camp-item" data-action="edit-campaign" data-id="${c.id}" style="--c:${esc(c.color)};border:1px solid var(--line-soft)"><span class="bar-swatch"></span><span style="flex:1"><b>${esc(c.name)}</b><small>${fmtShort(c.start_date)} au ${fmtShort(c.end_date)}, ${c.kind === 'temps_fort' ? 'temps fort' : 'campagne'}, ${n} contenu${n > 1 ? 's' : ''}</small></span></button>`;
+  }).join('') || '<p class="muted">Aucune campagne pour l’instant.</p>'}</div>`,
+  footer:canEdit() ? `<span class="spacer"></span><button class="btn primary" data-action="new-campaign">${I('plus')}Nouvelle campagne</button>` : '' });
+}
+
+/* ---------- Espaces ---------- */
+function wsMenu(anchor){
+  openPopover(anchor, `<div class="phead">Mes espaces</div>
+    ${S.workspaces.map(w => `<button class="pitem" role="menuitemradio" aria-checked="${w.id === S.ws.id}" data-action="switch-ws" data-id="${w.id}"><span class="ws-avatar ${w.kind === 'team' ? 'team' : ''}" style="width:24px;height:24px;font-size:11px;border-radius:6px">${esc(initials(w.name))}</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(w.name)}</span>${w.id === S.ws.id ? I('check') : ''}</button>`).join('')}
+    <hr><button class="pitem" data-action="new-ws">${I('plus')}Créer un espace d’équipe</button>
+    <button class="pitem" data-action="join-ws">${I('enter')}Rejoindre avec un code</button>
+    <hr><button class="pitem" data-action="ws-settings">${I('settings')}Réglages de « ${esc(S.ws.name)} »</button>`);
+}
+function openNewWs(){
+  openModal({ title:'Créer un espace d’équipe', body:`<form id="ws-form" class="modal-body" style="padding:0">
+    <label class="field"><span>Nom de l’espace</span><input class="input" name="name" placeholder="Ex. Projet BDE, Classe Bachelor CME" required maxlength="80"></label>
+    <label class="check"><input type="checkbox" name="alt" checked><span>Ajouter le planning d’alternance 2026-2027 de la classe</span></label>
+    <p class="note">Tu recevras un code à partager. Toute personne qui l’utilise rejoint l’espace comme éditrice, et tu peux ensuite changer son rôle.</p>
+  </form>`, footer:`<span class="spacer"></span><button class="btn" data-action="close-modal">Annuler</button><button class="btn primary" id="ws-create">Créer l’espace</button>`,
+  onMount(m){
+    const form = $('#ws-form', m);
+    const go = async () => {
+      const name = form.name.value.trim(); if (!name) return toast('Donne un nom à l’espace.', 'err');
+      try {
+        const w = await S.be.createWorkspace(name);
+        if (form.alt.checked) await S.be.bulkDayMarks(w.id, presetRows(w.id));
+        S.workspaces = await S.be.listWorkspaces(); await openWorkspace(w.id, false); closeModal(); renderAll();
+        toast('Espace créé'); openWsSettings('general');
+      } catch (e) { toast(errMsg(e), 'err'); }
+    };
+    $('#ws-create', m).addEventListener('click', go); form.addEventListener('submit', e => { e.preventDefault(); go(); });
+  } });
+}
+function openJoinWs(){
+  openModal({ title:'Rejoindre un espace', body:`<form id="join-form" class="modal-body" style="padding:0">
+    <label class="field"><span>Code d’invitation</span><input class="input" name="code" placeholder="Ex. K7Q2MX" required maxlength="12" style="text-transform:uppercase;letter-spacing:.12em;font-weight:700" autocapitalize="characters"></label>
+    <p class="note">Demande le code à la personne qui a créé l’espace. Il se trouve dans ses réglages d’espace.</p></form>`,
+  footer:`<span class="spacer"></span><button class="btn" data-action="close-modal">Annuler</button><button class="btn primary" id="join-go">Rejoindre</button>`,
+  onMount(m){
+    const form = $('#join-form', m);
+    const go = async () => {
+      const code = form.code.value.trim().toUpperCase(); if (!code) return;
+      try { const id = await S.be.joinWorkspace(code); S.workspaces = await S.be.listWorkspaces(); await openWorkspace(id, false); closeModal(); renderAll(); toast(`Bienvenue dans « ${S.ws.name} »`); }
+      catch (e) { toast(errMsg(e), 'err'); }
+    };
+    $('#join-go', m).addEventListener('click', go); form.addEventListener('submit', e => { e.preventDefault(); go(); });
+  } });
+}
+async function openWsSettings(tab = 'general'){
+  const w = S.ws, owner = isOwner();
+  const tabs = [['general', 'Général'], ...(w.kind === 'team' ? [['members', 'Membres']] : []), ['channels', 'Canaux et formats'], ['alternance', 'Calque alternance']];
+  const counts = ALT_TYPES.map(t => ({ ...t, n:[...S.marks.values()].filter(v => v === t.id).length })).filter(t => t.n);
+  const panes = {
+    general:`<label class="field"><span>Nom de l’espace</span><div class="row"><input class="input" id="ws-name" value="${esc(w.name)}" ${owner ? '' : 'disabled'} maxlength="80">${owner ? '<button class="btn" id="ws-rename">Renommer</button>' : ''}</div></label>
+      ${w.kind === 'team' ? `<div class="field"><span>Code d’invitation</span><div class="code-box"><b>${esc(w.invite_code || '')}</b><button class="btn sm" id="ws-copy">${I('copy')}Copier</button></div>
+        <p class="meta-line" style="margin:0">Partage ce code avec ta classe : chacun le saisit dans « Rejoindre avec un code ».</p></div>` : `<p class="note">Ton espace personnel est privé. Pour travailler à plusieurs, crée un espace d’équipe depuis le sélecteur d’espaces.</p>`}
+      ${w.kind === 'team' ? (owner ? `<button class="btn danger" id="ws-delete" style="justify-self:start">${I('trash')}Supprimer l’espace et ses contenus</button>` : `<button class="btn danger" id="ws-leave" style="justify-self:start">${I('logout')}Quitter l’espace</button>`) : ''}`,
+    members:`<div id="members"><p class="muted">Chargement des membres…</p></div>
+      <p class="note">Propriétaire : gère l’espace. Éditeur : crée et modifie les contenus. Lecteur : consulte seulement.</p>`,
+    channels:`${owner ? '' : '<p class="note">Seul le propriétaire de l’espace modifie les canaux et les formats.</p>'}
+      <div class="field"><span>Canaux</span><div class="editable-list" id="ch-list"></div>${owner ? `<button class="btn ghost sm" id="ch-add" style="justify-self:start">${I('plus')}Ajouter un canal</button>` : ''}</div>
+      <label class="field"><span>Formats (un par ligne)</span><textarea class="textarea" id="fmt-list" ${owner ? '' : 'disabled'}>${esc((w.settings.formats || []).join('\n'))}</textarea></label>
+      ${owner ? '<button class="btn primary" id="ch-save" style="justify-self:start">Enregistrer les canaux et formats</button>' : ''}`,
+    alternance:`<p class="muted" style="margin:0">Le calque colore chaque jour selon ton rythme : formation, entreprise, férié, examen ou vacances. Tu peux modifier un jour précis en touchant son numéro dans la vue Mois.</p>
+      ${counts.length ? `<div class="legend" style="padding:0">${counts.map(t => `<span><i style="--c:var(--alt-${t.id})"></i>${t.name} : ${t.n} jour${t.n > 1 ? 's' : ''}</span>`).join('')}</div>` : '<p class="note">Aucun jour marqué pour l’instant.</p>'}
+      ${canEdit() ? `<div class="note"><b style="color:var(--text)">Planning préchargé</b><br>${esc(PRESET_ALT.name)}.</div>
+      <div class="row" style="flex-wrap:wrap"><button class="btn primary" id="alt-import">${S.marks.size ? 'Réappliquer le planning de la classe' : 'Importer le planning de la classe'}</button>${S.marks.size ? `<button class="btn danger" id="alt-clear">Effacer le calque</button>` : ''}</div>` : ''}`
+  };
+  openModal({ title:`Réglages de l’espace`, wide:true, body:`<div class="tabs" role="tablist">${tabs.map(([id, n]) => `<button role="tab" data-tab="${id}" aria-selected="${tab === id}">${n}</button>`).join('')}</div><div id="ws-pane" style="display:grid;gap:16px">${panes[tab]}</div>`,
+  onMount(m){
+    $$('[data-tab]', m).forEach(b => b.addEventListener('click', () => openWsSettings(b.dataset.tab)));
+    $('#ws-rename', m)?.addEventListener('click', async () => {
+      const name = $('#ws-name', m).value.trim(); if (!name) return;
+      try { Object.assign(w, await S.be.updateWorkspace(w.id, { name })); const li = S.workspaces.find(x => x.id === w.id); if (li) li.name = name; renderAll(); toast('Espace renommé'); } catch (e) { toast(errMsg(e), 'err'); }
+    });
+    $('#ws-copy', m)?.addEventListener('click', () => { navigator.clipboard?.writeText(w.invite_code).then(() => toast('Code copié'), () => toast('Copie impossible : note le code à la main.', 'err')); });
+    $('#ws-delete', m)?.addEventListener('click', async () => {
+      if (prompt(`Pour confirmer, tape le nom de l’espace : ${w.name}`) !== w.name) return toast('Suppression annulée.');
+      try { await S.be.deleteWorkspace(w.id); closeModal(); await loadWorkspaces(null); renderAll(); toast('Espace supprimé'); } catch (e) { toast(errMsg(e), 'err'); }
+    });
+    $('#ws-leave', m)?.addEventListener('click', async () => {
+      if (!confirm(`Quitter « ${w.name} » ? Tu pourras revenir avec le code d’invitation.`)) return;
+      try { await S.be.leaveWorkspace(w.id); closeModal(); await loadWorkspaces(null); renderAll(); toast('Tu as quitté l’espace'); } catch (e) { toast(errMsg(e), 'err'); }
+    });
+    if (tab === 'members') {
+      S.be.listMembers(w.id).then(list => {
+        const box = $('#members', m); if (!box) return;
+        box.innerHTML = list.sort((a, b) => (a.role === 'owner' ? -1 : 1)).map(x => `<div class="member"><span class="ava">${esc(initials(x.display_name))}</span><span class="who"><b>${esc(x.display_name)}${x.user_id === S.user.id ? ' (toi)' : ''}</b><small>${{ owner:'Propriétaire', editor:'Éditeur', viewer:'Lecteur' }[x.role]}</small></span>
+          ${owner && x.user_id !== S.user.id ? `<select class="select" data-role="${x.user_id}" style="width:auto;min-height:34px" aria-label="Rôle"><option value="editor" ${x.role === 'editor' ? 'selected' : ''}>Éditeur</option><option value="viewer" ${x.role === 'viewer' ? 'selected' : ''}>Lecteur</option></select><button class="icon-btn" data-kick="${x.user_id}" aria-label="Retirer ${esc(x.display_name)}">${I('x')}</button>` : ''}</div>`).join('');
+        $$('[data-role]', box).forEach(s => s.addEventListener('change', async () => { try { await S.be.setRole(w.id, s.dataset.role, s.value); toast('Rôle mis à jour'); } catch (e) { toast(errMsg(e), 'err'); } }));
+        $$('[data-kick]', box).forEach(b => b.addEventListener('click', async () => { if (!confirm('Retirer ce membre de l’espace ?')) return; try { await S.be.removeMember(w.id, b.dataset.kick); openWsSettings('members'); toast('Membre retiré'); } catch (e) { toast(errMsg(e), 'err'); } }));
+      }).catch(e => { const box = $('#members', m); if (box) box.innerHTML = `<p class="form-error">${esc(errMsg(e))}</p>`; });
+    }
+    if (tab === 'channels') {
+      const chs = clone(w.settings.channels);
+      const draw = () => {
+        $('#ch-list', m).innerHTML = chs.map((c, i) => `<div class="erow"><input type="color" value="${esc(c.color)}" data-ci="${i}" ${owner ? '' : 'disabled'} aria-label="Couleur de ${esc(c.name)}"><input class="input" value="${esc(c.name)}" data-cn="${i}" ${owner ? '' : 'disabled'} aria-label="Nom du canal">${owner ? `<button class="icon-btn" data-cx="${i}" aria-label="Supprimer ${esc(c.name)}">${I('trash')}</button>` : ''}</div>`).join('');
+        $$('[data-ci]', m).forEach(x => x.addEventListener('input', () => chs[+x.dataset.ci].color = x.value));
+        $$('[data-cn]', m).forEach(x => x.addEventListener('input', () => chs[+x.dataset.cn].name = x.value));
+        $$('[data-cx]', m).forEach(x => x.addEventListener('click', () => { chs.splice(+x.dataset.cx, 1); draw(); }));
+      };
+      draw();
+      $('#ch-add', m)?.addEventListener('click', () => { chs.push({ id:'c-' + Math.random().toString(36).slice(2, 8), name:'Nouveau canal', color:CAMP_COLORS[chs.length % CAMP_COLORS.length] }); draw(); $$('[data-cn]', m).pop()?.select(); });
+      $('#ch-save', m)?.addEventListener('click', async () => {
+        const clean = chs.filter(c => c.name.trim()).map(c => ({ ...c, name:c.name.trim() }));
+        if (!clean.length) return toast('Garde au moins un canal.', 'err');
+        const formats = $('#fmt-list', m).value.split('\n').map(s => s.trim()).filter(Boolean);
+        const settings = { ...w.settings, channels:clean, formats };
+        try { const r = await S.be.updateWorkspace(w.id, { settings }); w.settings = { ...clone(DEFAULT_WS_SETTINGS), ...r.settings }; renderAll(); toast('Canaux et formats enregistrés'); } catch (e) { toast(errMsg(e), 'err'); }
+      });
+    }
+    $('#alt-import', m)?.addEventListener('click', async () => {
+      try { const rows = presetRows(w.id); await S.be.bulkDayMarks(w.id, rows); rows.forEach(r => S.marks.set(r.day, r.type)); if (!S.prefs.showAlt) setPref('showAlt', true); renderAll(); openWsSettings('alternance'); toast(`Planning importé : ${rows.length} jours`); }
+      catch (e) { toast(errMsg(e), 'err'); }
+    });
+    $('#alt-clear', m)?.addEventListener('click', async () => {
+      if (!confirm('Effacer tous les jours du calque alternance de cet espace ?')) return;
+      try { await S.be.clearDayMarks(w.id); S.marks.clear(); renderAll(); openWsSettings('alternance'); toast('Calque effacé'); } catch (e) { toast(errMsg(e), 'err'); }
+    });
+  } });
+}
+
+/* ---------- Réglages personnels ---------- */
+function openSettings(){
+  const p = S.prefs, custom = !ACCENTS.includes(p.accent);
+  openModal({ title:'Réglages', body:`
+    <label class="field"><span>Nom affiché</span><div class="row"><input class="input" id="me-name" value="${esc(S.profile.display_name || '')}" maxlength="60"><button class="btn" id="me-save">Enregistrer</button></div></label>
+    <div class="field"><span>Thème</span><div class="seg" role="radiogroup">${[['dark', 'Sombre'], ['light', 'Clair'], ['auto', 'Système']].map(([v, n]) => `<button data-pref="theme" data-v="${v}" aria-pressed="${p.theme === v}">${n}</button>`).join('')}</div></div>
+    <div class="field"><span>Couleur d’accent</span><div class="swatches">${ACCENTS.map(c => `<button class="swatch" style="--c:${c}" data-pref="accent" data-v="${c}" aria-pressed="${p.accent === c}" aria-label="Accent ${c}"></button>`).join('')}
+      <label class="swatch-custom" style="${custom ? `background:${esc(p.accent)};border-style:solid` : ''}" title="Couleur personnalisée">${custom ? '' : I('plus')}<input type="color" id="accent-custom" value="${esc(p.accent)}" aria-label="Couleur personnalisée"></label></div></div>
+    <div class="field"><span>Densité du calendrier</span><div class="seg">${[['confort', 'Confortable'], ['compact', 'Compacte']].map(([v, n]) => `<button data-pref="density" data-v="${v}" aria-pressed="${p.density === v}">${n}</button>`).join('')}</div></div>
+    <div class="field"><span>Vue Année</span><div class="seg">${[['school', 'Année scolaire'], ['civil', 'Année civile']].map(([v, n]) => `<button data-pref="yearMode" data-v="${v}" aria-pressed="${p.yearMode === v}">${n}</button>`).join('')}</div></div>
+    <label class="check"><input type="checkbox" id="pref-alt" ${p.showAlt ? 'checked' : ''}><span>Afficher le calque alternance</span></label>
+    <p class="meta-line">Cadence v${VERSION}. ${S.be.kind === 'local' ? 'Mode démo : les données restent dans ce navigateur.' : 'Connecté en tant que ' + esc(S.user.email || '') + '.'} Raccourcis : N nouveau contenu, T aujourd’hui, flèches pour naviguer, 1 à 5 pour changer de vue.</p>`,
+  footer:`<button class="btn ghost danger" id="me-out">${I('logout')}${S.be.kind === 'local' ? 'Quitter le mode démo' : 'Se déconnecter'}</button><span class="spacer"></span><button class="btn primary" data-action="close-modal">Terminé</button>`,
+  onMount(m){
+    $$('[data-pref]', m).forEach(b => b.addEventListener('click', () => { setPref(b.dataset.pref, b.dataset.v); $$(`[data-pref="${b.dataset.pref}"]`, m).forEach(x => x.setAttribute('aria-pressed', x === b)); renderAll(); }));
+    $('#accent-custom', m).addEventListener('input', e => { setPref('accent', e.target.value); $$('[data-pref="accent"]', m).forEach(x => x.setAttribute('aria-pressed', 'false')); });
+    $('#pref-alt', m).addEventListener('change', e => { setPref('showAlt', e.target.checked); renderAll(); });
+    $('#me-save', m).addEventListener('click', async () => {
+      const name = $('#me-name', m).value.trim(); if (!name) return;
+      try { S.profile = await S.be.updateProfile({ display_name:name }); renderSide(); toast('Nom enregistré'); } catch (e) { toast(errMsg(e), 'err'); }
+    });
+    $('#me-out', m).addEventListener('click', async () => { closeModal(); stopSub(); await S.be.signOut(); if (S.be.kind === 'remote') { S.entered = false; renderAuth('login'); } });
+  } });
+}
+
+/* ============================================================
+   Glisser-déposer (souris et tactile)
+   Souris : on glisse directement. Tactile : appui long puis glisser.
+   ============================================================ */
+const DnD = {
+  st:null, suppress:false,
+  init(){
+    document.addEventListener('pointerdown', e => this.down(e));
+    window.addEventListener('pointermove', e => this.move(e), { passive:true });
+    window.addEventListener('pointerup', e => this.up(e));
+    window.addEventListener('pointercancel', () => this.cleanup());
+    document.addEventListener('touchmove', e => { if (this.st && this.st.active) e.preventDefault(); }, { passive:false });
+    document.addEventListener('contextmenu', e => { if (e.target.closest('[data-drag]')) e.preventDefault(); });
+  },
+  down(e){
+    if (e.button > 0 || !canEdit()) return;
+    const el = e.target.closest('[data-drag]'); if (!el || el.closest('.modal')) return;
+    this.st = { el, id:el.dataset.drag, x:e.clientX, y:e.clientY, cx:e.clientX, cy:e.clientY, type:e.pointerType, active:false, timer:null, target:null };
+    if (e.pointerType !== 'mouse') this.st.timer = setTimeout(() => this.st && this.begin(), 380);
+  },
+  move(e){
+    const s = this.st; if (!s) return;
+    s.cx = e.clientX; s.cy = e.clientY;
+    if (!s.active) {
+      const dist = Math.hypot(s.cx - s.x, s.cy - s.y);
+      if (s.type === 'mouse') { if (dist > 6) this.begin(); else return; }
+      else { if (dist > 10) this.cleanup(); return; }
+    }
+    this.place(); this.hover();
+  },
+  begin(){
+    const s = this.st; s.active = true; clearTimeout(s.timer);
+    if (s.type !== 'mouse') navigator.vibrate?.(12);
+    const r = s.el.getBoundingClientRect(), g = s.el.cloneNode(true);
+    g.classList.add('drag-ghost'); g.style.width = Math.min(r.width, 280) + 'px'; g.removeAttribute('data-drag'); document.body.appendChild(g);
+    s.ghost = g; s.ox = Math.min(s.x - r.left, 260); s.oy = s.y - r.top;
+    s.el.classList.add('dragging'); document.body.classList.add('is-dragging'); closePopover(); this.place(); this.hover();
+  },
+  place(){ const s = this.st; if (s.ghost) s.ghost.style.transform = `translate(${s.cx - s.ox}px, ${s.cy - s.oy}px) rotate(-1.5deg)`; },
+  hover(){
+    const s = this.st, t = document.elementFromPoint(s.cx, s.cy)?.closest('[data-drop]') || null;
+    if (t !== s.target) { s.target?.classList.remove('drop-over'); t?.classList.add('drop-over'); s.target = t; }
+  },
+  async up(e){
+    const s = this.st; if (!s) return; clearTimeout(s.timer);
+    if (!s.active) { this.st = null; return; }
+    s.cx = e.clientX; s.cy = e.clientY; this.hover();
+    const t = s.target, id = s.id; this.cleanup();
+    this.suppress = true; setTimeout(() => this.suppress = false, 60);
+    if (t) await onDrop(id, t);
+  },
+  cleanup(){
+    const s = this.st; if (!s) return; clearTimeout(s.timer);
+    s.ghost?.remove(); s.el.classList.remove('dragging'); s.target?.classList.remove('drop-over');
+    document.body.classList.remove('is-dragging'); this.st = null;
+  }
+};
+async function onDrop(id, t){
+  const p = S.posts.find(x => x.id === id); if (!p) return;
+  const k = t.dataset.drop; let patch = null;
+  if (k === 'date' && p.pub_date !== t.dataset.date) patch = { pub_date:t.dataset.date };
+  if (k === 'status' && p.status !== t.dataset.status) patch = { status:t.dataset.status };
+  if (k === 'ideas' && p.pub_date) patch = { pub_date:null, pub_time:null };
+  if (!patch) return;
+  const old = { ...p }; Object.assign(p, patch); renderAll();
+  try {
+    Object.assign(p, await S.be.update('posts', id, patch));
+    toast(k === 'ideas' ? 'Renvoyé dans la boîte à idées' : k === 'status' ? `Statut : ${statusName(patch.status)}` : `Déplacé au ${fmtShort(patch.pub_date)}`);
+  } catch (e) { Object.assign(p, old); renderAll(); toast(errMsg(e), 'err'); }
+}
+
+/* ============================================================
+   Actions
+   ============================================================ */
+function setView(v){ S.view = v; setPref('view', v); S.sideOpen = false; closePopover(); renderAll(); $('#view')?.scrollTo(0, 0); }
+function shift(dir){
+  if (S.view === 'year') S.cursor = addMonths(S.cursor, 12 * dir);
+  else if (S.view === 'week') S.cursor = addDays(S.cursor, 7 * dir);
+  else S.cursor = addMonths(S.cursor, dir);
+  renderToolbar(); renderView();
+}
+document.addEventListener('click', async e => {
+  if (DnD.suppress) { e.preventDefault(); e.stopPropagation(); return; }
+  const pop = $('.popover');
+  if (pop && !pop.contains(e.target) && !(S.popAnchor && S.popAnchor.contains(e.target))) closePopover();
+  const el = e.target.closest('[data-action]'); if (!el) return;
+  const a = el.dataset.action, d = el.dataset;
+  if (el.tagName === 'A') e.preventDefault();
+  switch (a) {
+    case 'demo': localStorage.setItem(LS.cfg, JSON.stringify({ mode:'local' })); location.reload(); break;
+    case 'close-modal': closeModal(); break;
+    case 'toggle-side': S.sideOpen = !S.sideOpen; syncPanels(); break;
+    case 'close-panels': S.sideOpen = false; if (narrow()) S.ideasOpen = false; renderIdeas(); syncPanels(); break;
+    case 'set-view': setView(d.view); break;
+    case 'prev': shift(-1); break;
+    case 'next': shift(1); break;
+    case 'today': S.cursor = new Date(); S.sel = todayISO(); renderToolbar(); renderView(); break;
+    case 'year-mode': setPref('yearMode', d.mode); renderToolbar(); renderView(); break;
+    case 'toggle-filters': S.filtersOpen = !S.filtersOpen; renderToolbar(); renderFilters(); if (S.filtersOpen) $('#filters [data-filter="q"]')?.focus(); break;
+    case 'toggle-ideas': S.ideasOpen = !S.ideasOpen; if (!narrow()) setPref('ideasOpen', S.ideasOpen); S.sideOpen = false; renderAll(); break;
+    case 'toggle-alt': setPref('showAlt', !S.prefs.showAlt); renderAll(); break;
+    case 'new-post': if (!canEdit()) return; closeModal(); openPost(null, { date:d.date }); break;
+    case 'open-post': openPost(d.id); break;
+    case 'day-list': closePopover(); openDayList(d.date); break;
+    case 'select-day':
+      if (e.target.closest('.chip, .bar, .more, .daynum')) return;
+      S.sel = d.date; $$('.cell.sel').forEach(c => c.classList.remove('sel')); el.classList.add('sel');
+      const ag = $('.agenda'); if (ag) ag.innerHTML = agendaHTML(d.date);
+      break;
+    case 'day-menu': {
+      if (S.popAnchor === el) return closePopover();
+      const cur = S.marks.get(d.date), n = (byDate().get(d.date) || []).length;
+      openPopover(el, `<div class="phead">${fmtDay(d.date)}</div>
+        ${canEdit() ? `<button class="pitem" data-action="new-post" data-date="${d.date}">${I('plus')}Nouveau contenu</button>` : ''}
+        ${n ? `<button class="pitem" data-action="day-list" data-date="${d.date}">${I('list')}Voir ${n > 1 ? 'les ' + n + ' contenus' : 'le contenu'}</button>` : ''}
+        ${canEdit() ? `<button class="pitem" data-action="new-campaign" data-date="${d.date}">${I('flag')}Campagne à partir de ce jour</button><hr><div class="phead">Type de journée</div>${ALT_TYPES.map(t => `<button class="pitem" role="menuitemradio" aria-checked="${cur === t.id}" data-action="set-mark" data-date="${d.date}" data-type="${t.id}"><span class="dot" style="--c:var(--alt-${t.id})"></span>${t.name}</button>`).join('')}<button class="pitem" role="menuitemradio" aria-checked="${!cur}" data-action="set-mark" data-date="${d.date}" data-type="">Aucun</button>` : ''}`);
+      break;
+    }
+    case 'set-mark': {
+      closePopover(); const prev = S.marks.get(d.date);
+      d.type ? S.marks.set(d.date, d.type) : S.marks.delete(d.date); renderAll();
+      try { await S.be.setDayMark(S.ws.id, d.date, d.type || null); } catch (err) { prev ? S.marks.set(d.date, prev) : S.marks.delete(d.date); renderAll(); toast(errMsg(err), 'err'); }
+      break;
+    }
+    case 'goto-month': S.cursor = new Date(+d.y, +d.m, 1); setView('month'); break;
+    case 'goto-day': S.cursor = parseISO(d.date); S.sel = d.date; setView('month'); break;
+    case 'edit-campaign': closePopover(); openCampaign(d.id); break;
+    case 'new-campaign': closePopover(); openCampaign(null, { date:d.date }); break;
+    case 'campaigns': openCampaigns(); break;
+    case 'ws-menu': if (S.popAnchor === el) return closePopover(); wsMenu(el); break;
+    case 'switch-ws': closePopover(); S.sideOpen = false; if (d.id !== S.ws.id) { try { await openWorkspace(d.id); } catch (err) { toast(errMsg(err), 'err'); } } else syncPanels(); break;
+    case 'new-ws': closePopover(); openNewWs(); break;
+    case 'join-ws': closePopover(); openJoinWs(); break;
+    case 'ws-settings': closePopover(); S.sideOpen = false; syncPanels(); openWsSettings(d.tab || 'general'); break;
+    case 'settings': S.sideOpen = false; syncPanels(); openSettings(); break;
+    case 'f-channel': case 'f-status': {
+      const key = a === 'f-channel' ? 'channels' : 'statuses', arr = S.filters[key];
+      S.filters[key] = arr.includes(d.id) ? arr.filter(x => x !== d.id) : [...arr, d.id]; S.activeView = '';
+      renderFilters(); renderToolbar(); renderView(); renderIdeas(); break;
+    }
+    case 'f-reset': S.filters = emptyFilters(); S.activeView = ''; renderAll(); break;
+    case 'save-view': {
+      const name = prompt('Nom de la vue (ex. Instagram à valider)'); if (!name || !name.trim()) return;
+      try { const v = await S.be.insert('saved_views', { workspace_id:S.ws.id, name:name.trim(), filters:{ ...S.filters, view:S.view } }); S.views.push(v); S.activeView = v.id; renderFilters(); toast('Vue enregistrée'); }
+      catch (err) { toast(errMsg(err), 'err'); }
+      break;
+    }
+    case 'del-view': {
+      const v = S.views.find(x => x.id === S.activeView); if (!v || !confirm(`Supprimer la vue « ${v.name} » ?`)) return;
+      try { await S.be.remove('saved_views', v.id); S.views = S.views.filter(x => x.id !== v.id); S.activeView = ''; renderFilters(); toast('Vue supprimée'); } catch (err) { toast(errMsg(err), 'err'); }
+      break;
+    }
+  }
+});
+document.addEventListener('dblclick', e => {
+  const cell = e.target.closest('.cell[data-date], .wcol[data-date]');
+  if (cell && canEdit() && !e.target.closest('.chip, .card, .bar, button')) openPost(null, { date:cell.dataset.date });
+});
+document.addEventListener('input', debounce(e => {
+  if (e.target.matches('[data-filter="q"]')) { S.filters.q = e.target.value.trim(); S.activeView = ''; renderToolbar(); renderView(); renderIdeas(); }
+}, 200));
+document.addEventListener('change', e => {
+  const f = e.target.dataset?.filter; if (!f || f === 'q') return;
+  if (f === 'label') S.filters.labels = e.target.value ? [e.target.value] : [];
+  if (f === 'campaign') S.filters.campaign = e.target.value;
+  if (f === 'saved') {
+    const v = S.views.find(x => x.id === e.target.value);
+    if (!v) { S.filters = emptyFilters(); S.activeView = ''; }
+    else { const { view, ...flt } = v.filters || {}; S.filters = { ...emptyFilters(), ...flt }; S.activeView = v.id; if (view && view !== S.view) { S.view = view; setPref('view', view); } }
+    renderAll(); return;
+  }
+  S.activeView = ''; renderFilters(); renderToolbar(); renderView(); renderIdeas();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { if ($('.popover')) return closePopover(); if ($('#modal-root').innerHTML) return closeModal(); if (S.sideOpen) { S.sideOpen = false; syncPanels(); } return; }
+  if (!$('#app') || $('#modal-root').innerHTML || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.target.closest('input, textarea, select, [contenteditable]')) return;
+  const k = e.key.toLowerCase();
+  if (k === 'n' && canEdit()) { e.preventDefault(); openPost(null, {}); }
+  else if (k === 't') { S.cursor = new Date(); S.sel = todayISO(); renderToolbar(); renderView(); }
+  else if (e.key === 'ArrowLeft') shift(-1);
+  else if (e.key === 'ArrowRight') shift(1);
+  else { const v = VIEWS.find(x => x.key === e.key); if (v) setView(v.id); }
+});
+window.addEventListener('resize', debounce(() => { if ($('#app')) syncPanels(); }, 150));
+
+DnD.init();
+boot();
+</script>
+</body>
+</html>
