@@ -124,6 +124,10 @@ html[data-theme="dark"] .seg button[aria-pressed="true"]{ background:var(--surfa
 .gate-card .links{ display:flex; justify-content:space-between; gap:12px; font-size:14px; }
 .link{ color:var(--accent-text); font-weight:600; text-decoration:none; }
 .link:hover{ text-decoration:underline; }
+.pw-wrap{ position:relative; }
+.pw-wrap .input{ padding-right:88px; }
+.pw-eye{ position:absolute; right:6px; top:50%; transform:translateY(-50%); height:30px; padding:0 10px; border-radius:5px; font-size:13px; font-weight:600; color:var(--muted); }
+.pw-eye:hover{ background:var(--surface-3); color:var(--text); }
 .form-error{ color:#F0707F; font-size:14px; min-height:0; }
 .form-ok{ color:var(--st-publie); font-size:14px; }
 
@@ -474,7 +478,7 @@ const CONFIG = {
   SUPABASE_URL: 'https://bbafwfvfarwofifnmdmq.supabase.co',
   SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiYWZ3ZnZmYXJ3b2ZpZm5tZG1xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMzQzNzEsImV4cCI6MjEwNTkxMDM3MX0.33OjtEAEjUp8v5M-5qtcaoOYT3Vov6dCk96PYujbfW0'
 };
-const VERSION = '1.0.2';
+const VERSION = '1.0.3';
 const LS = { cfg:'cadence_cfg', local:'cadence_local', prefs:'cadence_prefs' };
 
 /* ---------- Utilitaires ---------- */
@@ -858,8 +862,8 @@ function renderAuth(mode = 'login', msg = ''){
   $('#root').innerHTML = `<div class="gate">${gateArt()}<div class="gate-form"><form class="gate-card" id="auth-form" novalidate>
     <h2>${T.h}</h2><p class="sub">${T.sub}</p>
     ${mode === 'signup' ? `<label class="field"><span>Prénom et nom</span><input class="input" name="name" autocomplete="name" required></label>` : ''}
-    ${mode !== 'newpass' ? `<label class="field"><span>Email</span><input class="input" type="email" name="email" autocomplete="email" required></label>` : ''}
-    ${mode !== 'reset' ? `<label class="field"><span>Mot de passe</span><input class="input" type="password" name="password" minlength="8" autocomplete="${mode === 'login' ? 'current-password' : 'new-password'}" required></label>` : ''}
+    ${mode !== 'newpass' ? `<label class="field"><span>Email</span><input class="input" type="email" name="email" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="email" required></label>` : ''}
+    ${mode !== 'reset' ? `<div class="field"><span>Mot de passe</span><div class="pw-wrap"><input class="input" type="password" name="password" minlength="8" autocomplete="${mode === 'login' ? 'current-password' : 'new-password'}" autocapitalize="none" autocorrect="off" spellcheck="false" required aria-label="Mot de passe"><button type="button" class="pw-eye" data-eye aria-label="Afficher le mot de passe" aria-pressed="false">Afficher</button></div></div>` : ''}
     ${mode === 'signup' ? `<label class="check"><input type="checkbox" name="consent" required><span>J’accepte que mon nom, mon email et mes contenus soient stockés pour faire fonctionner Cadence. Je peux demander leur suppression à tout moment à l’administrateur de l’app.</span></label>` : ''}
     <div class="${msg && msg.ok ? 'form-ok' : 'form-error'}" id="auth-msg">${esc(msg.text || msg || '')}</div>
     <button class="btn primary" type="submit">${T.cta}</button>
@@ -870,9 +874,13 @@ function renderAuth(mode = 'login', msg = ''){
   </form></div></div>`;
   $$('[data-auth]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); renderAuth(a.dataset.auth); }));
   const form = $('#auth-form'), out = $('#auth-msg'), btn = form.querySelector('[type=submit]');
+  form.querySelector('[data-eye]')?.addEventListener('click', e => {
+    const b = e.currentTarget, inp = form.password, show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password'; b.textContent = show ? 'Masquer' : 'Afficher'; b.setAttribute('aria-pressed', show);
+  });
   form.addEventListener('submit', async e => {
     e.preventDefault(); const f = new FormData(form); out.className = 'form-error'; out.textContent = '';
-    const email = (f.get('email') || '').trim(), pw = f.get('password') || '', name = (f.get('name') || '').trim();
+    const email = (f.get('email') || '').trim().toLowerCase(), pw = f.get('password') || '', name = (f.get('name') || '').trim();
     if (mode !== 'newpass' && !/^\S+@\S+\.\S+$/.test(email)) return out.textContent = 'Saisis un email valide.';
     if ((mode === 'login' || mode === 'signup' || mode === 'newpass') && pw.length < 8) return out.textContent = 'Le mot de passe doit contenir au moins 8 caractères.';
     if (mode === 'signup' && !name) return out.textContent = 'Indique ton prénom et ton nom.';
