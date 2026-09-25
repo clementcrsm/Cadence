@@ -48,7 +48,7 @@ html[data-density="confort"]{ --cell-min:124px; --chip-h:24px; --gap:10px; }
 html,body{ height:100%; margin:0; }
 body{
   font-family:var(--font); font-size:15px; line-height:1.45; color:var(--text); background:var(--bg);
-  -webkit-font-smoothing:antialiased; font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;
   overscroll-behavior:none;
 }
 button,input,select,textarea{ font:inherit; color:inherit; }
@@ -106,7 +106,9 @@ html[data-theme="dark"] .seg button[aria-pressed="true"]{ background:var(--surfa
 .status-pill .dot{ background:var(--st); }
 
 /* ---------- Écrans d'accès ---------- */
-.gate{ min-height:100%; display:grid; grid-template-columns:1.1fr 1fr; }
+.daynum, .yd, .whead .d b, .chip .tm, .lrow .dt, .lrow .tm, .counter, .code-box b, .ym-foot, .nav .count, .card .top{ font-variant-numeric:tabular-nums; }
+#root{ min-height:100%; }
+.gate{ min-height:100vh; min-height:100dvh; display:grid; grid-template-columns:1.1fr 1fr; }
 .gate-art{ position:relative; padding:calc(48px + var(--safe-t)) 56px 48px; display:flex; flex-direction:column; justify-content:space-between; background:var(--surface); border-right:1px solid var(--line-soft); overflow:hidden; }
 .wordmark{ font-size:clamp(64px, 9vw, 128px); line-height:.88; font-weight:850; letter-spacing:-.045em; margin:0; }
 .gate-art p{ max-width:34ch; color:var(--muted); font-size:17px; margin:18px 0 0; }
@@ -469,10 +471,10 @@ body.is-dragging{ cursor:grabbing; user-select:none; -webkit-user-select:none; }
    Supabase > Project Settings > API
    ============================================================ */
 const CONFIG = {
-  SUPABASE_URL: '',
-  SUPABASE_ANON_KEY: ''
+  SUPABASE_URL: 'https://bbafwfvfarwofifnmdmq.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiYWZ3ZnZmYXJ3b2ZpZm5tZG1xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMzQzNzEsImV4cCI6MjEwNTkxMDM3MX0.33OjtEAEjUp8v5M-5qtcaoOYT3Vov6dCk96PYujbfW0'
 };
-const VERSION = '1.0.0';
+const VERSION = '1.0.1';
 const LS = { cfg:'cadence_cfg', local:'cadence_local', prefs:'cadence_prefs' };
 
 /* ---------- Utilitaires ---------- */
