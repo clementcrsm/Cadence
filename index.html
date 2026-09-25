@@ -326,8 +326,9 @@ body.is-dragging{ cursor:grabbing; user-select:none; -webkit-user-select:none; }
 .modal.wide{ width:min(760px, calc(100vw - 24px)); }
 .modal > header{ display:flex; align-items:center; gap:10px; padding:18px 18px 12px 22px; }
 .modal > header h2{ margin:0; font-size:20px; letter-spacing:-.02em; flex:1; }
-.modal-body{ padding:6px 22px 20px; overflow-y:auto; display:grid; gap:16px; }
-.modal > footer{ display:flex; gap:8px; align-items:center; padding:14px 18px; border-top:1px solid var(--line-soft); }
+.modal-body{ padding:6px 22px 20px; overflow-y:auto; display:grid; gap:16px; align-content:start; grid-auto-rows:max-content; min-height:0; flex:1 1 auto; }
+.modal > header, .modal > footer{ flex:none; }
+.modal > footer{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:14px 18px; border-top:1px solid var(--line-soft); }
 .modal > footer .spacer{ flex:1; }
 @keyframes fade{ from{ opacity:0; } }
 @keyframes pop{ from{ opacity:0; transform:translate(-50%,-48%) scale(.98); } }
@@ -446,6 +447,9 @@ body.is-dragging{ cursor:grabbing; user-select:none; -webkit-user-select:none; }
   .modal > footer{ flex-wrap:wrap; }
   .modal > footer .spacer{ flex-basis:100%; height:0; }
   .modal > footer .btn.primary{ flex:1; }
+  .modal > footer .btn.ghost.sm{ font-size:0; width:40px; padding:0; gap:0; }
+  .modal > footer .btn.ghost.sm svg.i{ width:18px; height:18px; }
+  .modal > footer .spacer{ flex-basis:auto; flex:1; }
   .toolbar .seg:not(.views){ display:none; }
   .tabbar{
     display:grid; grid-template-columns:repeat(5,1fr); position:fixed; z-index:90; left:0; right:0; bottom:0;
@@ -458,6 +462,138 @@ body.is-dragging{ cursor:grabbing; user-select:none; -webkit-user-select:none; }
   .fab svg{ width:24px; height:24px; stroke-width:2.2; }
   .toasts{ bottom:calc(140px + var(--safe-b)); }
 }
+
+/* ================= V2 ================= */
+.chip .t svg.i, .card .ttl svg.i, .tile-date svg.i{ width:12px; height:12px; vertical-align:-1px; margin-right:3px; }
+.modal .tabs{ margin-top:-4px; }
+.tabs .tabcount{ margin-left:6px; font-size:12px; color:var(--faint); }
+[data-pane]{ display:grid; gap:16px; }
+/* Validation */
+.valbox{ display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; padding:12px 14px; border-radius:var(--r-md); background:var(--surface-2); border:1px solid var(--line-soft); }
+.valbox > svg.i{ color:var(--accent-text); }
+.valbox b{ display:block; font-size:14.5px; } .valbox span{ color:var(--muted); font-size:13.5px; }
+.valbox.locked{ border-color:color-mix(in srgb, var(--st-publie) 45%, var(--line)); }
+.valbox.locked > svg.i{ color:var(--st-publie); }
+.valbox.review{ grid-template-columns:1fr; }
+.steps{ list-style:none; margin:0; padding:0; display:grid; gap:6px; }
+.steps li{ display:flex; gap:10px; align-items:center; }
+.steps .n{ width:24px; height:24px; border-radius:50%; display:grid; place-items:center; font-size:12.5px; font-weight:700; background:var(--surface-3); color:var(--muted); flex:none; }
+.steps li.ok .n{ background:var(--st-publie); color:#0f1a14; }
+.steps li.cur .n{ background:var(--st-a_valider); color:#1d1406; }
+.steps small{ display:block; color:var(--muted); font-size:12.5px; }
+/* Discussion */
+.timeline{ display:grid; gap:12px; }
+.tl-item{ display:flex; gap:10px; align-items:flex-start; }
+.tl-item p{ margin:2px 0 0; font-size:14px; line-height:1.5; overflow-wrap:anywhere; }
+.tl-item .ava{ width:28px; height:28px; border-radius:50%; background:var(--surface-3); display:grid; place-items:center; font-size:11.5px; font-weight:700; flex:none; }
+.tl-item.ext .ava{ background:color-mix(in srgb, var(--accent) 30%, var(--surface-3)); }
+.tl-head{ display:flex; align-items:center; gap:8px; } .tl-head b{ font-size:14px; } .tl-head small, .tl-item small{ color:var(--faint); font-size:12px; }
+.tl-del{ margin-left:auto; width:24px; height:24px; display:grid; place-items:center; border-radius:6px; color:var(--faint); }
+.tl-del:hover{ background:var(--surface-3); color:var(--text); } .tl-del svg.i{ width:14px; height:14px; }
+.tl-item.event{ align-items:center; color:var(--muted); } .tl-item.event p{ margin:0; font-size:13px; color:var(--muted); } .tl-item.event b{ color:var(--text); font-weight:600; }
+.tl-dot{ width:28px; display:grid; place-items:center; flex:none; } .tl-dot::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--faint); }
+.tl-ico{ width:28px; height:28px; border-radius:50%; display:grid; place-items:center; flex:none; background:var(--surface-3); }
+.tl-item.review.approved .tl-ico{ background:color-mix(in srgb, var(--st-publie) 25%, transparent); color:var(--st-publie); }
+.tl-item.review.changes .tl-ico{ background:color-mix(in srgb, var(--st-a_valider) 25%, transparent); color:var(--st-a_valider); }
+.tl-ico svg.i{ width:15px; height:15px; }
+/* Galerie de visuels */
+.gallery{ display:grid; grid-template-columns:repeat(auto-fill, minmax(96px, 1fr)); gap:8px; }
+.gthumb{ position:relative; aspect-ratio:1; border-radius:var(--r-sm); overflow:hidden; background:var(--surface-3); }
+.gthumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.gthumb .gtools{ position:absolute; inset:auto 4px 4px 4px; display:flex; justify-content:space-between; }
+.gthumb .gtools button{ width:26px; height:26px; display:grid; place-items:center; border-radius:6px; background:rgba(10,11,13,.72); color:#fff; }
+.gthumb .gtools svg.i{ width:14px; height:14px; }
+.gthumb .gidx{ position:absolute; top:4px; left:4px; min-width:20px; height:20px; padding:0 5px; border-radius:5px; background:rgba(10,11,13,.72); color:#fff; font-size:11.5px; font-weight:700; display:grid; place-items:center; }
+.gadd{ aspect-ratio:1; border-radius:var(--r-sm); border:1px dashed var(--line); display:grid; place-content:center; justify-items:center; gap:4px; color:var(--muted); font-size:12.5px; font-weight:600; cursor:pointer; text-align:center; padding:6px; }
+.gadd:hover{ border-color:var(--faint); color:var(--text); }
+img.broken{ opacity:0; }
+/* Aperçus plateforme */
+.pv-wrap{ display:grid; justify-items:center; padding:6px 0; }
+.pv{ width:min(360px, 100%); background:#fff; color:#111; border-radius:14px; overflow:hidden; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size:14px; line-height:1.4; box-shadow:0 0 0 1px rgba(0,0,0,.08); text-align:left; }
+.pv img{ display:block; width:100%; height:100%; object-fit:cover; background:#e9e9ea; }
+.pv-head{ display:flex; align-items:center; gap:9px; padding:10px 12px; }
+.pv-ava{ width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, #cfd3da, #9aa1ad); display:grid; place-items:center; font-size:12px; font-weight:700; color:#fff; flex:none; }
+.pv-head b{ font-size:13.5px; } .pv-head small{ display:block; color:#6b6f76; font-size:12px; font-weight:400; }
+.pv-head .pv-more3{ margin-left:auto; color:#6b6f76; letter-spacing:1px; }
+.pv-media{ position:relative; background:#e9e9ea; }
+.pv-media.r45{ aspect-ratio:4/5; } .pv-media.r169{ aspect-ratio:16/9; } .pv-media.r43{ aspect-ratio:4/3; }
+.pv-noimg{ width:100%; height:100%; min-height:140px; display:grid; place-content:center; justify-items:center; gap:6px; color:#8a8f97; font-size:13px; }
+.pv-dots{ position:absolute; bottom:8px; left:0; right:0; display:flex; justify-content:center; gap:4px; }
+.pv-dots i{ width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.55); } .pv-dots i.on{ background:#fff; }
+.pv-count{ position:absolute; top:8px; right:8px; padding:2px 8px; border-radius:99px; background:rgba(0,0,0,.6); color:#fff; font-size:12px; }
+.pv-actions{ display:flex; gap:14px; padding:10px 12px 4px; } .pv-actions svg{ width:22px; height:22px; stroke:#111; fill:none; stroke-width:1.7; }
+.pv-actions .r{ margin-left:auto; }
+.pv-cap{ padding:4px 12px 10px; overflow-wrap:anywhere; } .pv-cap b{ font-weight:600; margin-right:4px; }
+.pv-date{ padding:0 12px 12px; color:#8a8f97; font-size:11.5px; }
+.pv-tag{ color:#2f6fca; }
+.pv-more{ color:#6b6f76; font:inherit; padding:0; margin-left:3px; }
+.pv-text{ padding:0 12px 10px; overflow-wrap:anywhere; }
+.pv-react{ display:flex; justify-content:space-around; padding:8px 6px; border-top:1px solid #eceef1; color:#5e636b; font-size:13px; font-weight:600; }
+.pv-vert{ position:relative; aspect-ratio:9/16; background:#111; color:#fff; }
+.pv-vert img{ position:absolute; inset:0; } .pv-vert .pv-noimg{ position:absolute; inset:0; color:#9aa0a8; background:#1c1d20; }
+.pv-vert::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.35) 0, transparent 22%, transparent 55%, rgba(0,0,0,.7)); pointer-events:none; }
+.pv-over{ position:absolute; z-index:1; left:12px; right:62px; bottom:14px; } .pv-over b{ display:block; margin-bottom:4px; } .pv-over p{ margin:0; font-size:13px; overflow-wrap:anywhere; }
+.pv-side{ position:absolute; z-index:1; right:10px; bottom:18px; display:grid; gap:16px; justify-items:center; }
+.pv-side svg{ width:26px; height:26px; stroke:#fff; fill:none; stroke-width:1.8; }
+.pv-prog{ position:absolute; z-index:1; top:10px; left:10px; right:10px; height:3px; border-radius:2px; background:rgba(255,255,255,.4); } .pv-prog::before{ content:""; position:absolute; inset:0 60% 0 0; background:#fff; border-radius:2px; }
+.pv-storyhead{ position:absolute; z-index:1; top:20px; left:12px; display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; }
+.pv-storytxt{ position:absolute; z-index:1; left:16px; right:16px; top:42%; text-align:center; font-weight:700; font-size:18px; text-shadow:0 1px 8px rgba(0,0,0,.5); }
+.pv-mail{ padding:14px; display:grid; gap:6px; } .pv-mail .from{ color:#6b6f76; font-size:12.5px; } .pv-mail h4{ margin:0; font-size:16px; } .pv-mail .pre{ color:#6b6f76; font-size:13px; }
+.pv-mail .pv-media{ border-radius:8px; overflow:hidden; margin:6px 0; }
+.pv-art h4{ margin:12px 12px 6px; font-size:19px; line-height:1.25; } .pv-art .pv-text{ color:#40444b; }
+.pv-yt h4{ margin:10px 12px 4px; font-size:15px; } .pv-yt small{ display:block; padding:0 12px 12px; color:#6b6f76; }
+.pv-play{ position:absolute; inset:0; display:grid; place-items:center; } .pv-play span{ width:54px; height:38px; border-radius:10px; background:rgba(0,0,0,.72); display:grid; place-items:center; } .pv-play svg{ width:20px; height:20px; fill:#fff; stroke:none; }
+/* Grille */
+.gridview, .mediaview{ padding:16px 24px 32px; display:grid; gap:16px; align-content:start; }
+.grid-head{ display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; }
+.grid-head .select{ width:auto; }
+.grid-head p{ margin:0; font-size:14px; }
+.igrid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:3px; max-width:620px; }
+.tile{ position:relative; aspect-ratio:3/4; overflow:hidden; background:var(--surface-2); border-radius:2px; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; touch-action:manipulation; }
+.tile img{ width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
+.tile-ph{ position:absolute; inset:0; display:grid; place-items:center; padding:10px; font-size:13px; font-weight:650; text-align:center; color:var(--muted); background:repeating-linear-gradient(135deg, var(--surface-2) 0 10px, var(--surface-3) 10px 20px); }
+.tile-type{ position:absolute; top:6px; right:6px; color:#fff; filter:drop-shadow(0 1px 2px rgba(0,0,0,.6)); } .tile-type svg.i{ width:18px; height:18px; }
+.tile-date{ position:absolute; left:6px; bottom:6px; padding:2px 7px; border-radius:5px; background:rgba(10,11,13,.72); color:#fff; font-size:11.5px; font-weight:650; }
+.tile-st{ position:absolute; right:7px; bottom:8px; width:9px; height:9px; border-radius:50%; background:var(--st); box-shadow:0 0 0 2px rgba(10,11,13,.6); }
+.tile.planned::after{ content:""; position:absolute; inset:0; box-shadow:inset 0 0 0 2px color-mix(in srgb, var(--accent) 70%, transparent); pointer-events:none; }
+.tile:hover{ filter:brightness(1.08); }
+/* Médiathèque */
+.mgrid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:12px; }
+.mgrid.sm{ grid-template-columns:repeat(auto-fill, minmax(110px, 1fr)); gap:8px; }
+.mtile{ display:grid; gap:6px; text-align:left; padding:6px; border-radius:var(--r-md); border:1px solid transparent; }
+.mtile:hover{ background:var(--surface); border-color:var(--line-soft); }
+.mtile img{ width:100%; aspect-ratio:1; object-fit:cover; border-radius:var(--r-sm); background:var(--surface-3); display:block; }
+.mtile .mt-name{ font-size:13.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.mtile .mt-meta{ font-size:12px; color:var(--faint); }
+.mtile.picked{ border-color:var(--accent); background:color-mix(in srgb, var(--accent) 10%, transparent); }
+.asset-big{ width:100%; max-height:52vh; object-fit:contain; border-radius:var(--r-md); background:var(--surface-2); }
+/* Page de validation externe */
+.rvpage{ max-width:1040px; margin:0 auto; padding:calc(28px + var(--safe-t)) 20px calc(40px + var(--safe-b)); display:grid; gap:22px; }
+.rv-head{ display:flex; gap:14px; align-items:center; }
+.rv-head .brand-mark{ width:34px; height:34px; }
+.rv-head h1{ margin:0; font-size:clamp(24px, 4vw, 34px); letter-spacing:-.03em; line-height:1.1; }
+.rv-head p{ margin:4px 0 0; }
+.rv-name{ max-width:360px; }
+.rv-post{ display:grid; gap:12px; padding:18px; border-radius:var(--r-lg); background:var(--surface); border:1px solid var(--line-soft); }
+.rv-post h2{ margin:0; font-size:21px; letter-spacing:-.02em; }
+.rv-meta{ display:flex; flex-wrap:wrap; gap:6px; }
+.rv-state{ color:var(--text); }
+.rv-body{ display:grid; grid-template-columns:minmax(0, 380px) minmax(0, 1fr); gap:20px; align-items:start; }
+.rv-side{ display:grid; gap:12px; }
+.row.wrap{ flex-wrap:wrap; }
+.links-list{ display:grid; gap:8px; }
+.link-row{ display:grid; grid-template-columns:1fr auto; gap:6px 12px; align-items:center; padding:10px 12px; border-radius:var(--r-md); background:var(--surface-2); }
+.link-row b{ font-size:14.5px; } .link-row small{ grid-column:1; color:var(--muted); font-size:12.5px; }
+.link-row .row{ grid-row:1 / span 2; grid-column:2; }
+.link-row.off{ opacity:.55; }
+@media (max-width:700px){
+  .gridview, .mediaview{ padding:12px 12px 110px; }
+  .igrid{ max-width:none; }
+  .mgrid{ grid-template-columns:repeat(2, 1fr); }
+  .rv-body{ grid-template-columns:1fr; }
+  .valbox{ grid-template-columns:auto 1fr; } .valbox > .btn{ grid-column:1 / -1; }
+}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{ animation-duration:.01ms !important; animation-delay:0ms !important; transition-duration:.01ms !important; }
 }
@@ -466,6 +602,7 @@ body.is-dragging{ cursor:grabbing; user-select:none; -webkit-user-select:none; }
 <body>
 <div id="root"></div>
 <div id="modal-root"></div>
+<div id="picker-root"></div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <script>
 'use strict';
@@ -478,7 +615,7 @@ const CONFIG = {
   SUPABASE_URL: 'https://bbafwfvfarwofifnmdmq.supabase.co',
   SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiYWZ3ZnZmYXJ3b2ZpZm5tZG1xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMzQzNzEsImV4cCI6MjEwNTkxMDM3MX0.33OjtEAEjUp8v5M-5qtcaoOYT3Vov6dCk96PYujbfW0'
 };
-const VERSION = '1.0.3';
+const VERSION = '2.0.1';
 const LS = { cfg:'cadence_cfg', local:'cadence_local', prefs:'cadence_prefs' };
 
 /* ---------- Utilitaires ---------- */
@@ -533,6 +670,16 @@ const I = (name) => {
     check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
     bookmark:'<path d="M6 4h12v17l-6-4-6 4z"/>',
     enter:'<path d="M9 10l-4 4 4 4"/><path d="M5 14h11a4 4 0 0 0 4-4V5"/>',
+    grid:'<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="M9.2 3.5v17M14.8 3.5v17M3.5 9.2h17M3.5 14.8h17"/>',
+    lock:'<rect x="5" y="11" width="14" height="9.5" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+    unlock:'<rect x="5" y="11" width="14" height="9.5" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.7-1.5"/>',
+    send:'<path d="M20.5 3.5L10 14M20.5 3.5l-6.5 17-4-6.5-6.5-4z"/>',
+    share:'<circle cx="17.5" cy="5.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><circle cx="17.5" cy="18.5" r="2.5"/><path d="M8.7 10.8l6.6-4M8.7 13.2l6.6 4"/>',
+    chat:'<path d="M20 14.5a2 2 0 0 1-2 2H8.5L4 20.5V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/>',
+    eye:'<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
+    upload:'<path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M4.5 15v3.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V15"/>',
+    reel:'<rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M10 9l5 3-5 3z"/>',
+    stack:'<rect x="7" y="7" width="13" height="13" rx="2"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/>',
     today:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.6"/>'
   }[name] || '';
   return `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`;
@@ -600,7 +747,7 @@ function compressImage(file, max = 1600, q = .82){
       const k = Math.min(1, max / Math.max(img.width, img.height));
       const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
       c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
-      c.toBlob(b => b ? resolve(b) : reject(new Error('Image illisible')), 'image/jpeg', q);
+      c.toBlob(b => { if (!b) return reject(new Error('Image illisible')); b.w = c.width; b.h = c.height; resolve(b); }, 'image/jpeg', q);
     };
     img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Ce fichier n’est pas une image lisible.')); };
     img.src = url;
@@ -631,8 +778,8 @@ const Remote = {
   async getProfile(){ return this.ok(await this.sb.from('profiles').select('*').eq('id', this.user.id).maybeSingle()) || { id:this.user.id, display_name:'', settings:{} }; },
   async updateProfile(patch){ return this.ok(await this.sb.from('profiles').update(patch).eq('id', this.user.id).select().single()); },
   async listWorkspaces(){
-    const rows = this.ok(await this.sb.from('workspace_members').select('role, workspaces(*)').eq('user_id', this.user.id));
-    return rows.filter(r => r.workspaces).map(r => ({ ...r.workspaces, role:r.role }));
+    const rows = this.ok(await this.sb.from('workspace_members').select('role, can_approve, workspaces(*)').eq('user_id', this.user.id));
+    return rows.filter(r => r.workspaces).map(r => ({ ...r.workspaces, role:r.role, can_approve:r.can_approve }));
   },
   async createWorkspace(name){ return this.ok(await this.sb.rpc('create_workspace', { p_name:name })); },
   async joinWorkspace(code){ return this.ok(await this.sb.rpc('join_workspace', { p_code:code })); },
@@ -640,20 +787,23 @@ const Remote = {
   async deleteWorkspace(id){ this.ok(await this.sb.from('workspaces').delete().eq('id', id)); },
   async leaveWorkspace(id){ this.ok(await this.sb.from('workspace_members').delete().eq('workspace_id', id).eq('user_id', this.user.id)); },
   async listMembers(ws){
-    const m = this.ok(await this.sb.from('workspace_members').select('user_id, role, joined_at').eq('workspace_id', ws));
+    const m = this.ok(await this.sb.from('workspace_members').select('user_id, role, can_approve, joined_at').eq('workspace_id', ws));
     const p = m.length ? this.ok(await this.sb.from('profiles').select('id, display_name').in('id', m.map(x => x.user_id))) : [];
     return m.map(x => ({ ...x, display_name:(p.find(y => y.id === x.user_id) || {}).display_name || 'Membre' }));
   },
   async setRole(ws, user, role){ this.ok(await this.sb.from('workspace_members').update({ role }).eq('workspace_id', ws).eq('user_id', user)); },
+  async setApprover(ws, user, val){ this.ok(await this.sb.from('workspace_members').update({ can_approve:val }).eq('workspace_id', ws).eq('user_id', user)); },
   async removeMember(ws, user){ this.ok(await this.sb.from('workspace_members').delete().eq('workspace_id', ws).eq('user_id', user)); },
   async loadWorkspace(ws){
-    const [p, c, d, v] = await Promise.all([
+    const [p, c, d, v, a, l] = await Promise.all([
       this.sb.from('posts').select('*').eq('workspace_id', ws),
       this.sb.from('campaigns').select('*').eq('workspace_id', ws),
       this.sb.from('day_marks').select('day, type').eq('workspace_id', ws),
-      this.sb.from('saved_views').select('*').eq('workspace_id', ws).eq('user_id', this.user.id)
+      this.sb.from('saved_views').select('*').eq('workspace_id', ws).eq('user_id', this.user.id),
+      this.sb.from('media_assets').select('*').eq('workspace_id', ws).order('created_at', { ascending:false }),
+      this.sb.from('share_links').select('*').eq('workspace_id', ws).order('created_at', { ascending:false })
     ]);
-    return { posts:this.ok(p), campaigns:this.ok(c), marks:this.ok(d), views:this.ok(v) };
+    return { posts:this.ok(p), campaigns:this.ok(c), marks:this.ok(d), views:this.ok(v), assets:this.ok(a), links:this.ok(l) };
   },
   async insert(table, row){ return this.ok(await this.sb.from(table).insert(row).select().single()); },
   async update(table, id, patch){ return this.ok(await this.sb.from(table).update(patch).eq('id', id).select().single()); },
@@ -675,9 +825,31 @@ const Remote = {
     this.urlCache.set(path, { url:d.signedUrl, exp:Date.now() + 3300e3 }); return d.signedUrl;
   },
   async removeMedia(path){ try { await this.sb.storage.from('media').remove([path]); } catch (e) {} },
+  async mediaUrls(paths){
+    const out = {}, need = [];
+    for (const p of paths) { const h = this.urlCache.get(p); if (h && h.exp > Date.now()) out[p] = h.url; else need.push(p); }
+    if (need.length) {
+      const { data, error } = await this.sb.storage.from('media').createSignedUrls(need, 3600);
+      if (!error) (data || []).forEach(d => { if (d.signedUrl) { out[d.path] = d.signedUrl; this.urlCache.set(d.path, { url:d.signedUrl, exp:Date.now() + 3300e3 }); } });
+    }
+    return out;
+  },
+  async loadThread(post){
+    const [c, e, r] = await Promise.all([
+      this.sb.from('post_comments').select('*').eq('post_id', post).order('created_at'),
+      this.sb.from('post_events').select('*').eq('post_id', post).order('created_at'),
+      this.sb.from('post_reviews').select('*').eq('post_id', post).order('created_at')
+    ]);
+    return { comments:this.ok(c), events:this.ok(e), reviews:this.ok(r) };
+  },
+  async addComment(ws, post, body){ return this.insert('post_comments', { workspace_id:ws, post_id:post, body }); },
+  async approvePost(post, decision, comment){ return this.ok(await this.sb.rpc('approve_post', { p_post:post, p_decision:decision, p_comment:comment || null })); },
+  async setLock(post, locked){ this.ok(await this.sb.rpc('set_post_lock', { p_post:post, p_locked:locked })); },
+  async reviewGet(token){ return this.ok(await this.sb.rpc('review_get', { p_token:token })); },
+  async reviewAct(token, post, name, decision, comment){ return this.ok(await this.sb.rpc('review_act', { p_token:token, p_post:post, p_name:name, p_decision:decision || null, p_comment:comment || null })); },
   subscribe(ws, cb){
     const ch = this.sb.channel('ws-' + ws);
-    ['posts','campaigns','day_marks'].forEach(t => ch.on('postgres_changes', { event:'*', schema:'public', table:t, filter:`workspace_id=eq.${ws}` }, () => cb(t)));
+    ['posts','campaigns','day_marks','post_comments','post_reviews','media_assets'].forEach(t => ch.on('postgres_changes', { event:'*', schema:'public', table:t, filter:`workspace_id=eq.${ws}` }, () => cb(t)));
     ch.subscribe(); return () => this.sb.removeChannel(ch);
   }
 };
@@ -699,6 +871,8 @@ const Local = {
       };
       this.save();
     }
+    ['media_assets','share_links','post_comments','post_events','post_reviews'].forEach(k => { if (!this.db[k]) this.db[k] = []; });
+    this.db.posts.forEach(p => { if (!p.media_paths) p.media_paths = p.media_path ? [p.media_path] : []; if (p.locked == null) p.locked = false; if (p.review_cycle == null) p.review_cycle = 0; });
   },
   save(){
     try { localStorage.setItem(LS.local, JSON.stringify(this.db)); }
@@ -709,7 +883,7 @@ const Local = {
   async signOut(){ localStorage.removeItem(LS.cfg); location.reload(); },
   async getProfile(){ return this.db.profiles[0]; },
   async updateProfile(patch){ Object.assign(this.db.profiles[0], patch); this.save(); return this.db.profiles[0]; },
-  async listWorkspaces(){ return this.db.workspaces.map(w => ({ ...w, role:(this.db.workspace_members.find(m => m.workspace_id === w.id) || {}).role || 'owner' })); },
+  async listWorkspaces(){ return this.db.workspaces.map(w => ({ ...w, can_approve:true, role:(this.db.workspace_members.find(m => m.workspace_id === w.id) || {}).role || 'owner' })); },
   async createWorkspace(name){
     const w = { id:uid(), name, kind:'team', owner_id:this.user.id, invite_code:Math.random().toString(36).slice(2, 8).toUpperCase(), settings:clone(DEFAULT_WS_SETTINGS), created_at:new Date().toISOString() };
     this.db.workspaces.push(w); this.db.workspace_members.push({ workspace_id:w.id, user_id:this.user.id, role:'owner' }); this.save(); return w;
@@ -719,21 +893,38 @@ const Local = {
   async deleteWorkspace(id){
     const d = this.db;
     d.workspaces = d.workspaces.filter(x => x.id !== id); d.workspace_members = d.workspace_members.filter(x => x.workspace_id !== id);
-    ['posts','campaigns','day_marks','saved_views'].forEach(t => d[t] = d[t].filter(x => x.workspace_id !== id)); this.save();
+    ['posts','campaigns','day_marks','saved_views','media_assets','share_links','post_comments','post_events','post_reviews'].forEach(t => d[t] = d[t].filter(x => x.workspace_id !== id)); this.save();
   },
   async leaveWorkspace(id){ return this.deleteWorkspace(id); },
-  async listMembers(ws){ return [{ user_id:this.user.id, role:'owner', display_name:this.db.profiles[0].display_name }]; },
+  async listMembers(ws){ return [{ user_id:this.user.id, role:'owner', can_approve:true, display_name:this.db.profiles[0].display_name }]; },
+  async setApprover(){},
   async setRole(){}, async removeMember(){},
   async loadWorkspace(ws){
     const f = t => clone(this.db[t].filter(x => x.workspace_id === ws));
-    return { posts:f('posts'), campaigns:f('campaigns'), marks:f('day_marks'), views:f('saved_views') };
+    return { posts:f('posts'), campaigns:f('campaigns'), marks:f('day_marks'), views:f('saved_views'), assets:f('media_assets').reverse(), links:[] };
   },
   async insert(table, row){
     const r = { id:uid(), created_at:new Date().toISOString(), updated_at:new Date().toISOString(), created_by:this.user.id, ...row };
-    if (table === 'saved_views') r.user_id = this.user.id;
-    this.db[table].push(r); this.save(); return clone(r);
+    if (table === 'saved_views' || table === 'post_comments') r.user_id = this.user.id;
+    if (table === 'posts') { r.media_paths = r.media_paths || []; r.locked = !!r.locked; r.review_cycle = r.review_cycle || 0; }
+    this.db[table].push(r);
+    if (table === 'posts') this.log(r.id, r.workspace_id, 'created', { status:r.status, pub_date:r.pub_date });
+    this.save(); return clone(r);
   },
-  async update(table, id, patch){ const r = this.db[table].find(x => x.id === id); Object.assign(r, patch, { updated_at:new Date().toISOString() }); this.save(); return clone(r); },
+  log(post, ws, kind, detail){ this.db.post_events.push({ id:uid(), post_id:post, workspace_id:ws, user_id:this.user.id, kind, detail, created_at:new Date().toISOString() }); },
+  async update(table, id, patch){
+    const r = this.db[table].find(x => x.id === id), old = clone(r);
+    Object.assign(r, patch, { updated_at:new Date().toISOString() });
+    if (table === 'posts') {
+      const d = {};
+      if (old.status !== r.status) d.status = [old.status, r.status];
+      if (old.pub_date !== r.pub_date || old.pub_time !== r.pub_time) d.date = [old.pub_date, old.pub_time, r.pub_date, r.pub_time];
+      if (old.locked !== r.locked) d.locked = r.locked;
+      if (['title','body','channel','format'].some(k => old[k] !== r[k]) || JSON.stringify(old.media_paths) !== JSON.stringify(r.media_paths)) d.content = true;
+      if (Object.keys(d).length) this.log(r.id, r.workspace_id, 'updated', d);
+    }
+    this.save(); return clone(r);
+  },
   async remove(table, id){ this.db[table] = this.db[table].filter(x => x.id !== id); this.save(); },
   async setDayMark(ws, day, type){
     this.db.day_marks = this.db.day_marks.filter(x => !(x.workspace_id === ws && x.day === day));
@@ -747,6 +938,24 @@ const Local = {
   async uploadMedia(ws, blob){ const path = `${ws}/${uid()}.jpg`; this.db.media[path] = await blobToDataURL(await compressImage(blob, 900, .72)); this.save(); return path; },
   async mediaUrl(path){ return this.db.media[path] || ''; },
   async removeMedia(path){ delete this.db.media[path]; this.save(); },
+  async mediaUrls(paths){ const o = {}; paths.forEach(p => { if (this.db.media[p]) o[p] = this.db.media[p]; }); return o; },
+  async loadThread(post){ const f = t => clone(this.db[t].filter(x => x.post_id === post)); return { comments:f('post_comments'), events:f('post_events'), reviews:f('post_reviews') }; },
+  async addComment(ws, post, body){ return this.insert('post_comments', { workspace_id:ws, post_id:post, body }); },
+  async approvePost(post, decision, comment){
+    const p = this.db.posts.find(x => x.id === post), w = this.db.workspaces.find(x => x.id === p.workspace_id);
+    if (p.status !== 'a_valider') throw new Error('pas_en_validation');
+    if (decision === 'changes' && !(comment || '').trim()) throw new Error('commentaire_requis');
+    const n = Math.max(1, ((w.settings.validation || {}).steps || []).length);
+    const done = this.db.post_reviews.filter(r => r.post_id === post && r.cycle === p.review_cycle && r.decision === 'approved').length;
+    this.db.post_reviews.push({ id:uid(), post_id:post, workspace_id:p.workspace_id, cycle:p.review_cycle, step:done + 1, decision, user_id:this.user.id, comment:(comment || '').trim() || null, created_at:new Date().toISOString() });
+    let result = 'step';
+    if (decision === 'changes') { await this.update('posts', post, { status:'redaction' }); result = 'changes'; }
+    else if (done + 1 >= n) { await this.update('posts', post, { status:'programme', locked:true }); result = 'validated'; }
+    this.save(); return { result, step:done + 1, steps:n };
+  },
+  async setLock(post, locked){ const p = this.db.posts.find(x => x.id === post); await this.update('posts', post, locked ? { locked:true } : { locked:false, status:p.status === 'publie' ? 'publie' : 'redaction' }); },
+  async reviewGet(){ throw new Error('Les liens de validation nécessitent la version en ligne.'); },
+  async reviewAct(){ throw new Error('Les liens de validation nécessitent la version en ligne.'); },
   subscribe(){ return () => {}; }
 };
 </script>
@@ -758,7 +967,8 @@ const DEFAULT_PREFS = { theme:'dark', accent:'#F5D547', density:'confort', showA
 const VIEWS = [
   { id:'year', name:'Année', icon:'year', key:'1' }, { id:'month', name:'Mois', icon:'calendar', key:'2' },
   { id:'week', name:'Semaine', icon:'week', key:'3' }, { id:'list', name:'Liste', icon:'list', key:'4' },
-  { id:'kanban', name:'Tableau', icon:'kanban', key:'5' }
+  { id:'kanban', name:'Tableau', icon:'kanban', key:'5' }, { id:'grid', name:'Grille', icon:'grid', key:'6' },
+  { id:'media', name:'Médiathèque', icon:'image', key:'7' }
 ];
 const emptyFilters = () => ({ q:'', channels:[], statuses:[], labels:[], campaign:'' });
 const S = {
@@ -766,7 +976,8 @@ const S = {
   workspaces:[], ws:null, role:'viewer',
   posts:[], campaigns:[], marks:new Map(), views:[], activeView:'',
   view:'month', cursor:new Date(), sel:todayISO(), filters:emptyFilters(), filtersOpen:false,
-  ideasOpen:true, sideOpen:false, unsub:null
+  ideasOpen:true, sideOpen:false, unsub:null,
+  members:[], me:null, assets:[], links:[], gridChannel:'', mediaQ:'', mediaTag:'', openPostId:null
 };
 const canEdit = () => S.role === 'owner' || S.role === 'editor';
 const isOwner = () => S.role === 'owner';
@@ -810,7 +1021,15 @@ function errMsg(e){
     [/code_invalide/i, 'Ce code ne correspond à aucun espace. Vérifie-le auprès de la personne qui l’a partagé.'],
     [/Failed to fetch|NetworkError|Load failed/i, 'Connexion impossible. Vérifie ton réseau puis réessaie.'],
     [/row-level security|permission denied/i, 'Action refusée : ton rôle dans cet espace ne le permet pas.'],
-    [/relation .* does not exist|Could not find the table/i, 'La base n’est pas initialisée. Exécute schema.sql dans Supabase.']
+    [/relation .* does not exist|Could not find the table/i, 'La base n’est pas initialisée. Exécute schema.sql dans Supabase.'],
+    [/contenu_verrouille/i, 'Ce contenu est verrouillé après validation. Seul un approbateur peut le modifier.'],
+    [/reserve_approbateur/i, 'Action réservée aux approbateurs de cet espace.'],
+    [/validation_requise/i, 'Ce contenu doit d’abord passer par la validation avant d’être programmé.'],
+    [/pas_en_validation/i, 'Ce contenu n’est pas en attente de validation.'],
+    [/commentaire_requis/i, 'Écris un commentaire pour expliquer les modifications attendues.'],
+    [/lien_invalide/i, 'Ce lien de validation a expiré ou a été désactivé.'],
+    [/nom_requis/i, 'Indique ton nom avant de répondre.'],
+    [/decision_interdite/i, 'Ce lien permet de commenter, pas de valider.']
   ];
   for (const [re, fr] of map) if (re.test(m)) return fr;
   return m;
@@ -893,7 +1112,7 @@ function renderAuth(mode = 'login', msg = ''){
         if (d.session) { S.user = d.user; await enterApp(); }
         else renderAuth('login', { ok:true, text:'Compte créé. Ouvre le lien reçu par email pour l’activer, puis connecte-toi.' });
       } else if (mode === 'reset') { await S.be.resetPassword(email); out.className = 'form-ok'; out.textContent = 'Lien envoyé. Vérifie ta boîte mail (et les indésirables).'; }
-      else if (mode === 'newpass') { await S.be.updatePassword(pw); history.replaceState(null, '', location.pathname); S.user = S.be.user; await enterApp(); }
+      else if (mode === 'newpass') { await S.be.updatePassword(pw); history.replaceState(null, '', location.pathname); S.recovering = false; S.user = S.be.user; toast('Mot de passe enregistré'); await enterApp(); }
     } catch (err) { out.textContent = errMsg(err); }
     finally { btn.disabled = false; }
   });
@@ -908,16 +1127,29 @@ async function boot(){
   let cfg = null;
   if (CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY) cfg = { mode:'remote', url:CONFIG.SUPABASE_URL, key:CONFIG.SUPABASE_ANON_KEY };
   else { try { cfg = JSON.parse(localStorage.getItem(LS.cfg) || 'null'); } catch (e) {} }
+  const reviewToken = new URLSearchParams(location.search).get('v');
+  if (reviewToken && cfg && cfg.mode === 'remote') {
+    try { S.be = Remote; await Remote.init(cfg.url, cfg.key); return renderReview(reviewToken); }
+    catch (e) { $('#root').innerHTML = `<div class="gate"><div class="gate-form" style="grid-column:1/-1"><div class="gate-card"><h2>Lien indisponible</h2><p class="sub">${esc(errMsg(e))}</p></div></div></div>`; return; }
+  }
   if (!cfg) return renderSetup();
+  /* Lire le retour d'un lien email avant que Supabase ne nettoie l'adresse */
+  const hp = new URLSearchParams(location.hash.slice(1) || location.search.slice(1));
+  S.recovering = hp.get('type') === 'recovery';
+  const linkErr = hp.get('error_code') || hp.get('error');
   try {
     if (cfg.mode === 'local') { S.be = Local; await Local.init(); S.user = Local.user; return enterApp(); }
     S.be = Remote; await Remote.init(cfg.url, cfg.key);
     Remote.onAuth((ev, user) => {
       if (ev === 'PASSWORD_RECOVERY') { S.entered = false; return renderAuth('newpass'); }
       if (ev === 'SIGNED_OUT') { S.user = null; S.entered = false; stopSub(); renderAuth('login'); }
-      if (ev === 'SIGNED_IN' && user && !S.entered && !location.hash.includes('type=recovery')) { S.user = user; enterApp(); }
+      if (ev === 'SIGNED_IN' && user && !S.entered && !S.recovering) { S.user = user; enterApp(); }
     });
-    if (location.hash.includes('type=recovery')) return renderAuth('newpass');
+    if (linkErr || S.recovering) history.replaceState(null, '', location.pathname);
+    if (S.recovering && Remote.user) return renderAuth('newpass');
+    if (linkErr && !Remote.user) return renderAuth('login', /expired|otp|invalid/i.test(linkErr + hp.get('error_description'))
+      ? 'Ce lien n’est plus valable : il a déjà été utilisé ou a expiré. Ouvre le dernier email reçu (Gmail range les emails du même sujet dans une seule conversation), ou redemande un lien.'
+      : 'Le lien reçu par email n’a pas fonctionné. Redemande-en un.');
     if (Remote.user) { S.user = Remote.user; await enterApp(); } else renderAuth('login');
   } catch (e) {
     if (CONFIG.SUPABASE_URL) $('#root').innerHTML = `<div class="gate">${gateArt()}<div class="gate-form"><div class="gate-card"><h2>Connexion impossible</h2><p class="sub">${esc(errMsg(e))}</p><button class="btn primary" onclick="location.reload()">Réessayer</button></div></div></div>`;
@@ -955,8 +1187,14 @@ async function openWorkspace(id, render = true){
   S.ws = w; S.role = w.role;
   const d = await S.be.loadWorkspace(id);
   S.posts = d.posts; S.campaigns = d.campaigns; S.marks = new Map(d.marks.map(m => [m.day, m.type])); S.views = d.views;
-  S.filters = emptyFilters(); S.activeView = '';
-  stopSub(); S.unsub = S.be.subscribe(id, debounce(refreshWs, 500));
+  S.assets = d.assets || []; S.links = d.links || [];
+  S.posts.forEach(p => { if (!p.media_paths) p.media_paths = p.media_path ? [p.media_path] : []; });
+  try { S.members = await S.be.listMembers(id); } catch (e) { S.members = []; }
+  S.me = S.members.find(m => m.user_id === S.user.id) || { role:w.role, can_approve:w.can_approve };
+  S.filters = emptyFilters(); S.activeView = ''; S.gridChannel = '';
+  stopSub();
+  const refresh = debounce(refreshWs, 500);
+  S.unsub = S.be.subscribe(id, t => { if ((t === 'post_comments' || t === 'post_reviews') && S.openPostId) reloadThread(); refresh(); });
   if (S.prefs.lastWs !== id) setPref('lastWs', id);
   if (render) renderAll();
 }
@@ -966,6 +1204,8 @@ async function refreshWs(){
   try {
     const d = await S.be.loadWorkspace(S.ws.id);
     S.posts = d.posts; S.campaigns = d.campaigns; S.marks = new Map(d.marks.map(m => [m.day, m.type]));
+    S.assets = d.assets || S.assets; S.links = d.links || S.links;
+    S.posts.forEach(p => { if (!p.media_paths) p.media_paths = p.media_path ? [p.media_path] : []; });
     renderAll();
   } catch (e) {}
 }
@@ -1053,6 +1293,8 @@ function renderSide(){
 }
 function periodTitle(){
   const c = S.cursor, y = c.getFullYear(), m = c.getMonth();
+  if (S.view === 'grid') return 'Grille';
+  if (S.view === 'media') return 'Médiathèque';
   if (S.view === 'year') {
     if (S.prefs.yearMode === 'school') { const s = m >= 8 ? y : y - 1; return `${s}<span>-${s + 1}</span>`; }
     return `${y}`;
@@ -1070,13 +1312,14 @@ function rhythmHTML(days){
 }
 function renderToolbar(){
   const c = S.cursor;
-  const days = S.view === 'week' ? [...Array(7)].map((_, i) => iso(addDays(startOfWeek(c), i))) : S.view === 'year' ? [] : monthDays(c.getFullYear(), c.getMonth());
+  const noNav = S.view === 'grid' || S.view === 'media';
+  const days = noNav ? [] : S.view === 'week' ? [...Array(7)].map((_, i) => iso(addDays(startOfWeek(c), i))) : S.view === 'year' ? [] : monthDays(c.getFullYear(), c.getMonth());
   const fc = filterCount();
   $('#toolbar').innerHTML = `
     <button class="icon-btn menu-btn" data-action="toggle-side" aria-label="Ouvrir le menu">${I('menu')}</button>
     <div class="period"><h1>${periodTitle()}</h1>${rhythmHTML(days)}</div>
     <div class="tools">
-      <div class="navarrows">
+      <div class="navarrows" ${noNav ? 'hidden' : ''}>
         <button class="icon-btn" data-action="prev" aria-label="Période précédente">${I('left')}</button>
         <button class="btn ghost sm" data-action="today">Aujourd’hui</button>
         <button class="icon-btn" data-action="next" aria-label="Période suivante">${I('right')}</button>
@@ -1104,24 +1347,27 @@ function renderFilters(){
     ${S.activeView ? `<button class="btn ghost sm danger" data-action="del-view">Supprimer cette vue</button>` : ''}`;
 }
 function renderTabbar(){
-  $('#tabbar').innerHTML = VIEWS.map(v => `<button data-action="set-view" data-view="${v.id}" aria-current="${S.view === v.id}">${I(v.icon)}${v.name}</button>`).join('');
+  const tabs = ['year','month','list','grid'].map(id => VIEWS.find(v => v.id === id));
+  $('#tabbar').innerHTML = tabs.map(v => `<button data-action="set-view" data-view="${v.id}" aria-current="${S.view === v.id}">${I(v.icon)}${v.name}</button>`).join('')
+    + `<button data-action="toggle-side" aria-current="${['week','kanban','media'].includes(S.view)}">${I('menu')}Plus</button>`;
 }
 function renderView(){
   const v = $('#view'); if (!v) return;
-  const fn = { year:viewYear, month:viewMonth, week:viewWeek, list:viewList, kanban:viewKanban }[S.view] || viewMonth;
+  const fn = { year:viewYear, month:viewMonth, week:viewWeek, list:viewList, kanban:viewKanban, grid:viewGrid, media:viewMedia }[S.view] || viewMonth;
   v.innerHTML = fn();
+  hydrateMedia(v);
 }
 
 /* ---------- Éléments réutilisables ---------- */
 function chipHTML(p){
   const c = chan(p.channel);
-  return `<button class="chip st-${p.status}" style="--ch:${esc(c.color)}" data-drag="${p.id}" data-action="open-post" data-id="${p.id}" title="${esc((p.title || 'Sans titre') + ', ' + c.name + ', ' + statusName(p.status))}"><span class="dot"></span><span class="t">${p.pub_time ? `<span class="tm">${fmtTime(p.pub_time)}</span> ` : ''}${esc(p.title || 'Sans titre')}</span></button>`;
+  return `<button class="chip st-${p.status}" style="--ch:${esc(c.color)}" data-drag="${p.id}" data-action="open-post" data-id="${p.id}" title="${esc((p.title || 'Sans titre') + ', ' + c.name + ', ' + statusName(p.status))}"><span class="dot"></span><span class="t">${p.locked ? I('lock') : ''}${p.pub_time ? `<span class="tm">${fmtTime(p.pub_time)}</span> ` : ''}${esc(p.title || 'Sans titre')}</span></button>`;
 }
 function cardHTML(p, o = {}){
   const c = chan(p.channel), camp = S.campaigns.find(x => x.id === p.campaign_id);
   return `<button class="card st-${p.status}" style="--ch:${esc(c.color)}" data-drag="${p.id}" data-action="open-post" data-id="${p.id}">
     <span class="top"><span class="dot" style="--c:${esc(c.color)}"></span>${esc(c.name)}${o.showDate ? `<span class="faint">${p.pub_date ? fmtShort(p.pub_date) : 'Sans date'}</span>` : ''}${p.pub_time ? `<span>${fmtTime(p.pub_time)}</span>` : ''}<span class="fmt">${esc(p.format || '')}</span></span>
-    <span class="ttl">${esc(p.title || 'Sans titre')}</span>
+    <span class="ttl">${p.locked ? I('lock') + ' ' : ''}${esc(p.title || 'Sans titre')}</span>
     <span class="meta"><span class="pill status-pill"><span class="dot"></span>${statusName(p.status)}</span>${camp ? `<span class="pill"><span class="dot" style="--c:${esc(camp.color)}"></span>${esc(camp.name)}</span>` : ''}${(p.labels || []).slice(0, 3).map(l => `<span class="pill">${esc(l)}</span>`).join('')}</span>
   </button>`;
 }
@@ -1262,10 +1508,10 @@ function openModal({ title, body, footer = '', wide = false, onMount }){
     <div class="modal-body">${body}</div>${footer ? `<footer>${footer}</footer>` : ''}</div>`;
   S.lastFocus = document.activeElement;
   const m = $('.modal', root); onMount && onMount(m);
-  const first = m.querySelector('input:not([type=hidden]):not([disabled]), textarea, select, button.primary'); if (first && !mobile()) first.focus();
+  const first = m.querySelector('input:not([type=hidden]):not([disabled]), textarea, select, button.primary'); if (first && !mobile() && first.offsetParent) first.focus({ preventScroll:true });
   return m;
 }
-function closeModal(){ $('#modal-root').innerHTML = ''; S.lastFocus?.focus?.(); }
+function closeModal(){ $('#modal-root').innerHTML = ''; S.openPostId = null; closePicker?.(); S.lastFocus?.focus?.(); }
 function openPopover(anchor, html, onMount){
   closePopover();
   const p = document.createElement('div'); p.className = 'popover'; p.setAttribute('role', 'menu'); p.innerHTML = html; document.body.appendChild(p);
@@ -1277,103 +1523,7 @@ function openPopover(anchor, html, onMount){
 }
 function closePopover(){ $('.popover')?.remove(); S.popAnchor = null; }
 
-/* ---------- Fiche contenu ---------- */
-function openPost(id, preset = {}){
-  const existing = id ? S.posts.find(x => x.id === id) : null;
-  if (id && !existing) return;
-  const chs = S.ws.settings.channels, fmts = S.ws.settings.formats || [];
-  const p = existing || { title:'', body:'', channel:chs[0]?.id || null, format:fmts[0] || null, status:preset.date ? 'redaction' : 'idee', pub_date:preset.date || null, pub_time:null, labels:[], campaign_id:S.filters.campaign || null, media_path:null, link:'', notes:'' };
-  const ro = !canEdit(), dis = ro ? 'disabled' : '';
-  const st = { labels:[...(p.labels || [])], status:p.status, channel:p.channel, blob:null, dropMedia:false };
-  const body = `<form id="post-form" class="modal-body" style="padding:0;gap:16px" autocomplete="off">
-    <label class="field"><span>Titre</span><input class="input" name="title" value="${esc(p.title)}" placeholder="Ex. Coulisses du shooting de lancement" ${dis} maxlength="200"></label>
-    <div class="field"><span>Statut</span><div class="status-pick" role="radiogroup" aria-label="Statut">${STATUSES.map(s => `<button type="button" class="toggle-chip st-${s.id}" data-st="${s.id}" role="radio" aria-pressed="${st.status === s.id}" aria-checked="${st.status === s.id}" ${dis}><span class="dot"></span>${s.name}</button>`).join('')}</div></div>
-    <div class="field"><span>Canal</span><div class="chan-pick" role="radiogroup" aria-label="Canal">${chs.map(c => `<button type="button" class="toggle-chip" style="--c:${esc(c.color)}" data-ch="${esc(c.id)}" role="radio" aria-pressed="${st.channel === c.id}" aria-checked="${st.channel === c.id}" ${dis}><span class="dot"></span>${esc(c.name)}</button>`).join('')}</div></div>
-    <div class="grid2">
-      <label class="field"><span>Format</span><select class="select" name="format" ${dis}><option value="">Aucun</option>${fmts.map(f => `<option ${p.format === f ? 'selected' : ''}>${esc(f)}</option>`).join('')}${p.format && !fmts.includes(p.format) ? `<option selected>${esc(p.format)}</option>` : ''}</select></label>
-      <label class="field"><span>Campagne</span><select class="select" name="campaign_id" ${dis}><option value="">Aucune</option>${S.campaigns.map(c => `<option value="${c.id}" ${p.campaign_id === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></label>
-    </div>
-    <div class="grid2">
-      <label class="field"><span>Date de publication</span><input class="input" type="date" name="pub_date" value="${p.pub_date || ''}" ${dis}></label>
-      <label class="field"><span>Heure</span><input class="input" type="time" name="pub_time" value="${p.pub_time ? p.pub_time.slice(0, 5) : ''}" ${dis}></label>
-    </div>
-    <p class="meta-line" style="margin:-8px 0 0">Sans date, le contenu reste dans la boîte à idées.</p>
-    <div class="field"><span>Étiquettes</span><div class="tags" id="tags"></div><datalist id="label-list">${allLabels().map(l => `<option value="${esc(l)}">`).join('')}</datalist></div>
-    <label class="field"><span>Texte de la publication</span><textarea class="textarea" name="body" placeholder="Légende, accroche, hashtags…" ${dis}>${esc(p.body || '')}</textarea></label>
-    <div class="counter" id="counter"></div>
-    <div class="field"><span>Visuel</span><label class="media-drop" id="media-drop">${ro ? '' : '<input type="file" accept="image/*" name="media" aria-label="Choisir un visuel">'}<span id="media-inner">${I('image')}<span>${ro ? 'Aucun visuel' : 'Ajouter une image (JPG, PNG, HEIC converti)'}</span></span></label>
-      ${ro ? '' : `<button type="button" class="btn ghost sm" id="media-remove" hidden style="justify-self:start">${I('trash')}Retirer le visuel</button>`}</div>
-    <label class="field"><span>Lien</span><input class="input" type="url" name="link" value="${esc(p.link || '')}" placeholder="https://" ${dis} inputmode="url"></label>
-    <label class="field"><span>Notes internes</span><textarea class="textarea" name="notes" style="min-height:80px" placeholder="Brief, idées de visuels, contraintes…" ${dis}>${esc(p.notes || '')}</textarea></label>
-    ${existing ? `<p class="meta-line">Créé le ${new Date(p.created_at).toLocaleDateString('fr-FR')}${p.updated_at ? ', modifié le ' + new Date(p.updated_at).toLocaleDateString('fr-FR') : ''}</p>` : ''}
-  </form>`;
-  const footer = ro ? `<span class="spacer"></span><button class="btn" data-action="close-modal">Fermer</button>`
-    : `${existing ? `<button class="btn ghost danger sm" id="post-del">${I('trash')}Supprimer</button><button class="btn ghost sm" id="post-dup">${I('copy')}Dupliquer</button>` : ''}<span class="spacer"></span><button class="btn" data-action="close-modal">Annuler</button><button class="btn primary" id="post-save">${existing ? 'Enregistrer' : 'Créer le contenu'}</button>`;
-  openModal({ title:existing ? (ro ? 'Contenu' : 'Modifier le contenu') : 'Nouveau contenu', wide:true, body, footer, onMount(m){
-    const form = $('#post-form', m);
-    const drawTags = () => {
-      $('#tags', m).innerHTML = st.labels.map((l, i) => `<span class="tag">${esc(l)}${ro ? '' : `<button type="button" data-rm="${i}" aria-label="Retirer ${esc(l)}">${I('x')}</button>`}</span>`).join('')
-        + (ro ? '' : `<input list="label-list" id="tag-in" placeholder="${st.labels.length ? '' : 'Ajouter une étiquette puis Entrée'}" aria-label="Nouvelle étiquette">`);
-      const tin = $('#tag-in', m); if (!tin) return;
-      const add = () => { const v = tin.value.trim().replace(/,$/, ''); if (v && !st.labels.includes(v)) st.labels.push(v); tin.value = ''; drawTags(); $('#tag-in', m).focus(); };
-      tin.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); add(); } else if (e.key === 'Backspace' && !tin.value && st.labels.length) { st.labels.pop(); drawTags(); $('#tag-in', m).focus(); } });
-      tin.addEventListener('change', () => { if (tin.value.trim()) add(); });
-    };
-    drawTags();
-    $('#tags', m).addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (b) { st.labels.splice(+b.dataset.rm, 1); drawTags(); } });
-    const count = () => {
-      const n = form.body.value.length, c = chan(st.channel), lim = CHAR_LIMITS[(c.id || '').toLowerCase()] || CHAR_LIMITS[(c.name || '').toLowerCase()];
-      const el = $('#counter', m); el.textContent = lim ? `${n} / ${lim} caractères pour ${c.name}` : `${n} caractères`; el.classList.toggle('over', !!lim && n > lim);
-    };
-    form.body.addEventListener('input', count); count();
-    $$('[data-st]', m).forEach(b => b.addEventListener('click', () => { st.status = b.dataset.st; $$('[data-st]', m).forEach(x => { x.setAttribute('aria-pressed', x === b); x.setAttribute('aria-checked', x === b); }); }));
-    $$('[data-ch]', m).forEach(b => b.addEventListener('click', () => { st.channel = st.channel === b.dataset.ch ? null : b.dataset.ch; $$('[data-ch]', m).forEach(x => { const on = x.dataset.ch === st.channel; x.setAttribute('aria-pressed', on); x.setAttribute('aria-checked', on); }); count(); }));
-    const inner = $('#media-inner', m), rmBtn = $('#media-remove', m);
-    const showImg = url => { inner.innerHTML = `<img src="${esc(url)}" alt="Aperçu du visuel">`; if (rmBtn) rmBtn.hidden = false; };
-    if (p.media_path) S.be.mediaUrl(p.media_path).then(u => u && !st.dropMedia && !st.blob && showImg(u)).catch(() => {});
-    const fileIn = form.querySelector('[name=media]');
-    fileIn?.addEventListener('change', async () => {
-      const f = fileIn.files[0]; if (!f) return;
-      try { st.blob = await compressImage(f); st.dropMedia = false; showImg(URL.createObjectURL(st.blob)); } catch (e) { toast(errMsg(e), 'err'); }
-    });
-    rmBtn?.addEventListener('click', () => { st.blob = null; st.dropMedia = true; if (fileIn) fileIn.value = ''; inner.innerHTML = `${I('image')}<span>Ajouter une image</span>`; rmBtn.hidden = true; });
-    const save = async () => {
-      const btn = $('#post-save', m); btn.disabled = true;
-      try {
-        const f = new FormData(form);
-        const row = {
-          title:(f.get('title') || '').trim(), body:f.get('body') || '', channel:st.channel, format:f.get('format') || null, status:st.status,
-          pub_date:f.get('pub_date') || null, pub_time:f.get('pub_time') || null, labels:st.labels, campaign_id:f.get('campaign_id') || null,
-          link:(f.get('link') || '').trim() || null, notes:f.get('notes') || null
-        };
-        if (!row.pub_date) row.pub_time = null;
-        const oldPath = existing?.media_path;
-        if (st.blob) row.media_path = await S.be.uploadMedia(S.ws.id, st.blob);
-        else if (st.dropMedia) row.media_path = null;
-        let r;
-        if (existing) { r = await S.be.update('posts', existing.id, row); Object.assign(existing, r); }
-        else { r = await S.be.insert('posts', { ...row, workspace_id:S.ws.id }); S.posts.push(r); }
-        if (oldPath && (st.blob || st.dropMedia)) S.be.removeMedia(oldPath);
-        closeModal(); renderAll(); toast(existing ? 'Contenu enregistré' : (row.pub_date ? `Contenu planifié le ${fmtShort(row.pub_date)}` : 'Idée ajoutée à la boîte à idées'));
-      } catch (e) { toast(errMsg(e), 'err'); btn.disabled = false; }
-    };
-    $('#post-save', m)?.addEventListener('click', save);
-    form.addEventListener('submit', e => { e.preventDefault(); save(); });
-    form.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); save(); } });
-    $('#post-del', m)?.addEventListener('click', async () => {
-      if (!confirm('Supprimer ce contenu ? Cette action est définitive.')) return;
-      try { await S.be.remove('posts', existing.id); if (existing.media_path) S.be.removeMedia(existing.media_path); S.posts = S.posts.filter(x => x.id !== existing.id); closeModal(); renderAll(); toast('Contenu supprimé'); }
-      catch (e) { toast(errMsg(e), 'err'); }
-    });
-    $('#post-dup', m)?.addEventListener('click', async () => {
-      try {
-        const { id:_i, created_at:_c, updated_at:_u, created_by:_b, media_path:_m, ...rest } = existing;
-        const r = await S.be.insert('posts', { ...rest, title:(existing.title || 'Sans titre') + ' (copie)', status:'redaction', media_path:null });
-        S.posts.push(r); renderAll(); toast('Contenu dupliqué'); openPost(r.id);
-      } catch (e) { toast(errMsg(e), 'err'); }
-    });
-  } });
-}
+/* Fiche contenu : voir la partie V2 */
 function openDayList(d){
   const ps = byDate().get(d) || [];
   openModal({ title:fmtDay(d), body:`<div class="day-list">${ps.map(p => cardHTML(p)).join('') || '<p class="muted">Rien de prévu ce jour.</p>'}</div>`,
@@ -1397,7 +1547,7 @@ function openCampaign(id, preset = {}){
     <label class="field"><span>Objectif ou description</span><textarea class="textarea" name="description" style="min-height:90px" ${dis}>${esc(c.description || '')}</textarea></label>
     ${ex ? `<p class="meta-line">${n} contenu${n > 1 ? 's' : ''} rattaché${n > 1 ? 's' : ''} à cette campagne.</p>` : ''}
   </form>`,
-  footer:`${ex ? `<button class="btn ghost sm" id="camp-filter">${I('filter')}Voir ses contenus</button>` : ''}${ex && !ro ? `<button class="btn ghost danger sm" id="camp-del">${I('trash')}Supprimer</button>` : ''}<span class="spacer"></span><button class="btn" data-action="close-modal">${ro ? 'Fermer' : 'Annuler'}</button>${ro ? '' : `<button class="btn primary" id="camp-save">${ex ? 'Enregistrer' : 'Créer la campagne'}</button>`}`,
+  footer:`${ex ? `<button class="btn ghost sm" id="camp-filter">${I('filter')}Voir ses contenus</button>` : ''}${ex && canEdit() ? `<button class="btn ghost sm" id="camp-share">${I('share')}Lien de validation</button>` : ''}${ex && !ro ? `<button class="btn ghost danger sm" id="camp-del">${I('trash')}Supprimer</button>` : ''}<span class="spacer"></span><button class="btn" data-action="close-modal">${ro ? 'Fermer' : 'Annuler'}</button>${ro ? '' : `<button class="btn primary" id="camp-save">${ex ? 'Enregistrer' : 'Créer la campagne'}</button>`}`,
   onMount(m){
     const form = $('#camp-form', m);
     $$('[data-kind]', m).forEach(b => b.addEventListener('click', () => { st.kind = b.dataset.kind; $$('[data-kind]', m).forEach(x => x.setAttribute('aria-pressed', x === b)); }));
@@ -1420,6 +1570,7 @@ function openCampaign(id, preset = {}){
       try { await S.be.remove('campaigns', ex.id); S.campaigns = S.campaigns.filter(x => x.id !== ex.id); S.posts.forEach(p => { if (p.campaign_id === ex.id) p.campaign_id = null; }); if (S.filters.campaign === ex.id) S.filters.campaign = ''; closeModal(); renderAll(); toast('Campagne supprimée'); }
       catch (err) { toast(errMsg(err), 'err'); }
     });
+    $('#camp-share', m)?.addEventListener('click', () => openShare({ campaign_id:ex.id }));
     $('#camp-filter', m)?.addEventListener('click', () => { S.filters = { ...emptyFilters(), campaign:ex.id }; S.filtersOpen = true; S.activeView = ''; S.cursor = parseISO(ex.start_date); if (S.view === 'year') S.view = 'month'; closeModal(); renderAll(); });
   } });
 }
@@ -1475,80 +1626,7 @@ function openJoinWs(){
     $('#join-go', m).addEventListener('click', go); form.addEventListener('submit', e => { e.preventDefault(); go(); });
   } });
 }
-async function openWsSettings(tab = 'general'){
-  const w = S.ws, owner = isOwner();
-  const tabs = [['general', 'Général'], ...(w.kind === 'team' ? [['members', 'Membres']] : []), ['channels', 'Canaux et formats'], ['alternance', 'Calque alternance']];
-  const counts = ALT_TYPES.map(t => ({ ...t, n:[...S.marks.values()].filter(v => v === t.id).length })).filter(t => t.n);
-  const panes = {
-    general:`<label class="field"><span>Nom de l’espace</span><div class="row"><input class="input" id="ws-name" value="${esc(w.name)}" ${owner ? '' : 'disabled'} maxlength="80">${owner ? '<button class="btn" id="ws-rename">Renommer</button>' : ''}</div></label>
-      ${w.kind === 'team' ? `<div class="field"><span>Code d’invitation</span><div class="code-box"><b>${esc(w.invite_code || '')}</b><button class="btn sm" id="ws-copy">${I('copy')}Copier</button></div>
-        <p class="meta-line" style="margin:0">Partage ce code avec ta classe : chacun le saisit dans « Rejoindre avec un code ».</p></div>` : `<p class="note">Ton espace personnel est privé. Pour travailler à plusieurs, crée un espace d’équipe depuis le sélecteur d’espaces.</p>`}
-      ${w.kind === 'team' ? (owner ? `<button class="btn danger" id="ws-delete" style="justify-self:start">${I('trash')}Supprimer l’espace et ses contenus</button>` : `<button class="btn danger" id="ws-leave" style="justify-self:start">${I('logout')}Quitter l’espace</button>`) : ''}`,
-    members:`<div id="members"><p class="muted">Chargement des membres…</p></div>
-      <p class="note">Propriétaire : gère l’espace. Éditeur : crée et modifie les contenus. Lecteur : consulte seulement.</p>`,
-    channels:`${owner ? '' : '<p class="note">Seul le propriétaire de l’espace modifie les canaux et les formats.</p>'}
-      <div class="field"><span>Canaux</span><div class="editable-list" id="ch-list"></div>${owner ? `<button class="btn ghost sm" id="ch-add" style="justify-self:start">${I('plus')}Ajouter un canal</button>` : ''}</div>
-      <label class="field"><span>Formats (un par ligne)</span><textarea class="textarea" id="fmt-list" ${owner ? '' : 'disabled'}>${esc((w.settings.formats || []).join('\n'))}</textarea></label>
-      ${owner ? '<button class="btn primary" id="ch-save" style="justify-self:start">Enregistrer les canaux et formats</button>' : ''}`,
-    alternance:`<p class="muted" style="margin:0">Le calque colore chaque jour selon ton rythme : formation, entreprise, férié, examen ou vacances. Tu peux modifier un jour précis en touchant son numéro dans la vue Mois.</p>
-      ${counts.length ? `<div class="legend" style="padding:0">${counts.map(t => `<span><i style="--c:var(--alt-${t.id})"></i>${t.name} : ${t.n} jour${t.n > 1 ? 's' : ''}</span>`).join('')}</div>` : '<p class="note">Aucun jour marqué pour l’instant.</p>'}
-      ${canEdit() ? `<div class="note"><b style="color:var(--text)">Planning préchargé</b><br>${esc(PRESET_ALT.name)}.</div>
-      <div class="row" style="flex-wrap:wrap"><button class="btn primary" id="alt-import">${S.marks.size ? 'Réappliquer le planning de la classe' : 'Importer le planning de la classe'}</button>${S.marks.size ? `<button class="btn danger" id="alt-clear">Effacer le calque</button>` : ''}</div>` : ''}`
-  };
-  openModal({ title:`Réglages de l’espace`, wide:true, body:`<div class="tabs" role="tablist">${tabs.map(([id, n]) => `<button role="tab" data-tab="${id}" aria-selected="${tab === id}">${n}</button>`).join('')}</div><div id="ws-pane" style="display:grid;gap:16px">${panes[tab]}</div>`,
-  onMount(m){
-    $$('[data-tab]', m).forEach(b => b.addEventListener('click', () => openWsSettings(b.dataset.tab)));
-    $('#ws-rename', m)?.addEventListener('click', async () => {
-      const name = $('#ws-name', m).value.trim(); if (!name) return;
-      try { Object.assign(w, await S.be.updateWorkspace(w.id, { name })); const li = S.workspaces.find(x => x.id === w.id); if (li) li.name = name; renderAll(); toast('Espace renommé'); } catch (e) { toast(errMsg(e), 'err'); }
-    });
-    $('#ws-copy', m)?.addEventListener('click', () => { navigator.clipboard?.writeText(w.invite_code).then(() => toast('Code copié'), () => toast('Copie impossible : note le code à la main.', 'err')); });
-    $('#ws-delete', m)?.addEventListener('click', async () => {
-      if (prompt(`Pour confirmer, tape le nom de l’espace : ${w.name}`) !== w.name) return toast('Suppression annulée.');
-      try { await S.be.deleteWorkspace(w.id); closeModal(); await loadWorkspaces(null); renderAll(); toast('Espace supprimé'); } catch (e) { toast(errMsg(e), 'err'); }
-    });
-    $('#ws-leave', m)?.addEventListener('click', async () => {
-      if (!confirm(`Quitter « ${w.name} » ? Tu pourras revenir avec le code d’invitation.`)) return;
-      try { await S.be.leaveWorkspace(w.id); closeModal(); await loadWorkspaces(null); renderAll(); toast('Tu as quitté l’espace'); } catch (e) { toast(errMsg(e), 'err'); }
-    });
-    if (tab === 'members') {
-      S.be.listMembers(w.id).then(list => {
-        const box = $('#members', m); if (!box) return;
-        box.innerHTML = list.sort((a, b) => (a.role === 'owner' ? -1 : 1)).map(x => `<div class="member"><span class="ava">${esc(initials(x.display_name))}</span><span class="who"><b>${esc(x.display_name)}${x.user_id === S.user.id ? ' (toi)' : ''}</b><small>${{ owner:'Propriétaire', editor:'Éditeur', viewer:'Lecteur' }[x.role]}</small></span>
-          ${owner && x.user_id !== S.user.id ? `<select class="select" data-role="${x.user_id}" style="width:auto;min-height:34px" aria-label="Rôle"><option value="editor" ${x.role === 'editor' ? 'selected' : ''}>Éditeur</option><option value="viewer" ${x.role === 'viewer' ? 'selected' : ''}>Lecteur</option></select><button class="icon-btn" data-kick="${x.user_id}" aria-label="Retirer ${esc(x.display_name)}">${I('x')}</button>` : ''}</div>`).join('');
-        $$('[data-role]', box).forEach(s => s.addEventListener('change', async () => { try { await S.be.setRole(w.id, s.dataset.role, s.value); toast('Rôle mis à jour'); } catch (e) { toast(errMsg(e), 'err'); } }));
-        $$('[data-kick]', box).forEach(b => b.addEventListener('click', async () => { if (!confirm('Retirer ce membre de l’espace ?')) return; try { await S.be.removeMember(w.id, b.dataset.kick); openWsSettings('members'); toast('Membre retiré'); } catch (e) { toast(errMsg(e), 'err'); } }));
-      }).catch(e => { const box = $('#members', m); if (box) box.innerHTML = `<p class="form-error">${esc(errMsg(e))}</p>`; });
-    }
-    if (tab === 'channels') {
-      const chs = clone(w.settings.channels);
-      const draw = () => {
-        $('#ch-list', m).innerHTML = chs.map((c, i) => `<div class="erow"><input type="color" value="${esc(c.color)}" data-ci="${i}" ${owner ? '' : 'disabled'} aria-label="Couleur de ${esc(c.name)}"><input class="input" value="${esc(c.name)}" data-cn="${i}" ${owner ? '' : 'disabled'} aria-label="Nom du canal">${owner ? `<button class="icon-btn" data-cx="${i}" aria-label="Supprimer ${esc(c.name)}">${I('trash')}</button>` : ''}</div>`).join('');
-        $$('[data-ci]', m).forEach(x => x.addEventListener('input', () => chs[+x.dataset.ci].color = x.value));
-        $$('[data-cn]', m).forEach(x => x.addEventListener('input', () => chs[+x.dataset.cn].name = x.value));
-        $$('[data-cx]', m).forEach(x => x.addEventListener('click', () => { chs.splice(+x.dataset.cx, 1); draw(); }));
-      };
-      draw();
-      $('#ch-add', m)?.addEventListener('click', () => { chs.push({ id:'c-' + Math.random().toString(36).slice(2, 8), name:'Nouveau canal', color:CAMP_COLORS[chs.length % CAMP_COLORS.length] }); draw(); $$('[data-cn]', m).pop()?.select(); });
-      $('#ch-save', m)?.addEventListener('click', async () => {
-        const clean = chs.filter(c => c.name.trim()).map(c => ({ ...c, name:c.name.trim() }));
-        if (!clean.length) return toast('Garde au moins un canal.', 'err');
-        const formats = $('#fmt-list', m).value.split('\n').map(s => s.trim()).filter(Boolean);
-        const settings = { ...w.settings, channels:clean, formats };
-        try { const r = await S.be.updateWorkspace(w.id, { settings }); w.settings = { ...clone(DEFAULT_WS_SETTINGS), ...r.settings }; renderAll(); toast('Canaux et formats enregistrés'); } catch (e) { toast(errMsg(e), 'err'); }
-      });
-    }
-    $('#alt-import', m)?.addEventListener('click', async () => {
-      try { const rows = presetRows(w.id); await S.be.bulkDayMarks(w.id, rows); rows.forEach(r => S.marks.set(r.day, r.type)); if (!S.prefs.showAlt) setPref('showAlt', true); renderAll(); openWsSettings('alternance'); toast(`Planning importé : ${rows.length} jours`); }
-      catch (e) { toast(errMsg(e), 'err'); }
-    });
-    $('#alt-clear', m)?.addEventListener('click', async () => {
-      if (!confirm('Effacer tous les jours du calque alternance de cet espace ?')) return;
-      try { await S.be.clearDayMarks(w.id); S.marks.clear(); renderAll(); openWsSettings('alternance'); toast('Calque effacé'); } catch (e) { toast(errMsg(e), 'err'); }
-    });
-  } });
-}
-
+/* Réglages d'espace : voir la partie V2 */
 /* ---------- Réglages personnels ---------- */
 function openSettings(){
   const p = S.prefs, custom = !ACCENTS.includes(p.accent);
@@ -1607,7 +1685,8 @@ const DnD = {
   },
   down(e){
     if (e.button > 0 || !canEdit()) return;
-    const el = e.target.closest('[data-drag]'); if (!el || el.closest('.modal')) return;
+    const el = e.target.closest('[data-drag]'); if (!el || el.closest('.modal, .picker')) return;
+    const post = S.posts.find(x => x.id === el.dataset.drag); if (post && post.locked && !canApprove()) return;
     this.st = { el, id:el.dataset.drag, x:e.clientX, y:e.clientY, cx:e.clientX, cy:e.clientY, type:e.pointerType, active:false, timer:null, target:null };
     if (e.pointerType !== 'mouse') this.st.timer = setTimeout(() => this.st && this.begin(), 380);
   },
@@ -1654,6 +1733,7 @@ async function onDrop(id, t){
   if (k === 'date' && p.pub_date !== t.dataset.date) patch = { pub_date:t.dataset.date };
   if (k === 'status' && p.status !== t.dataset.status) patch = { status:t.dataset.status };
   if (k === 'ideas' && p.pub_date) patch = { pub_date:null, pub_time:null };
+  if (k === 'swap') return swapPosts(id, t.dataset.id);
   if (!patch) return;
   const old = { ...p }; Object.assign(p, patch); renderAll();
   try {
@@ -1753,7 +1833,7 @@ document.addEventListener('input', debounce(e => {
   if (e.target.matches('[data-filter="q"]')) { S.filters.q = e.target.value.trim(); S.activeView = ''; renderToolbar(); renderView(); renderIdeas(); }
 }, 200));
 document.addEventListener('change', e => {
-  const f = e.target.dataset?.filter; if (!f || f === 'q') return;
+  const f = e.target.dataset?.filter; if (!f || f === 'q' || f.startsWith('grid') || f.startsWith('media')) return;
   if (f === 'label') S.filters.labels = e.target.value ? [e.target.value] : [];
   if (f === 'campaign') S.filters.campaign = e.target.value;
   if (f === 'saved') {
@@ -1765,7 +1845,7 @@ document.addEventListener('change', e => {
   S.activeView = ''; renderFilters(); renderToolbar(); renderView(); renderIdeas();
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { if ($('.popover')) return closePopover(); if ($('#modal-root').innerHTML) return closeModal(); if (S.sideOpen) { S.sideOpen = false; syncPanels(); } return; }
+  if (e.key === 'Escape') { if ($('.popover')) return closePopover(); if ($('#picker-root')?.innerHTML) return closePicker(); if ($('#modal-root').innerHTML) return closeModal(); if (S.sideOpen) { S.sideOpen = false; syncPanels(); } return; }
   if (!$('#app') || $('#modal-root').innerHTML || e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.target.closest('input, textarea, select, [contenteditable]')) return;
   const k = e.key.toLowerCase();
@@ -1776,6 +1856,657 @@ document.addEventListener('keydown', e => {
   else { const v = VIEWS.find(x => x.key === e.key); if (v) setView(v.id); }
 });
 window.addEventListener('resize', debounce(() => { if ($('#app')) syncPanels(); }, 150));
+
+</script>
+<script>
+/* ============================================================
+   Cadence V2 : validation, discussion, lien externe, aperçus,
+   grille Instagram, médiathèque
+   ============================================================ */
+const canApprove = () => S.role === 'owner' || !!(S.me && S.me.can_approve);
+function valCfg(ws = S.ws){
+  const v = (ws && ws.settings && ws.settings.validation) || {};
+  const steps = Array.isArray(v.steps) && v.steps.length ? v.steps : [{ name:'Validation' }];
+  return { enabled:!!v.enabled, steps };
+}
+const memberName = id => {
+  if (S.user && id === S.user.id) return S.profile?.display_name || 'Toi';
+  return (S.members.find(m => m.user_id === id) || {}).display_name || 'Membre';
+};
+const relTime = s => {
+  const d = (Date.now() - new Date(s)) / 1000;
+  if (d < 60) return 'à l’instant';
+  if (d < 3600) return `il y a ${Math.floor(d / 60)} min`;
+  if (d < 86400) return `il y a ${Math.floor(d / 3600)} h`;
+  return new Date(s).toLocaleString('fr-FR', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+};
+const assetUses = path => S.posts.filter(p => (p.media_paths || []).includes(path));
+const linkURL = l => `${location.origin}${location.pathname}?v=${l.token}`;
+
+/* ---------- Visuels ---------- */
+async function hydrateMedia(root){
+  if (!root || !S.be || !S.be.mediaUrls) return;
+  const imgs = $$('img[data-path]:not([data-ok])', root); if (!imgs.length) return;
+  const paths = [...new Set(imgs.map(i => i.dataset.path))];
+  try {
+    const urls = await S.be.mediaUrls(paths);
+    imgs.forEach(i => { const u = urls[i.dataset.path]; if (u) { i.src = u; i.dataset.ok = '1'; } else i.classList.add('broken'); });
+  } catch (e) {}
+}
+async function uploadAsset(file){
+  const blob = await compressImage(file);
+  const path = await S.be.uploadMedia(S.ws.id, blob);
+  const a = await S.be.insert('media_assets', {
+    workspace_id:S.ws.id, path, name:(file.name || 'Visuel').replace(/\.[^.]+$/, '').slice(0, 120),
+    width:blob.w || null, height:blob.h || null, size:blob.size, tags:[]
+  });
+  S.assets.unshift(a); return a;
+}
+async function uploadMany(files){
+  const out = []; let i = 0;
+  for (const f of files) {
+    i++;
+    try { out.push(await uploadAsset(f)); } catch (e) { toast(`${f.name} : ${errMsg(e)}`, 'err'); }
+  }
+  return out;
+}
+
+/* ---------- Aperçus plateforme ---------- */
+const PV_ICONS = {
+  heart:'<svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg>',
+  bubble:'<svg viewBox="0 0 24 24"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3.5 20l1.2-4.1a8.5 8.5 0 1 1 15.8-4.4z"/></svg>',
+  send:'<svg viewBox="0 0 24 24"><path d="M21 3.5L10.5 13.5M21 3.5l-6.5 17-4-7-7-4z"/></svg>',
+  save:'<svg viewBox="0 0 24 24"><path d="M6 3.5h12v17l-6-4.2-6 4.2z"/></svg>',
+  play:'<svg viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z"/></svg>'
+};
+function channelKind(p){
+  const c = chan(p.channel), key = `${c.id || ''} ${c.name || ''}`.toLowerCase(), f = (p.format || '').toLowerCase();
+  if (/story/.test(f)) return 'story';
+  if (/tiktok/.test(key) || /reel|short/.test(f)) return 'vertical';
+  if (/insta/.test(key)) return 'ig';
+  if (/newsletter|mail/.test(key) || /newsletter/.test(f)) return 'mail';
+  if (/site|blog/.test(key) || /article/.test(f)) return 'article';
+  if (/youtube/.test(key) || /vid[ée]o/.test(f)) return 'video';
+  return 'feed';
+}
+const richText = t => esc(t).replace(/(^|\s)([#@][\p{L}\p{N}_.]+)/gu, '$1<span class="pv-tag">$2</span>').replace(/\n/g, '<br>');
+function clipped(text, n, label){
+  const t = text || '';
+  if (t.length <= n) return richText(t);
+  const cut = t.slice(0, n).replace(/\s+\S*$/, '');
+  return `${richText(cut)}<span class="pv-rest" hidden>${richText(t.slice(cut.length))}</span><button type="button" class="pv-more" data-action="pv-more">${label}</button>`;
+}
+function previewHTML(p, o = {}){
+  const kind = channelKind(p), who = o.account || S.profile?.display_name || 'Mon compte';
+  const handle = who.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '.').replace(/^\.|\.$/g, '') || 'compte';
+  const imgs = p.media_paths || [], ava = `<span class="pv-ava">${esc(initials(who))}</span>`;
+  const img = imgs.length ? `<img data-path="${esc(imgs[0])}" alt="">` : `<div class="pv-noimg">${I('image')}<span>Aucun visuel</span></div>`;
+  const multi = imgs.length > 1 ? `<div class="pv-dots">${imgs.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div><span class="pv-count">1/${imgs.length}</span>` : '';
+  const when = p.pub_date ? fmtShort(p.pub_date) : 'Date à définir';
+  const body = p.body || '';
+  let h = '';
+  if (kind === 'ig') {
+    h = `<div class="pv"><div class="pv-head">${ava}<b>${esc(handle)}</b><span class="pv-more3">•••</span></div>
+      <div class="pv-media r45">${img}${multi}</div>
+      <div class="pv-actions">${PV_ICONS.heart}${PV_ICONS.bubble}${PV_ICONS.send}<span class="r">${PV_ICONS.save}</span></div>
+      <div class="pv-cap"><b>${esc(handle)}</b>${clipped(body, 125, 'plus')}</div><div class="pv-date">${esc(when)}</div></div>`;
+  } else if (kind === 'vertical') {
+    h = `<div class="pv"><div class="pv-vert">${img}<div class="pv-side">${PV_ICONS.heart}${PV_ICONS.bubble}${PV_ICONS.save}${PV_ICONS.send}</div>
+      <div class="pv-over"><b>@${esc(handle)}</b><p>${clipped(body, 90, 'plus')}</p></div></div></div>`;
+  } else if (kind === 'story') {
+    h = `<div class="pv"><div class="pv-vert">${img}<div class="pv-prog"></div><div class="pv-storyhead">${ava}<span>${esc(handle)}</span></div>
+      ${p.title && !imgs.length ? `<div class="pv-storytxt">${esc(p.title)}</div>` : ''}</div></div>`;
+  } else if (kind === 'mail') {
+    const pre = body.split('\n').find(l => l.trim()) || '';
+    h = `<div class="pv"><div class="pv-mail"><span class="from">De : ${esc(who)}</span><h4>${esc(p.title || 'Objet de l’email')}</h4><span class="pre">${esc(pre.slice(0, 110))}</span>
+      ${imgs.length ? `<div class="pv-media r169">${img}</div>` : ''}<div>${clipped(body, 400, 'Lire la suite')}</div></div></div>`;
+  } else if (kind === 'article') {
+    h = `<div class="pv pv-art">${imgs.length ? `<div class="pv-media r169">${img}</div>` : ''}<h4>${esc(p.title || 'Titre de l’article')}</h4><div class="pv-text">${clipped(body, 240, 'Lire la suite')}</div></div>`;
+  } else if (kind === 'video') {
+    h = `<div class="pv pv-yt"><div class="pv-media r169">${img}<div class="pv-play"><span>${PV_ICONS.play}</span></div></div><h4>${esc(p.title || 'Titre de la vidéo')}</h4><small>${esc(who)}</small></div>`;
+  } else {
+    h = `<div class="pv"><div class="pv-head">${ava}<div><b>${esc(who)}</b><small>${esc(when)}</small></div><span class="pv-more3">•••</span></div>
+      <div class="pv-text">${clipped(body, 210, '… voir plus')}</div>
+      ${imgs.length ? `<div class="pv-media r43">${img}${multi}</div>` : ''}
+      <div class="pv-react"><span>J’aime</span><span>Commenter</span><span>Partager</span></div></div>`;
+  }
+  return `<div class="pv-wrap">${h}</div>`;
+}
+
+/* ---------- Grille ---------- */
+function gridChannelId(){
+  const chs = S.ws.settings.channels;
+  if (S.gridChannel && chs.some(c => c.id === S.gridChannel)) return S.gridChannel;
+  const ig = chs.find(c => /insta/i.test(`${c.id} ${c.name}`));
+  return (ig || chs[0] || {}).id;
+}
+function tileHTML(p, today){
+  const imgs = p.media_paths || [], future = p.status !== 'publie' && p.pub_date >= today;
+  const type = /reel|vid/i.test(p.format || '') ? I('reel') : (imgs.length > 1 || /carrousel/i.test(p.format || '')) ? I('stack') : '';
+  return `<button class="tile st-${p.status} ${future ? 'planned' : ''}" data-drag="${p.id}" data-drop="swap" data-id="${p.id}" data-action="open-post" title="${esc((p.title || 'Sans titre') + ', ' + statusName(p.status))}">
+    ${imgs.length ? `<img data-path="${esc(imgs[0])}" alt="">` : `<span class="tile-ph">${esc(p.title || 'Sans titre')}</span>`}
+    ${type ? `<span class="tile-type">${type}</span>` : ''}
+    <span class="tile-date">${p.locked ? I('lock') : ''}${fmtShort(p.pub_date)}</span><span class="tile-st"></span></button>`;
+}
+function viewGrid(){
+  const ch = gridChannelId(), chs = S.ws.settings.channels, today = todayISO();
+  const ps = visible().filter(p => p.pub_date && p.channel === ch && !/story/i.test(p.format || ''))
+    .sort((a, b) => `${b.pub_date}${b.pub_time || ''}`.localeCompare(`${a.pub_date}${a.pub_time || ''}`));
+  const fut = ps.filter(p => p.pub_date >= today && p.status !== 'publie').length;
+  return `<div class="gridview">
+    <div class="grid-head"><select class="select" data-filter="grid-ch" aria-label="Canal affiché">${chs.map(c => `<option value="${esc(c.id)}" ${c.id === ch ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select>
+      <p class="muted">${ps.length} publication${ps.length > 1 ? 's' : ''}, dont ${fut} à venir (encadrées). La plus récente est en haut à gauche${canEdit() ? '. Glisse une case sur une autre pour échanger leurs dates' : ''}.</p></div>
+    ${ps.length ? `<div class="igrid">${ps.map(p => tileHTML(p, today)).join('')}</div>`
+      : `<div class="ideas-empty">Aucun contenu daté sur ce canal. Planifie des publications pour voir la grille prendre forme.</div>`}
+  </div>`;
+}
+async function swapPosts(aId, bId){
+  if (!aId || !bId || aId === bId) return;
+  const a = S.posts.find(x => x.id === aId), b = S.posts.find(x => x.id === bId); if (!a || !b) return;
+  if ((a.locked || b.locked) && !canApprove()) return toast(errMsg('contenu_verrouille'), 'err');
+  const A = { pub_date:a.pub_date, pub_time:a.pub_time }, B = { pub_date:b.pub_date, pub_time:b.pub_time };
+  Object.assign(a, B); Object.assign(b, A); renderAll();
+  try { Object.assign(a, await S.be.update('posts', a.id, B)); Object.assign(b, await S.be.update('posts', b.id, A)); toast('Dates échangées'); }
+  catch (e) { toast(errMsg(e), 'err'); refreshWs(); }
+}
+
+/* ---------- Médiathèque ---------- */
+function viewMedia(){
+  const q = S.mediaQ.toLowerCase(), tag = S.mediaTag;
+  const tags = [...new Set(S.assets.flatMap(a => a.tags || []))].sort((x, y) => x.localeCompare(y, 'fr'));
+  const list = S.assets.filter(a => (!q || (a.name || '').toLowerCase().includes(q) || (a.tags || []).some(t => t.toLowerCase().includes(q))) && (!tag || (a.tags || []).includes(tag)));
+  return `<div class="mediaview">
+    <div class="grid-head">${canEdit() ? `<label class="btn primary">${I('upload')}Importer des visuels<input type="file" accept="image/*" multiple data-upload="library" hidden></label>` : ''}
+      <input class="input" type="search" data-filter="media-q" placeholder="Rechercher par nom ou étiquette" value="${esc(S.mediaQ)}" style="max-width:280px" aria-label="Rechercher un visuel">
+      ${tags.map(t => `<button class="toggle-chip" data-action="media-tag" data-tag="${esc(t)}" aria-pressed="${tag === t}">${esc(t)}</button>`).join('')}
+      <span class="muted" style="font-size:13.5px">${S.assets.length} visuel${S.assets.length > 1 ? 's' : ''}</span></div>
+    ${list.length ? `<div class="mgrid">${list.map(a => { const n = assetUses(a.path).length; return `<button class="mtile" data-action="open-asset" data-id="${a.id}"><img data-path="${esc(a.path)}" alt="${esc(a.name)}" loading="lazy"><span class="mt-name">${esc(a.name || 'Sans nom')}</span><span class="mt-meta">${a.width ? `${a.width} × ${a.height}` : 'Image'}${n ? `, utilisé ${n} fois` : ', non utilisé'}</span></button>`; }).join('')}</div>`
+      : `<div class="ideas-empty">${S.assets.length ? 'Aucun visuel ne correspond à cette recherche.' : 'La médiathèque rassemble les visuels de l’espace. Importe tes images ici, puis ajoute-les à tes contenus.'}</div>`}
+  </div>`;
+}
+function openAsset(id){
+  const a = S.assets.find(x => x.id === id); if (!a) return;
+  const uses = assetUses(a.path), ro = !canEdit(), dis = ro ? 'disabled' : '';
+  openModal({ title:a.name || 'Visuel', wide:true, body:`<img class="asset-big" data-path="${esc(a.path)}" alt="${esc(a.name)}">
+    <label class="field"><span>Nom</span><input class="input" id="as-name" value="${esc(a.name)}" maxlength="120" ${dis}></label>
+    <label class="field"><span>Étiquettes (séparées par des virgules)</span><input class="input" id="as-tags" value="${esc((a.tags || []).join(', '))}" placeholder="Ex. salon, portrait, équipe" ${dis}></label>
+    <div class="field"><span>Utilisé dans</span>${uses.length ? `<div class="day-list">${uses.map(p => cardHTML(p, { showDate:true })).join('')}</div>` : '<p class="muted" style="margin:0">Aucun contenu pour l’instant.</p>'}</div>
+    <p class="meta-line">${a.width ? `${a.width} × ${a.height} px, ` : ''}${a.size ? Math.round(a.size / 1024) + ' Ko, ' : ''}ajouté ${relTime(a.created_at)}</p>`,
+  footer:ro ? `<span class="spacer"></span><button class="btn" data-action="close-modal">Fermer</button>` : `<button class="btn ghost danger sm" id="as-del">${I('trash')}Supprimer</button><span class="spacer"></span><button class="btn" data-action="close-modal">Annuler</button><button class="btn primary" id="as-save">Enregistrer</button>`,
+  onMount(m){
+    hydrateMedia(m);
+    $('#as-save', m)?.addEventListener('click', async () => {
+      const patch = { name:$('#as-name', m).value.trim(), tags:[...new Set($('#as-tags', m).value.split(',').map(t => t.trim()).filter(Boolean))] };
+      try { Object.assign(a, await S.be.update('media_assets', a.id, patch)); closeModal(); renderView(); toast('Visuel enregistré'); } catch (e) { toast(errMsg(e), 'err'); }
+    });
+    $('#as-del', m)?.addEventListener('click', async () => {
+      if (uses.length) return toast(`Ce visuel est utilisé dans ${uses.length} contenu${uses.length > 1 ? 's' : ''}. Retire-le d’abord de ${uses.length > 1 ? 'ces contenus' : 'ce contenu'}.`, 'err');
+      if (!confirm('Supprimer définitivement ce visuel ?')) return;
+      try { await S.be.remove('media_assets', a.id); await S.be.removeMedia(a.path); S.assets = S.assets.filter(x => x.id !== a.id); closeModal(); renderView(); toast('Visuel supprimé'); }
+      catch (e) { toast(errMsg(e), 'err'); }
+    });
+  } });
+}
+function openPicker(onPick, already = []){
+  const root = $('#picker-root'), sel = new Set();
+  const draw = () => {
+    root.innerHTML = `<div class="scrim" style="z-index:300" data-pick="close"></div><div class="modal wide picker" style="z-index:301" role="dialog" aria-modal="true" aria-label="Choisir des visuels">
+      <header><h2>Choisir des visuels</h2><button class="icon-btn" data-pick="close" aria-label="Fermer">${I('x')}</button></header>
+      <div class="modal-body">${canEdit() ? `<label class="btn" style="justify-self:start">${I('upload')}Importer depuis l’appareil<input type="file" accept="image/*" multiple hidden id="pick-up"></label>` : ''}
+        ${S.assets.length ? `<div class="mgrid sm">${S.assets.map(a => `<button class="mtile ${sel.has(a.path) ? 'picked' : ''}" data-pick="toggle" data-path="${esc(a.path)}" aria-pressed="${sel.has(a.path)}"><img data-path="${esc(a.path)}" alt=""><span class="mt-name">${esc(a.name || 'Sans nom')}</span>${already.includes(a.path) ? '<span class="mt-meta">Déjà dans ce contenu</span>' : ''}</button>`).join('')}</div>`
+          : '<p class="muted">La médiathèque est vide. Importe une image pour commencer.</p>'}</div>
+      <footer><span class="muted" style="font-size:14px">${sel.size} sélectionné${sel.size > 1 ? 's' : ''}</span><span class="spacer"></span><button class="btn" data-pick="close">Annuler</button><button class="btn primary" data-pick="ok" ${sel.size ? '' : 'disabled'}>Ajouter</button></footer></div>`;
+    hydrateMedia(root);
+    $('#pick-up', root)?.addEventListener('change', async e => { const got = await uploadMany([...e.target.files]); got.forEach(a => sel.add(a.path)); draw(); });
+  };
+  root.onclick = e => {
+    const b = e.target.closest('[data-pick]'); if (!b) return;
+    const k = b.dataset.pick;
+    if (k === 'close') closePicker();
+    else if (k === 'toggle') { const p = b.dataset.path; sel.has(p) ? sel.delete(p) : sel.add(p); draw(); }
+    else if (k === 'ok') { const list = [...sel]; closePicker(); onPick(list); }
+  };
+  draw();
+}
+function closePicker(){ const r = $('#picker-root'); if (r) { r.innerHTML = ''; r.onclick = null; } }
+
+/* ---------- Historique ---------- */
+function eventText(ev){
+  const d = ev.detail || {};
+  if (ev.kind === 'created') return 'a créé le contenu';
+  const parts = [];
+  if (d.status) parts.push(`a changé le statut de ${statusName(d.status[0])} à ${statusName(d.status[1])}`);
+  if (d.date) parts.push(d.date[2] ? `a planifié au ${fmtShort(d.date[2])}${d.date[3] ? ' à ' + fmtTime(d.date[3]) : ''}` : 'a renvoyé le contenu dans la boîte à idées');
+  if (d.locked === true) parts.push('a verrouillé le contenu');
+  if (d.locked === false) parts.push('a déverrouillé le contenu');
+  if (d.content) parts.push('a modifié le contenu');
+  return parts.join(', ') || 'a modifié le contenu';
+}
+function timelineHTML(th){
+  const items = [
+    ...th.comments.map(c => ({ t:c.created_at, h:`<div class="tl-item ${c.user_id ? '' : 'ext'}"><span class="ava">${esc(initials(c.author_name || memberName(c.user_id)))}</span><div style="flex:1;min-width:0"><div class="tl-head"><b>${esc(c.author_name || memberName(c.user_id))}</b><small>${relTime(c.created_at)}</small>${(S.user && c.user_id === S.user.id) || isOwner() ? `<button class="tl-del" data-del-comment="${c.id}" aria-label="Supprimer ce commentaire">${I('x')}</button>` : ''}</div><p>${esc(c.body).replace(/\n/g, '<br>')}</p></div></div>` })),
+    ...th.reviews.map(r => ({ t:r.created_at, h:`<div class="tl-item review ${r.decision}"><span class="tl-ico">${r.decision === 'approved' ? I('check') : I('chat')}</span><div><div class="tl-head"><b>${esc(r.actor_name || memberName(r.user_id))}</b><small>${relTime(r.created_at)}</small></div><p>${r.decision === 'approved' ? `a approuvé l’étape ${r.step}` : 'a demandé des modifications'}${r.comment ? ` : « ${esc(r.comment)} »` : ''}</p></div></div>` })),
+    ...th.events.map(ev => ({ t:ev.created_at, h:`<div class="tl-item event"><span class="tl-dot"></span><p><b>${esc(ev.actor_name || memberName(ev.user_id))}</b> ${eventText(ev)} <small>${relTime(ev.created_at)}</small></p></div>` }))
+  ].sort((a, b) => a.t.localeCompare(b.t));
+  return items.length ? `<div class="timeline">${items.map(i => i.h).join('')}</div>` : '<p class="muted">Aucune activité pour l’instant.</p>';
+}
+async function reloadThread(){
+  const pm = S.postModal; if (!pm || !S.openPostId) return;
+  try { pm.st.thread = await S.be.loadThread(S.openPostId); pm.redraw(); } catch (e) {}
+}
+
+/* ---------- Fiche contenu (V2) ---------- */
+function openPost(id, preset = {}){
+  const existing = id ? S.posts.find(x => x.id === id) : null;
+  if (id && !existing) return;
+  const chs = S.ws.settings.channels, fmts = S.ws.settings.formats || [], vc = valCfg(), approver = canApprove();
+  const p = existing || { title:'', body:'', channel:chs[0]?.id || null, format:fmts[0] || null, status:preset.date ? 'redaction' : 'idee', pub_date:preset.date || null, pub_time:null, labels:[], campaign_id:S.filters.campaign || null, media_paths:[], link:'', notes:'', locked:false, review_cycle:0 };
+  const ro = !canEdit() || (p.locked && !approver), dis = ro ? 'disabled' : '';
+  const st = { labels:[...(p.labels || [])], status:p.status, channel:p.channel, media:[...(p.media_paths || [])], tab:preset.tab || 'content', thread:null };
+  const stDisabled = sid => ro || (vc.enabled && !approver && ['programme','publie'].includes(sid) && !['programme','publie'].includes(p.status));
+  S.openPostId = existing ? existing.id : null;
+  const body = `
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" data-ptab="content" aria-selected="${st.tab === 'content'}">Contenu</button>
+      <button type="button" role="tab" data-ptab="preview" aria-selected="${st.tab === 'preview'}">Aperçu</button>
+      <button type="button" role="tab" data-ptab="thread" aria-selected="${st.tab === 'thread'}">Discussion<span class="tabcount" id="tcount"></span></button>
+    </div>
+    <div data-pane="content" ${st.tab === 'content' ? '' : 'hidden'}>
+      <div id="valbox"></div>
+      <form id="post-form" style="display:grid;gap:16px" autocomplete="off">
+        <label class="field"><span>Titre</span><input class="input" name="title" value="${esc(p.title)}" placeholder="Ex. Coulisses du shooting de lancement" ${dis} maxlength="200"></label>
+        <div class="field"><span>Statut</span><div class="status-pick" role="radiogroup" aria-label="Statut">${STATUSES.map(s => `<button type="button" class="toggle-chip st-${s.id}" data-st="${s.id}" role="radio" aria-pressed="${st.status === s.id}" aria-checked="${st.status === s.id}" ${stDisabled(s.id) ? 'disabled' : ''}><span class="dot"></span>${s.name}</button>`).join('')}</div>
+          ${vc.enabled && !approver && !ro ? '<p class="meta-line" style="margin:0">Programmé et Publié se débloquent après validation.</p>' : ''}</div>
+        <div class="field"><span>Canal</span><div class="chan-pick" role="radiogroup" aria-label="Canal">${chs.map(c => `<button type="button" class="toggle-chip" style="--c:${esc(c.color)}" data-ch="${esc(c.id)}" role="radio" aria-pressed="${st.channel === c.id}" aria-checked="${st.channel === c.id}" ${dis}><span class="dot"></span>${esc(c.name)}</button>`).join('')}</div></div>
+        <div class="grid2">
+          <label class="field"><span>Format</span><select class="select" name="format" ${dis}><option value="">Aucun</option>${fmts.map(f => `<option ${p.format === f ? 'selected' : ''}>${esc(f)}</option>`).join('')}${p.format && !fmts.includes(p.format) ? `<option selected>${esc(p.format)}</option>` : ''}</select></label>
+          <label class="field"><span>Campagne</span><select class="select" name="campaign_id" ${dis}><option value="">Aucune</option>${S.campaigns.map(c => `<option value="${c.id}" ${p.campaign_id === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></label>
+        </div>
+        <div class="grid2">
+          <label class="field"><span>Date de publication</span><input class="input" type="date" name="pub_date" value="${p.pub_date || ''}" ${dis}></label>
+          <label class="field"><span>Heure</span><input class="input" type="time" name="pub_time" value="${p.pub_time ? p.pub_time.slice(0, 5) : ''}" ${dis}></label>
+        </div>
+        <p class="meta-line" style="margin:-8px 0 0">Sans date, le contenu reste dans la boîte à idées.</p>
+        <div class="field"><span>Étiquettes</span><div class="tags" id="tags"></div><datalist id="label-list">${allLabels().map(l => `<option value="${esc(l)}">`).join('')}</datalist></div>
+        <label class="field"><span>Texte de la publication</span><textarea class="textarea" name="body" placeholder="Légende, accroche, hashtags…" ${dis}>${esc(p.body || '')}</textarea></label>
+        <div class="counter" id="counter"></div>
+        <div class="field"><span>Visuels${st.media.length > 1 ? ' (le premier sert de couverture)' : ''}</span><div class="gallery" id="gallery"></div></div>
+        <label class="field"><span>Lien</span><input class="input" type="url" name="link" value="${esc(p.link || '')}" placeholder="https://" ${dis} inputmode="url"></label>
+        <label class="field"><span>Notes internes</span><textarea class="textarea" name="notes" style="min-height:80px" placeholder="Brief, idées de visuels, contraintes…" ${dis}>${esc(p.notes || '')}</textarea></label>
+        ${existing ? `<p class="meta-line">Créé le ${new Date(p.created_at).toLocaleDateString('fr-FR')}${p.created_by ? ' par ' + esc(memberName(p.created_by)) : ''}${p.updated_at ? ', modifié le ' + new Date(p.updated_at).toLocaleDateString('fr-FR') : ''}</p>` : ''}
+      </form>
+    </div>
+    <div data-pane="preview" ${st.tab === 'preview' ? '' : 'hidden'}><p class="meta-line" style="margin:0">Aperçu indicatif selon le canal et le format choisis. Le rendu réel dépend de l’application.</p><div id="pv-box"></div></div>
+    <div data-pane="thread" ${st.tab === 'thread' ? '' : 'hidden'}>
+      <div id="thread-box"></div>
+      ${existing ? `<div class="field"><textarea class="textarea" id="cm-body" placeholder="Écrire un commentaire" style="min-height:80px" maxlength="2000"></textarea>
+        <div class="row"><button type="button" class="btn primary sm" id="cm-send">${I('chat')}Commenter</button><span class="meta-line">Les personnes externes ne voient pas les commentaires internes.</span></div></div>` : ''}
+    </div>`;
+  const footer = `${existing && canEdit() && !(p.locked && !approver) ? `<button class="btn ghost danger sm" id="post-del" title="Supprimer" aria-label="Supprimer">${I('trash')}Supprimer</button><button class="btn ghost sm" id="post-dup" title="Dupliquer" aria-label="Dupliquer">${I('copy')}Dupliquer</button>` : ''}
+    ${existing && canEdit() ? `<button class="btn ghost sm" id="post-share" title="Lien de validation" aria-label="Lien de validation">${I('share')}Lien de validation</button>` : ''}
+    ${existing && approver && !p.locked ? `<button class="btn ghost sm" id="post-lock" title="Verrouiller" aria-label="Verrouiller">${I('lock')}Verrouiller</button>` : ''}
+    <span class="spacer"></span>${ro ? `<button class="btn" data-action="close-modal">Fermer</button>` : `<button class="btn" data-action="close-modal">Annuler</button><button class="btn primary" id="post-save">${existing ? 'Enregistrer' : 'Créer le contenu'}</button>`}`;
+  openModal({ title:existing ? (ro ? 'Contenu' : 'Modifier le contenu') : 'Nouveau contenu', wide:true, body, footer, onMount(m){
+    const form = $('#post-form', m);
+    const cur = () => (existing && S.posts.find(x => x.id === existing.id)) || p;
+    const formPost = () => {
+      const f = new FormData(form);
+      return { ...p, title:(f.get('title') ?? p.title) || '', body:f.get('body') ?? p.body, channel:st.channel, format:f.get('format') ?? p.format, pub_date:f.get('pub_date') ?? p.pub_date, pub_time:f.get('pub_time') ?? p.pub_time, media_paths:st.media };
+    };
+    /* étiquettes */
+    const drawTags = () => {
+      $('#tags', m).innerHTML = st.labels.map((l, i) => `<span class="tag">${esc(l)}${ro ? '' : `<button type="button" data-rm="${i}" aria-label="Retirer ${esc(l)}">${I('x')}</button>`}</span>`).join('')
+        + (ro ? '' : `<input list="label-list" id="tag-in" placeholder="${st.labels.length ? '' : 'Ajouter une étiquette puis Entrée'}" aria-label="Nouvelle étiquette">`);
+      const tin = $('#tag-in', m); if (!tin) return;
+      const add = () => { const v = tin.value.trim().replace(/,$/, ''); if (v && !st.labels.includes(v)) st.labels.push(v); tin.value = ''; drawTags(); $('#tag-in', m).focus(); };
+      tin.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); add(); } else if (e.key === 'Backspace' && !tin.value && st.labels.length) { st.labels.pop(); drawTags(); $('#tag-in', m).focus(); } });
+      tin.addEventListener('change', () => { if (tin.value.trim()) add(); });
+    };
+    drawTags();
+    $('#tags', m).addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (b) { st.labels.splice(+b.dataset.rm, 1); drawTags(); } });
+    /* compteur */
+    const count = () => {
+      const n = form.body.value.length, c = chan(st.channel), lim = CHAR_LIMITS[(c.id || '').toLowerCase()] || CHAR_LIMITS[(c.name || '').toLowerCase()];
+      const el = $('#counter', m); el.textContent = lim ? `${n} / ${lim} caractères pour ${c.name}` : `${n} caractères`; el.classList.toggle('over', !!lim && n > lim);
+    };
+    form.body.addEventListener('input', count); count();
+    $$('[data-st]', m).forEach(b => b.addEventListener('click', () => { st.status = b.dataset.st; $$('[data-st]', m).forEach(x => { x.setAttribute('aria-pressed', x === b); x.setAttribute('aria-checked', x === b); }); }));
+    $$('[data-ch]', m).forEach(b => b.addEventListener('click', () => { st.channel = st.channel === b.dataset.ch ? null : b.dataset.ch; $$('[data-ch]', m).forEach(x => { const on = x.dataset.ch === st.channel; x.setAttribute('aria-pressed', on); x.setAttribute('aria-checked', on); }); count(); }));
+    /* visuels */
+    const drawGallery = () => {
+      $('#gallery', m).innerHTML = st.media.map((path, i) => `<div class="gthumb"><img data-path="${esc(path)}" alt="Visuel ${i + 1}"><span class="gidx">${i + 1}</span>
+        ${ro ? '' : `<div class="gtools">${i ? `<button type="button" data-gm="left" data-i="${i}" aria-label="Déplacer avant">${I('left')}</button>` : '<span></span>'}<button type="button" data-gm="rm" data-i="${i}" aria-label="Retirer ce visuel">${I('x')}</button></div>`}</div>`).join('')
+        + (ro ? (st.media.length ? '' : '<p class="muted" style="margin:0">Aucun visuel.</p>')
+          : `<label class="gadd">${I('upload')}<span>Importer</span><input type="file" accept="image/*" multiple hidden id="g-up"></label><button type="button" class="gadd" id="g-lib">${I('image')}<span>Médiathèque</span></button>`);
+      hydrateMedia($('#gallery', m));
+      $('#g-up', m)?.addEventListener('change', async e => { const got = await uploadMany([...e.target.files]); got.forEach(a => st.media.push(a.path)); drawGallery(); });
+      $('#g-lib', m)?.addEventListener('click', () => openPicker(list => { list.forEach(pth => { if (!st.media.includes(pth)) st.media.push(pth); }); drawGallery(); }, st.media));
+    };
+    drawGallery();
+    $('#gallery', m).addEventListener('click', e => {
+      const b = e.target.closest('[data-gm]'); if (!b) return; const i = +b.dataset.i;
+      if (b.dataset.gm === 'rm') st.media.splice(i, 1);
+      if (b.dataset.gm === 'left' && i > 0) [st.media[i - 1], st.media[i]] = [st.media[i], st.media[i - 1]];
+      drawGallery();
+    });
+    /* validation */
+    const drawVal = () => {
+      const box = $('#valbox', m); if (!existing) { box.innerHTML = ''; return; }
+      const c = cur(), reviews = (st.thread?.reviews || []).filter(r => r.cycle === c.review_cycle);
+      let h = '';
+      if (c.locked) {
+        const last = (st.thread?.reviews || []).filter(r => r.decision === 'approved').slice(-1)[0];
+        h = `<div class="valbox locked">${I('lock')}<div><b>Contenu verrouillé</b><span>${last ? `Validé par ${esc(last.actor_name || memberName(last.user_id))}, ${relTime(last.created_at)}.` : 'Verrouillé par un approbateur.'} ${approver ? 'Déverrouille pour le modifier : il repassera en rédaction.' : 'Seul un approbateur peut le modifier.'}</span></div>
+          ${approver ? `<button class="btn sm" data-v="unlock">${I('unlock')}Déverrouiller</button>` : (canEdit() && c.status === 'programme' ? `<button class="btn sm" data-v="published">Marquer comme publié</button>` : '')}</div>`;
+      } else if (vc.enabled && c.status === 'a_valider') {
+        const okN = reviews.filter(r => r.decision === 'approved').length;
+        h = `<div class="valbox review"><b>Validation en cours : étape ${Math.min(okN + 1, vc.steps.length)} sur ${vc.steps.length}</b>
+          <ol class="steps">${vc.steps.map((s, i) => { const r = reviews.find(x => x.step === i + 1 && x.decision === 'approved'); const now = !r && okN === i;
+            return `<li class="${r ? 'ok' : now ? 'cur' : ''}"><span class="n">${r ? I('check') : i + 1}</span><span><b>${esc(s.name || 'Étape ' + (i + 1))}</b><small>${r ? `Approuvée par ${esc(r.actor_name || memberName(r.user_id))}, ${relTime(r.created_at)}` : now ? 'En attente' : 'À venir'}</small></span></li>`; }).join('')}</ol>
+          ${approver ? `<textarea class="textarea" id="val-comment" placeholder="Commentaire (obligatoire pour demander des modifications)" style="min-height:70px" maxlength="2000"></textarea>
+            <div class="row wrap"><button type="button" class="btn primary sm" data-v="approved">${I('check')}Approuver l’étape</button><button type="button" class="btn sm" data-v="changes">Demander des modifications</button></div>`
+            : '<span class="muted" style="font-size:13.5px">En attente d’un approbateur. Tu seras prévenu dans la discussion.</span>'}</div>`;
+      } else if (vc.enabled && canEdit() && ['idee','redaction'].includes(c.status)) {
+        const last = (st.thread?.reviews || []).filter(r => r.decision === 'changes').slice(-1)[0];
+        h = `<div class="valbox">${I('send')}<div><b>Circuit de validation : ${vc.steps.length} étape${vc.steps.length > 1 ? 's' : ''}</b><span>${last ? `Modifications demandées par ${esc(last.actor_name || memberName(last.user_id))} : « ${esc(last.comment || '')} »` : 'Envoie ce contenu quand il est prêt à être relu. Tes modifications en cours seront enregistrées.'}</span></div>
+          <button type="button" class="btn primary sm" data-v="submit">Envoyer en validation</button></div>`;
+      }
+      box.innerHTML = h;
+    };
+    const drawThread = () => {
+      const tb = $('#thread-box', m); if (!tb) return;
+      if (!existing) { tb.innerHTML = '<p class="muted">Enregistre d’abord le contenu pour ouvrir la discussion.</p>'; return; }
+      tb.innerHTML = st.thread ? timelineHTML(st.thread) : '<p class="muted">Chargement…</p>';
+      $('#tcount', m).textContent = st.thread && st.thread.comments.length ? st.thread.comments.length : '';
+    };
+    const drawPreview = () => { const box = $('#pv-box', m); box.innerHTML = previewHTML(formPost()); hydrateMedia(box); };
+    S.postModal = { st, redraw:() => { drawVal(); drawThread(); } };
+    drawVal(); drawThread(); if (st.tab === 'preview') drawPreview();
+    if (existing) S.be.loadThread(existing.id).then(th => { st.thread = th; drawVal(); drawThread(); }).catch(() => {});
+    /* onglets */
+    $$('[data-ptab]', m).forEach(b => b.addEventListener('click', () => {
+      st.tab = b.dataset.ptab;
+      $$('[data-ptab]', m).forEach(x => x.setAttribute('aria-selected', x === b));
+      $$('[data-pane]', m).forEach(x => x.hidden = x.dataset.pane !== st.tab);
+      if (st.tab === 'preview') drawPreview();
+      if (st.tab === 'thread') $('#cm-body', m)?.focus();
+    }));
+    /* discussion */
+    $('#cm-send', m)?.addEventListener('click', async () => {
+      const ta = $('#cm-body', m), txt = ta.value.trim(); if (!txt) return;
+      try { await S.be.addComment(S.ws.id, existing.id, txt); ta.value = ''; await reloadThread(); } catch (e) { toast(errMsg(e), 'err'); }
+    });
+    $('#thread-box', m)?.addEventListener('click', async e => {
+      const b = e.target.closest('[data-del-comment]'); if (!b || !confirm('Supprimer ce commentaire ?')) return;
+      try { await S.be.remove('post_comments', b.dataset.delComment); await reloadThread(); } catch (err) { toast(errMsg(err), 'err'); }
+    });
+    /* enregistrement */
+    const buildRow = () => {
+      const f = new FormData(form);
+      const row = {
+        title:(f.get('title') || '').trim(), body:f.get('body') || '', channel:st.channel, format:f.get('format') || null, status:st.status,
+        pub_date:f.get('pub_date') || null, pub_time:f.get('pub_time') || null, labels:st.labels, campaign_id:f.get('campaign_id') || null,
+        link:(f.get('link') || '').trim() || null, notes:f.get('notes') || null, media_paths:st.media, media_path:st.media[0] || null
+      };
+      if (!row.pub_date) row.pub_time = null;
+      return row;
+    };
+    const save = async (extra = {}, msg) => {
+      const btn = $('#post-save', m); if (btn) btn.disabled = true;
+      try {
+        const row = { ...buildRow(), ...extra };
+        let r;
+        if (existing) { r = await S.be.update('posts', existing.id, row); Object.assign(existing, r); }
+        else { r = await S.be.insert('posts', { ...row, workspace_id:S.ws.id }); S.posts.push(r); }
+        closeModal(); renderAll();
+        toast(msg || (existing ? 'Contenu enregistré' : (row.pub_date ? `Contenu planifié le ${fmtShort(row.pub_date)}` : 'Idée ajoutée à la boîte à idées')));
+      } catch (e) { toast(errMsg(e), 'err'); if (btn) btn.disabled = false; }
+    };
+    $('#post-save', m)?.addEventListener('click', () => save());
+    form.addEventListener('submit', e => { e.preventDefault(); if (!ro) save(); });
+    form.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && !ro) { e.preventDefault(); save(); } });
+    /* actions de validation */
+    const after = async (msg) => { toast(msg); await refreshWs(); openPost(existing.id, { tab:st.tab }); };
+    $('#valbox', m).addEventListener('click', async e => {
+      const b = e.target.closest('[data-v]'); if (!b) return; const v = b.dataset.v, c = cur();
+      try {
+        if (v === 'submit') return save({ status:'a_valider', review_cycle:(c.review_cycle || 0) + 1 }, 'Envoyé en validation');
+        if (v === 'approved' || v === 'changes') {
+          b.disabled = true;
+          const r = await S.be.approvePost(c.id, v, $('#val-comment', m)?.value || '');
+          return after(r.result === 'validated' ? 'Contenu validé et verrouillé' : r.result === 'changes' ? 'Modifications demandées' : `Étape ${r.step} approuvée`);
+        }
+        if (v === 'unlock') { await S.be.setLock(c.id, false); return after('Contenu déverrouillé, repassé en rédaction'); }
+        if (v === 'published') { await S.be.update('posts', c.id, { status:'publie' }); return after('Marqué comme publié'); }
+      } catch (err) { b.disabled = false; toast(errMsg(err), 'err'); }
+    });
+    $('#post-lock', m)?.addEventListener('click', async () => { try { await S.be.setLock(existing.id, true); await after('Contenu verrouillé'); } catch (e) { toast(errMsg(e), 'err'); } });
+    $('#post-share', m)?.addEventListener('click', () => openShare({ post_id:existing.id }));
+    $('#post-del', m)?.addEventListener('click', async () => {
+      if (!confirm('Supprimer ce contenu ? Ses visuels restent dans la médiathèque.')) return;
+      try { await S.be.remove('posts', existing.id); S.posts = S.posts.filter(x => x.id !== existing.id); closeModal(); renderAll(); toast('Contenu supprimé'); }
+      catch (e) { toast(errMsg(e), 'err'); }
+    });
+    $('#post-dup', m)?.addEventListener('click', async () => {
+      try {
+        const { id:_i, created_at:_c, updated_at:_u, created_by:_b, ...rest } = existing;
+        const r = await S.be.insert('posts', { ...rest, title:(existing.title || 'Sans titre') + ' (copie)', status:'redaction', locked:false, review_cycle:0 });
+        S.posts.push(r); renderAll(); toast('Contenu dupliqué'); openPost(r.id);
+      } catch (e) { toast(errMsg(e), 'err'); }
+    });
+  } });
+}
+
+/* ---------- Liens de validation ---------- */
+function linkScope(l){
+  if (l.post_id) { const p = S.posts.find(x => x.id === l.post_id); return `Contenu : ${p ? (p.title || 'Sans titre') : 'supprimé'}`; }
+  if (l.campaign_id) { const c = S.campaigns.find(x => x.id === l.campaign_id); return `Campagne : ${c ? c.name : 'supprimée'}`; }
+  return `Du ${fmtShort(l.start_date)} au ${fmtShort(l.end_date)}`;
+}
+const linkActive = l => !l.revoked && (!l.expires_at || new Date(l.expires_at) > new Date());
+function openShare(scope = {}){
+  if (S.be.kind === 'local') return toast('Les liens de validation nécessitent la version en ligne.', 'err');
+  const post = scope.post_id && S.posts.find(p => p.id === scope.post_id), camp = scope.campaign_id && S.campaigns.find(c => c.id === scope.campaign_id);
+  const a = iso(startOfWeek(new Date())), b = iso(addDays(startOfWeek(new Date()), 13));
+  const label = post ? (post.title || 'Contenu') : camp ? camp.name : 'Contenus à valider';
+  openModal({ title:'Lien de validation', body:`<form id="sh-form" style="display:grid;gap:16px">
+    <p class="note" style="margin:0">La personne n’a pas besoin de compte. Elle voit les aperçus, peut commenter et, si tu l’autorises, valider. Elle ne voit ni vos commentaires internes ni le reste de l’espace.</p>
+    <label class="field"><span>Titre affiché</span><input class="input" name="label" value="${esc(label)}" maxlength="100"></label>
+    ${post ? `<p class="muted" style="margin:0">Contient : ${esc(post.title || 'ce contenu')}</p>` : camp ? `<p class="muted" style="margin:0">Contient tous les contenus de la campagne « ${esc(camp.name)} », y compris ceux ajoutés plus tard.</p>`
+      : `<div class="grid2"><label class="field"><span>Du</span><input class="input" type="date" name="start" value="${a}" required></label><label class="field"><span>Au</span><input class="input" type="date" name="end" value="${b}" required></label></div>`}
+    <label class="field"><span>Durée de validité</span><select class="select" name="exp"><option value="7">7 jours</option><option value="30" selected>30 jours</option><option value="90">90 jours</option><option value="0">Sans limite</option></select></label>
+    <label class="check"><input type="checkbox" name="decide" checked><span>Autoriser la validation (sinon, commentaires uniquement)</span></label>
+  </form><div id="sh-out"></div>`,
+  footer:`<span class="spacer"></span><button class="btn" data-action="close-modal">Fermer</button><button class="btn primary" id="sh-go">${I('share')}Créer le lien</button>`,
+  onMount(m){
+    $('#sh-go', m).addEventListener('click', async () => {
+      const f = new FormData($('#sh-form', m)), exp = +f.get('exp');
+      const row = { workspace_id:S.ws.id, label:(f.get('label') || '').trim() || label, allow_decision:!!f.get('decide'), expires_at:exp ? new Date(Date.now() + exp * 864e5).toISOString() : null };
+      if (post) row.post_id = post.id; else if (camp) row.campaign_id = camp.id;
+      else { row.start_date = f.get('start'); row.end_date = f.get('end'); if (!row.start_date || !row.end_date || row.end_date < row.start_date) return toast('Choisis une période valide.', 'err'); }
+      try {
+        const l = await S.be.insert('share_links', row); S.links.unshift(l);
+        $('#sh-form', m).hidden = true; $('#sh-go', m).remove();
+        $('#sh-out', m).innerHTML = `<div class="field"><span>Lien à envoyer</span><div class="code-box"><input class="input" value="${esc(linkURL(l))}" readonly id="sh-url" style="flex:1"><button class="btn sm" id="sh-copy">${I('copy')}Copier</button></div>
+          <p class="meta-line" style="margin:0">Tu peux le désactiver à tout moment dans les réglages de l’espace, onglet Liens de validation.</p><a class="link" href="${esc(linkURL(l))}" target="_blank" rel="noopener">Ouvrir la page de validation</a></div>`;
+        $('#sh-copy', m).addEventListener('click', () => navigator.clipboard?.writeText(linkURL(l)).then(() => toast('Lien copié'), () => { $('#sh-url', m).select(); toast('Copie impossible : sélectionne le lien et copie-le.', 'err'); }));
+      } catch (e) { toast(errMsg(e), 'err'); }
+    });
+  } });
+}
+
+/* ---------- Réglages d'espace (V2) ---------- */
+async function openWsSettings(tab = 'general'){
+  const w = S.ws, owner = isOwner(), vc = valCfg();
+  const tabs = [['general', 'Général'], ...(w.kind === 'team' ? [['members', 'Membres']] : []), ['validation', 'Validation'], ['links', 'Liens de validation'], ['channels', 'Canaux et formats'], ['alternance', 'Calque alternance']];
+  const counts = ALT_TYPES.map(t => ({ ...t, n:[...S.marks.values()].filter(v => v === t.id).length })).filter(t => t.n);
+  const panes = {
+    general:`<label class="field"><span>Nom de l’espace</span><div class="row"><input class="input" id="ws-name" value="${esc(w.name)}" ${owner ? '' : 'disabled'} maxlength="80">${owner ? '<button class="btn" id="ws-rename">Renommer</button>' : ''}</div></label>
+      ${w.kind === 'team' ? `<div class="field"><span>Code d’invitation</span><div class="code-box"><b>${esc(w.invite_code || '')}</b><button class="btn sm" id="ws-copy">${I('copy')}Copier</button></div>
+        <p class="meta-line" style="margin:0">Partage ce code avec ta classe : chacun le saisit dans « Rejoindre avec un code ».</p></div>` : `<p class="note">Ton espace personnel est privé. Pour travailler à plusieurs, crée un espace d’équipe depuis le sélecteur d’espaces.</p>`}
+      ${w.kind === 'team' ? (owner ? `<button class="btn danger" id="ws-delete" style="justify-self:start">${I('trash')}Supprimer l’espace et ses contenus</button>` : `<button class="btn danger" id="ws-leave" style="justify-self:start">${I('logout')}Quitter l’espace</button>`) : ''}`,
+    members:`<div id="members"><p class="muted">Chargement des membres…</p></div>
+      <p class="note">Propriétaire : gère l’espace. Éditeur : crée et modifie les contenus. Lecteur : consulte et commente. Approbateur : valide les contenus, quel que soit son rôle (un lecteur approbateur convient bien à un enseignant ou un tuteur).</p>`,
+    validation:`<p class="muted" style="margin:0">Quand le circuit est actif, un contenu passe par chaque étape avant d’être programmé. Chaque étape demande l’accord d’un approbateur, et un contenu validé est verrouillé.</p>
+      <label class="check"><input type="checkbox" id="val-on" ${vc.enabled ? 'checked' : ''} ${owner ? '' : 'disabled'}><span>Activer le circuit de validation dans cet espace</span></label>
+      <div class="field"><span>Étapes (dans l’ordre)</span><div class="editable-list" id="val-steps"></div>${owner ? `<button class="btn ghost sm" id="val-add" style="justify-self:start">${I('plus')}Ajouter une étape</button>` : ''}</div>
+      ${owner ? '<button class="btn primary" id="val-save" style="justify-self:start">Enregistrer le circuit</button>' : '<p class="note">Seul le propriétaire modifie le circuit de validation.</p>'}
+      <p class="meta-line" style="margin:0">Approbateurs actuels : ${esc(S.members.filter(x => x.role === 'owner' || x.can_approve).map(x => x.display_name).join(', ') || 'le propriétaire')}. ${w.kind === 'team' ? 'Tu les choisis dans l’onglet Membres.' : ''}</p>`,
+    links:S.be.kind === 'local' ? '<p class="note">Les liens de validation nécessitent la version en ligne.</p>' : `<p class="muted" style="margin:0">Liens envoyés à des personnes sans compte (tuteur, client, jury) pour relire et valider des contenus.</p>
+      ${canEdit() ? `<button class="btn primary" id="lk-new" style="justify-self:start">${I('share')}Nouveau lien pour une période</button>` : ''}
+      <div class="links-list">${S.links.length ? S.links.map(l => `<div class="link-row ${linkActive(l) ? '' : 'off'}"><b>${esc(l.label || 'Lien')}</b><small>${esc(linkScope(l))}, ${l.revoked ? 'désactivé' : l.expires_at ? (linkActive(l) ? 'jusqu’au ' : 'expiré le ') + new Date(l.expires_at).toLocaleDateString('fr-FR') : 'sans limite'}${l.allow_decision ? '' : ', commentaires seulement'}</small>
+        <div class="row">${linkActive(l) ? `<button class="btn sm" data-lk-copy="${l.id}">${I('copy')}Copier</button>${canEdit() ? `<button class="btn ghost sm danger" data-lk-off="${l.id}">Désactiver</button>` : ''}` : ''}</div></div>`).join('') : '<p class="note">Aucun lien pour l’instant. Crée-en un depuis un contenu, une campagne, ou pour une période.</p>'}</div>`,
+    channels:`${owner ? '' : '<p class="note">Seul le propriétaire de l’espace modifie les canaux et les formats.</p>'}
+      <div class="field"><span>Canaux</span><div class="editable-list" id="ch-list"></div>${owner ? `<button class="btn ghost sm" id="ch-add" style="justify-self:start">${I('plus')}Ajouter un canal</button>` : ''}</div>
+      <label class="field"><span>Formats (un par ligne)</span><textarea class="textarea" id="fmt-list" ${owner ? '' : 'disabled'}>${esc((w.settings.formats || []).join('\n'))}</textarea></label>
+      ${owner ? '<button class="btn primary" id="ch-save" style="justify-self:start">Enregistrer les canaux et formats</button>' : ''}`,
+    alternance:`<p class="muted" style="margin:0">Le calque colore chaque jour selon ton rythme : formation, entreprise, férié, examen ou vacances. Tu peux modifier un jour précis en touchant son numéro dans la vue Mois.</p>
+      ${counts.length ? `<div class="legend" style="padding:0">${counts.map(t => `<span><i style="--c:var(--alt-${t.id})"></i>${t.name} : ${t.n} jour${t.n > 1 ? 's' : ''}</span>`).join('')}</div>` : '<p class="note">Aucun jour marqué pour l’instant.</p>'}
+      ${canEdit() ? `<div class="note"><b style="color:var(--text)">Planning préchargé</b><br>${esc(PRESET_ALT.name)}.</div>
+      <div class="row" style="flex-wrap:wrap"><button class="btn primary" id="alt-import">${S.marks.size ? 'Réappliquer le planning de la classe' : 'Importer le planning de la classe'}</button>${S.marks.size ? `<button class="btn danger" id="alt-clear">Effacer le calque</button>` : ''}</div>` : ''}`
+  };
+  if (!panes[tab]) tab = 'general';
+  openModal({ title:'Réglages de l’espace', wide:true, body:`<div class="tabs" role="tablist">${tabs.map(([id, n]) => `<button role="tab" data-tab="${id}" aria-selected="${tab === id}">${n}</button>`).join('')}</div><div style="display:grid;gap:16px">${panes[tab]}</div>`,
+  onMount(m){
+    $$('[data-tab]', m).forEach(b => b.addEventListener('click', () => openWsSettings(b.dataset.tab)));
+    $('#ws-rename', m)?.addEventListener('click', async () => {
+      const name = $('#ws-name', m).value.trim(); if (!name) return;
+      try { Object.assign(w, await S.be.updateWorkspace(w.id, { name })); const li = S.workspaces.find(x => x.id === w.id); if (li) li.name = name; renderAll(); toast('Espace renommé'); } catch (e) { toast(errMsg(e), 'err'); }
+    });
+    $('#ws-copy', m)?.addEventListener('click', () => { navigator.clipboard?.writeText(w.invite_code).then(() => toast('Code copié'), () => toast('Copie impossible : note le code à la main.', 'err')); });
+    $('#ws-delete', m)?.addEventListener('click', async () => {
+      if (prompt(`Pour confirmer, tape le nom de l’espace : ${w.name}`) !== w.name) return toast('Suppression annulée.');
+      try { await S.be.deleteWorkspace(w.id); closeModal(); await loadWorkspaces(null); renderAll(); toast('Espace supprimé'); } catch (e) { toast(errMsg(e), 'err'); }
+    });
+    $('#ws-leave', m)?.addEventListener('click', async () => {
+      if (!confirm(`Quitter « ${w.name} » ? Tu pourras revenir avec le code d’invitation.`)) return;
+      try { await S.be.leaveWorkspace(w.id); closeModal(); await loadWorkspaces(null); renderAll(); toast('Tu as quitté l’espace'); } catch (e) { toast(errMsg(e), 'err'); }
+    });
+    if (tab === 'members') {
+      S.be.listMembers(w.id).then(list => {
+        S.members = list; const box = $('#members', m); if (!box) return;
+        box.innerHTML = list.sort((a, b) => (a.role === 'owner' ? -1 : b.role === 'owner' ? 1 : 0)).map(x => `<div class="member"><span class="ava">${esc(initials(x.display_name))}</span><span class="who"><b>${esc(x.display_name)}${x.user_id === S.user.id ? ' (toi)' : ''}</b><small>${{ owner:'Propriétaire', editor:'Éditeur', viewer:'Lecteur' }[x.role]}${x.role === 'owner' || x.can_approve ? ', approbateur' : ''}</small></span>
+          ${owner && x.user_id !== S.user.id ? `<label class="check" style="margin-right:6px"><input type="checkbox" data-appr="${x.user_id}" ${x.can_approve ? 'checked' : ''}><span>Approbateur</span></label><select class="select" data-role="${x.user_id}" style="width:auto;min-height:34px" aria-label="Rôle"><option value="editor" ${x.role === 'editor' ? 'selected' : ''}>Éditeur</option><option value="viewer" ${x.role === 'viewer' ? 'selected' : ''}>Lecteur</option></select><button class="icon-btn" data-kick="${x.user_id}" aria-label="Retirer ${esc(x.display_name)}">${I('x')}</button>` : ''}</div>`).join('');
+        $$('[data-role]', box).forEach(s => s.addEventListener('change', async () => { try { await S.be.setRole(w.id, s.dataset.role, s.value); toast('Rôle mis à jour'); } catch (e) { toast(errMsg(e), 'err'); } }));
+        $$('[data-appr]', box).forEach(c => c.addEventListener('change', async () => { try { await S.be.setApprover(w.id, c.dataset.appr, c.checked); const mm = S.members.find(x => x.user_id === c.dataset.appr); if (mm) mm.can_approve = c.checked; toast(c.checked ? 'Approbateur ajouté' : 'Approbateur retiré'); } catch (e) { c.checked = !c.checked; toast(errMsg(e), 'err'); } }));
+        $$('[data-kick]', box).forEach(b => b.addEventListener('click', async () => { if (!confirm('Retirer ce membre de l’espace ?')) return; try { await S.be.removeMember(w.id, b.dataset.kick); openWsSettings('members'); toast('Membre retiré'); } catch (e) { toast(errMsg(e), 'err'); } }));
+      }).catch(e => { const box = $('#members', m); if (box) box.innerHTML = `<p class="form-error">${esc(errMsg(e))}</p>`; });
+    }
+    if (tab === 'validation') {
+      const steps = clone(vc.steps);
+      const draw = () => {
+        $('#val-steps', m).innerHTML = steps.map((s, i) => `<div class="erow"><span class="pill">${i + 1}</span><input class="input" value="${esc(s.name || '')}" data-sn="${i}" ${owner ? '' : 'disabled'} maxlength="40" aria-label="Nom de l’étape ${i + 1}">${owner && steps.length > 1 ? `<button class="icon-btn" data-sx="${i}" aria-label="Supprimer l’étape ${i + 1}">${I('trash')}</button>` : ''}</div>`).join('');
+        $$('[data-sn]', m).forEach(x => x.addEventListener('input', () => steps[+x.dataset.sn].name = x.value));
+        $$('[data-sx]', m).forEach(x => x.addEventListener('click', () => { steps.splice(+x.dataset.sx, 1); draw(); }));
+      };
+      draw();
+      $('#val-add', m)?.addEventListener('click', () => { if (steps.length >= 4) return toast('Quatre étapes maximum.', 'err'); steps.push({ name:steps.length ? 'Validation finale' : 'Relecture' }); draw(); });
+      $('#val-save', m)?.addEventListener('click', async () => {
+        const clean = steps.map(s => ({ name:(s.name || '').trim() || 'Étape' }));
+        const settings = { ...w.settings, validation:{ enabled:$('#val-on', m).checked, steps:clean } };
+        try { const r = await S.be.updateWorkspace(w.id, { settings }); w.settings = { ...clone(DEFAULT_WS_SETTINGS), ...r.settings }; renderAll(); toast('Circuit de validation enregistré'); } catch (e) { toast(errMsg(e), 'err'); }
+      });
+    }
+    if (tab === 'links') {
+      $('#lk-new', m)?.addEventListener('click', () => openShare({}));
+      $$('[data-lk-copy]', m).forEach(b => b.addEventListener('click', () => { const l = S.links.find(x => x.id === b.dataset.lkCopy); navigator.clipboard?.writeText(linkURL(l)).then(() => toast('Lien copié'), () => toast('Copie impossible.', 'err')); }));
+      $$('[data-lk-off]', m).forEach(b => b.addEventListener('click', async () => {
+        if (!confirm('Désactiver ce lien ? La personne ne pourra plus l’ouvrir.')) return;
+        try { const l = S.links.find(x => x.id === b.dataset.lkOff); Object.assign(l, await S.be.update('share_links', l.id, { revoked:true })); openWsSettings('links'); toast('Lien désactivé'); } catch (e) { toast(errMsg(e), 'err'); }
+      }));
+    }
+    if (tab === 'channels') {
+      const chs = clone(w.settings.channels);
+      const draw = () => {
+        $('#ch-list', m).innerHTML = chs.map((c, i) => `<div class="erow"><input type="color" value="${esc(c.color)}" data-ci="${i}" ${owner ? '' : 'disabled'} aria-label="Couleur de ${esc(c.name)}"><input class="input" value="${esc(c.name)}" data-cn="${i}" ${owner ? '' : 'disabled'} aria-label="Nom du canal">${owner ? `<button class="icon-btn" data-cx="${i}" aria-label="Supprimer ${esc(c.name)}">${I('trash')}</button>` : ''}</div>`).join('');
+        $$('[data-ci]', m).forEach(x => x.addEventListener('input', () => chs[+x.dataset.ci].color = x.value));
+        $$('[data-cn]', m).forEach(x => x.addEventListener('input', () => chs[+x.dataset.cn].name = x.value));
+        $$('[data-cx]', m).forEach(x => x.addEventListener('click', () => { chs.splice(+x.dataset.cx, 1); draw(); }));
+      };
+      draw();
+      $('#ch-add', m)?.addEventListener('click', () => { chs.push({ id:'c-' + Math.random().toString(36).slice(2, 8), name:'Nouveau canal', color:CAMP_COLORS[chs.length % CAMP_COLORS.length] }); draw(); $$('[data-cn]', m).pop()?.select(); });
+      $('#ch-save', m)?.addEventListener('click', async () => {
+        const clean = chs.filter(c => c.name.trim()).map(c => ({ ...c, name:c.name.trim() }));
+        if (!clean.length) return toast('Garde au moins un canal.', 'err');
+        const formats = $('#fmt-list', m).value.split('\n').map(s => s.trim()).filter(Boolean);
+        try { const r = await S.be.updateWorkspace(w.id, { settings:{ ...w.settings, channels:clean, formats } }); w.settings = { ...clone(DEFAULT_WS_SETTINGS), ...r.settings }; renderAll(); toast('Canaux et formats enregistrés'); } catch (e) { toast(errMsg(e), 'err'); }
+      });
+    }
+    $('#alt-import', m)?.addEventListener('click', async () => {
+      try { const rows = presetRows(w.id); await S.be.bulkDayMarks(w.id, rows); rows.forEach(r => S.marks.set(r.day, r.type)); if (!S.prefs.showAlt) setPref('showAlt', true); renderAll(); openWsSettings('alternance'); toast(`Planning importé : ${rows.length} jours`); }
+      catch (e) { toast(errMsg(e), 'err'); }
+    });
+    $('#alt-clear', m)?.addEventListener('click', async () => {
+      if (!confirm('Effacer tous les jours du calque alternance de cet espace ?')) return;
+      try { await S.be.clearDayMarks(w.id); S.marks.clear(); renderAll(); openWsSettings('alternance'); toast('Calque effacé'); } catch (e) { toast(errMsg(e), 'err'); }
+    });
+  } });
+}
+
+/* ---------- Page de validation externe (sans compte) ---------- */
+async function renderReview(token, keepScroll){
+  S.prefs = loadLocalPrefs(); applyPrefs();
+  const root = $('#root'), y = keepScroll ? window.scrollY : 0;
+  if (!keepScroll) root.innerHTML = `<div class="rvpage"><p class="muted">Chargement des contenus…</p></div>`;
+  let data;
+  try { data = await S.be.reviewGet(token); }
+  catch (e) { root.innerHTML = `<div class="gate"><div class="gate-form" style="grid-column:1/-1"><div class="gate-card"><h2>Lien indisponible</h2><p class="sub">${esc(errMsg(e))}</p><p class="meta-line">Demande un nouveau lien à la personne qui te l’a envoyé.</p></div></div></div>`; return; }
+  S.ws = { name:data.workspace.name, settings:{ channels:data.workspace.channels || DEFAULT_WS_SETTINGS.channels, validation:{ enabled:true, steps:data.workspace.steps } } };
+  const steps = valCfg().steps, name = localStorage.getItem('cadence_reviewer') || '';
+  const postHTML = p => {
+    const c = chan(p.channel), okN = p.reviews.filter(r => r.decision === 'approved').length;
+    const state = p.locked || ['programme','publie'].includes(p.status) ? 'Validé' : p.status === 'a_valider' ? `En attente de validation, étape ${Math.min(okN + 1, steps.length)} sur ${steps.length}` : 'En préparation, pas encore soumis';
+    const decide = data.link.allow_decision && p.status === 'a_valider';
+    const th = { comments:p.comments.map(x => ({ ...x, author_name:x.author, user_id:null })), reviews:p.reviews.map(r => ({ ...r, actor_name:r.author })), events:[] };
+    return `<article class="rv-post" id="rv-${p.id}">
+      <div class="rv-meta"><span class="pill"><span class="dot" style="--c:${esc(c.color)}"></span>${esc(c.name)}</span>${p.format ? `<span class="pill">${esc(p.format)}</span>` : ''}<span class="pill">${p.pub_date ? fmtDay(p.pub_date) + (p.pub_time ? ' à ' + fmtTime(p.pub_time) : '') : 'Date à définir'}</span><span class="pill rv-state">${state}</span></div>
+      <h2>${esc(p.title || 'Sans titre')}</h2>
+      <div class="rv-body"><div>${previewHTML(p, { account:data.workspace.name })}</div>
+        <div class="rv-side">
+          ${th.comments.length || th.reviews.length ? timelineHTML(th) : '<p class="muted" style="margin:0">Aucun retour pour l’instant.</p>'}
+          <textarea class="textarea" id="rv-c-${p.id}" placeholder="${decide ? 'Ton commentaire (obligatoire pour demander des modifications)' : 'Ton commentaire'}" style="min-height:84px" maxlength="2000"></textarea>
+          <div class="row wrap">${decide ? `<button class="btn primary" data-rv="approved" data-id="${p.id}">${I('check')}Valider</button><button class="btn" data-rv="changes" data-id="${p.id}">Demander des modifications</button>` : ''}<button class="btn ghost" data-rv="comment" data-id="${p.id}">${I('chat')}Commenter</button></div>
+        </div></div></article>`;
+  };
+  root.innerHTML = `<div class="rvpage">
+    <header class="rv-head">${brandMark()}<div><h1>${esc(data.link.label || 'Validation de contenus')}</h1><p class="muted">${esc(data.workspace.name)}, ${data.posts.length} contenu${data.posts.length > 1 ? 's' : ''}${data.link.expires_at ? `, lien valable jusqu’au ${new Date(data.link.expires_at).toLocaleDateString('fr-FR')}` : ''}</p></div></header>
+    <label class="field rv-name"><span>Ton nom, affiché avec tes réponses</span><input class="input" id="rv-name" value="${esc(name)}" maxlength="60" autocomplete="name" placeholder="Prénom Nom"></label>
+    ${data.posts.map(postHTML).join('') || '<p class="note">Aucun contenu dans ce lien pour le moment.</p>'}
+    <p class="meta-line">Page de validation Cadence : aucun compte nécessaire. Tes réponses sont transmises à l’équipe qui t’a envoyé ce lien.</p>
+  </div>`;
+  hydrateMedia(root);
+  if (keepScroll) window.scrollTo(0, y);
+  $('#rv-name').addEventListener('input', e => localStorage.setItem('cadence_reviewer', e.target.value.trim()));
+  root.onclick = async e => {
+    const more = e.target.closest('.pv-more'); if (more) { more.previousElementSibling.hidden = false; more.remove(); return; }
+    const b = e.target.closest('[data-rv]'); if (!b) return;
+    const who = $('#rv-name').value.trim(), txt = $(`#rv-c-${b.dataset.id}`).value.trim(), act = b.dataset.rv;
+    if (!who) { $('#rv-name').focus(); return toast('Indique ton nom avant de répondre.', 'err'); }
+    if (act !== 'approved' && !txt) return toast('Écris un commentaire.', 'err');
+    b.disabled = true;
+    try {
+      await S.be.reviewAct(token, b.dataset.id, who, act === 'comment' ? null : act, txt);
+      toast(act === 'approved' ? 'Merci, validation enregistrée' : act === 'changes' ? 'Demande de modifications envoyée' : 'Commentaire envoyé');
+      renderReview(token, true);
+    } catch (err) { b.disabled = false; toast(errMsg(err), 'err'); }
+  };
+}
+
+/* ---------- Écouteurs V2 ---------- */
+document.addEventListener('click', e => {
+  if (DnD.suppress) return;
+  const el = e.target.closest('[data-action]'); if (!el) return;
+  const a = el.dataset.action;
+  if (a === 'pv-more') { el.previousElementSibling && (el.previousElementSibling.hidden = false); el.remove(); }
+  if (a === 'media-tag') { S.mediaTag = S.mediaTag === el.dataset.tag ? '' : el.dataset.tag; renderView(); }
+  if (a === 'open-asset') openAsset(el.dataset.id);
+});
+document.addEventListener('change', async e => {
+  const t = e.target;
+  if (t.dataset?.filter === 'grid-ch') { S.gridChannel = t.value; renderView(); }
+  if (t.dataset?.upload === 'library' && t.files?.length) { const got = await uploadMany([...t.files]); t.value = ''; if (got.length) toast(`${got.length} visuel${got.length > 1 ? 's' : ''} importé${got.length > 1 ? 's' : ''}`); renderView(); }
+});
+document.addEventListener('input', debounce(e => { if (e.target.dataset?.filter === 'media-q') { S.mediaQ = e.target.value.trim(); const pos = e.target.selectionStart; renderView(); const inp = $('[data-filter="media-q"]'); if (inp) { inp.focus(); try { inp.setSelectionRange(pos, pos); } catch (x) {} } } }, 250));
 
 DnD.init();
 boot();
