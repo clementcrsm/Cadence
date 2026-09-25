@@ -474,7 +474,7 @@ const CONFIG = {
   SUPABASE_URL: 'https://bbafwfvfarwofifnmdmq.supabase.co',
   SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJiYWZ3ZnZmYXJ3b2ZpZm5tZG1xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMzQzNzEsImV4cCI6MjEwNTkxMDM3MX0.33OjtEAEjUp8v5M-5qtcaoOYT3Vov6dCk96PYujbfW0'
 };
-const VERSION = '1.0.1';
+const VERSION = '1.0.2';
 const LS = { cfg:'cadence_cfg', local:'cadence_local', prefs:'cadence_prefs' };
 
 /* ---------- Utilitaires ---------- */
@@ -622,6 +622,7 @@ const Remote = {
   async signIn(email, password){ const d = this.ok(await this.sb.auth.signInWithPassword({ email, password })); this.user = d.user; return d; },
   async resetPassword(email){ this.ok(await this.sb.auth.resetPasswordForEmail(email, { redirectTo:location.origin + location.pathname })); },
   async updatePassword(pw){ this.ok(await this.sb.auth.updateUser({ password:pw })); },
+  async updateEmail(email){ this.ok(await this.sb.auth.updateUser({ email }, { emailRedirectTo:location.origin + location.pathname })); },
   async signOut(){ await this.sb.auth.signOut(); this.user = null; },
   async getProfile(){ return this.ok(await this.sb.from('profiles').select('*').eq('id', this.user.id).maybeSingle()) || { id:this.user.id, display_name:'', settings:{} }; },
   async updateProfile(patch){ return this.ok(await this.sb.from('profiles').update(patch).eq('id', this.user.id).select().single()); },
@@ -798,6 +799,8 @@ function errMsg(e){
     [/Invalid login credentials/i, 'Email ou mot de passe incorrect.'],
     [/already registered|already been registered/i, 'Un compte existe déjà avec cet email. Connecte-toi.'],
     [/Email not confirmed/i, 'Confirme d’abord ton email grâce au lien reçu par mail.'],
+    [/should be different from the old password/i, 'Choisis un mot de passe différent de l’actuel.'],
+    [/reauthentication|Reauthentication/i, 'Pour des raisons de sécurité, déconnecte-toi puis reconnecte-toi avant de changer ton mot de passe.'],
     [/Password should be at least/i, 'Le mot de passe doit contenir au moins 8 caractères.'],
     [/rate limit/i, 'Trop de tentatives. Patiente une minute puis réessaie.'],
     [/code_invalide/i, 'Ce code ne correspond à aucun espace. Vérifie-le auprès de la personne qui l’a partagé.'],
@@ -1549,6 +1552,11 @@ function openSettings(){
     <div class="field"><span>Densité du calendrier</span><div class="seg">${[['confort', 'Confortable'], ['compact', 'Compacte']].map(([v, n]) => `<button data-pref="density" data-v="${v}" aria-pressed="${p.density === v}">${n}</button>`).join('')}</div></div>
     <div class="field"><span>Vue Année</span><div class="seg">${[['school', 'Année scolaire'], ['civil', 'Année civile']].map(([v, n]) => `<button data-pref="yearMode" data-v="${v}" aria-pressed="${p.yearMode === v}">${n}</button>`).join('')}</div></div>
     <label class="check"><input type="checkbox" id="pref-alt" ${p.showAlt ? 'checked' : ''}><span>Afficher le calque alternance</span></label>
+    ${S.be.kind === 'remote' ? `<div class="field"><span>Compte</span>
+      <div class="row"><input class="input" type="email" id="acc-email" value="${esc(S.user.email || '')}" autocomplete="email" aria-label="Email"><button class="btn" id="acc-email-save">Changer l’email</button></div>
+      <p class="meta-line" style="margin:0">Un lien de confirmation est envoyé : le changement ne prend effet qu’après validation.</p>
+      <div class="grid2" style="margin-top:6px"><input class="input" type="password" id="acc-pw" placeholder="Nouveau mot de passe" autocomplete="new-password" minlength="8" aria-label="Nouveau mot de passe"><input class="input" type="password" id="acc-pw2" placeholder="Confirmer" autocomplete="new-password" aria-label="Confirmer le mot de passe"></div>
+      <button class="btn" id="acc-pw-save" style="justify-self:start">Changer le mot de passe</button></div>` : ''}
     <p class="meta-line">Cadence v${VERSION}. ${S.be.kind === 'local' ? 'Mode démo : les données restent dans ce navigateur.' : 'Connecté en tant que ' + esc(S.user.email || '') + '.'} Raccourcis : N nouveau contenu, T aujourd’hui, flèches pour naviguer, 1 à 5 pour changer de vue.</p>`,
   footer:`<button class="btn ghost danger" id="me-out">${I('logout')}${S.be.kind === 'local' ? 'Quitter le mode démo' : 'Se déconnecter'}</button><span class="spacer"></span><button class="btn primary" data-action="close-modal">Terminé</button>`,
   onMount(m){
@@ -1558,6 +1566,18 @@ function openSettings(){
     $('#me-save', m).addEventListener('click', async () => {
       const name = $('#me-name', m).value.trim(); if (!name) return;
       try { S.profile = await S.be.updateProfile({ display_name:name }); renderSide(); toast('Nom enregistré'); } catch (e) { toast(errMsg(e), 'err'); }
+    });
+    $('#acc-email-save', m)?.addEventListener('click', async () => {
+      const email = $('#acc-email', m).value.trim();
+      if (!/^\S+@\S+\.\S+$/.test(email)) return toast('Saisis un email valide.', 'err');
+      if (email === S.user.email) return toast('C’est déjà ton email actuel.');
+      try { await S.be.updateEmail(email); toast('Lien envoyé : valide le changement depuis ta boîte mail.'); } catch (e) { toast(errMsg(e), 'err'); }
+    });
+    $('#acc-pw-save', m)?.addEventListener('click', async () => {
+      const a = $('#acc-pw', m).value, b = $('#acc-pw2', m).value;
+      if (a.length < 8) return toast('Le mot de passe doit contenir au moins 8 caractères.', 'err');
+      if (a !== b) return toast('Les deux mots de passe ne correspondent pas.', 'err');
+      try { await S.be.updatePassword(a); $('#acc-pw', m).value = $('#acc-pw2', m).value = ''; toast('Mot de passe changé'); } catch (e) { toast(errMsg(e), 'err'); }
     });
     $('#me-out', m).addEventListener('click', async () => { closeModal(); stopSub(); await S.be.signOut(); if (S.be.kind === 'remote') { S.entered = false; renderAuth('login'); } });
   } });
